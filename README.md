@@ -200,7 +200,7 @@ No BI tool has been selected yet. If Power BI or Tableau is used:
 
 ## Project documentation
 
-- [Completed Repository Documentation Lab](Repository_Documentation_Lab_Completed.docx) — the completed course starter describing the repository, environment, notebooks, README plan, data dictionary, and figure-export rules.
+- [Completed Repository Documentation Lab](docs/Repository_Documentation_Lab_Completed.docx) — the completed course starter describing the repository, environment, notebooks, README plan, data dictionary, and figure-export rules.
 - [Project brief](docs/project_brief.md) — business decision, project goal, scope, limitation, and spatial design.
 - [Data dictionary](docs/data_dictionary.md) — approved MVP fields, data types, units, sources, examples, and missing-value rules.
 - [Source plan](docs/source_plan.md) — public sources, access methods, collection rules, and limitations.
