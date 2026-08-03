@@ -2,9 +2,9 @@
 
 ## Analytical unit
 
-One analytical record represents one **1 km grid cell and one observation year**.
+One analytical record represents one **1 km grid cell and one predictor reference year `T`**.
 
-Predictors available for year `T` are used to estimate wildfire impact in year `T+1`.
+Predictors available for year `T` are used to estimate the observed wildfire outcome in year `T+1`.
 
 ## Spatial definitions
 
@@ -13,6 +13,14 @@ Predictors available for year `T` are used to estimate wildfire impact in year `
 - **Purpose of the buffer:** measure nearby vegetation, terrain, and previous fire activity that may affect the residential location.
 
 The 2 km buffer is not a second grid resolution. It is an initial modelling parameter that will be checked through sensitivity analysis.
+
+## Temporal scope and split
+
+The planned predictor-reference panel is `T = 2014-2024`: training years `2014-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. The required ICNF annual burned-area archive range is `2004-2025` inclusive.
+
+There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
+
+Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the actual ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` remains an assumption to validate before finalising the model panel.
 
 ## Technical identifiers
 
@@ -34,16 +42,16 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 | `built_up_share` | float | 0-1 | Share of the 1 km cell classified as built or artificial land. It is an initial residential-relevance proxy, not proof that the cell is residential. | DGT COS/COSc |
 | `forest_shrub_share_2km` | float | 0-1 | Combined forest and shrubland share within the initial 2 km buffer around the cell. | DGT COSc |
 | `mean_slope_2km` | float | degrees | Mean terrain slope within the same 2 km buffer. | Derived from Copernicus DEM GLO-30 |
-| `fire_years_previous_10y_2km` | integer | count | Number of the previous ten years in which the 2 km buffer intersected an ICNF burned-area polygon. | ICNF burned-area intersections |
+| `fire_years_previous_10y_2km` | integer | count | Number of years from `T-10` through `T-1` inclusive in which the 2 km buffer intersected an ICNF burned-area polygon. This is strictly pre-`T` information. | ICNF burned-area intersections |
 | `warm_season_mean_temp` | float | degrees Celsius | Mean temperature for the defined warm-season period in observation year `T`. | ERA5-Land aggregation |
 | `warm_season_precip_total` | float | millimetres | Total precipitation for the same warm-season period in observation year `T`. | ERA5-Land aggregation |
-| `burned_share_next_year` | float | 0-1 | Share of the 1 km cell intersected by burned-area polygons in year `T+1`. This is the main continuous target. | ICNF burned-area intersections |
+| `burned_share_next_year` | float | 0-1 | Share of the 1 km cell intersected by burned-area polygons in observed outcome year `T+1`. This is the main continuous target. | ICNF burned-area intersections |
 
 ## Derived classification target
 
 | Column | Type | Meaning |
 |---|---|---|
-| `burned_next_year` | boolean | Classification target derived from `burned_share_next_year` using a documented threshold selected after target-distribution analysis. |
+| `burned_next_year` | boolean | Classification target for observed outcome year `T+1`, derived later from `burned_share_next_year` using a documented threshold selected after continuous-target-distribution analysis. |
 
 ## Model and decision outputs
 
@@ -74,7 +82,7 @@ Missing mandatory data must not be interpreted as low exposure. The result must 
 - Use one projected CRS for all area and distance calculations.
 - Keep raw files unchanged.
 - Never convert `NoData` automatically to zero.
-- Use only predictors available before the target year.
+- Use only predictors available at predictor reference year `T`; never use observed outcome-year `T+1` information as a predictor.
 - Record dataset versions and class definitions.
 - Treat `built_up_share` only as a residential-relevance proxy until validated.
 - Select the burned-area classification threshold after inspecting the target distribution.

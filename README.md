@@ -53,6 +53,18 @@ Build a reproducible geospatial data-science and machine-learning workflow that:
 
 The 2 km value is not a second resolution. It is a modelling assumption that will be tested during sensitivity analysis.
 
+## Temporal methodology and data scope
+
+Each analytical record is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` is used to estimate the observed wildfire outcome in `T+1`.
+
+- **Continuous target:** `burned_share_next_year`, the share of the cell burned in `T+1`.
+- **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
+- **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
+
+The planned predictor-reference panel is `T = 2014` through `2024`: training years `2014-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. This requires ICNF annual burned-area archives for `2004-2025` inclusive: pre-`T` fire history and observed `T+1` outcome labels have distinct roles. No temporal gap is required because the historical-fire window is strictly before `T` and is information genuinely available when making a prediction.
+
+Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the corresponding ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` remains an assumption to validate before finalising the model panel.
+
 ## Data sources
 
 The initial project uses four public source groups:

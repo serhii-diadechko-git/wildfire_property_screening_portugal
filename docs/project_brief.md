@@ -38,6 +38,18 @@ It does not recommend the purchase of a specific property.
 - The 2 km buffer is used for nearby vegetation, slope, and previous-fire features.
 - The 2 km value is an initial parameter and will be checked through sensitivity analysis.
 
+## Temporal methodology and model evaluation
+
+Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
+
+- **Continuous target:** `burned_share_next_year`, the share of the cell burned in `T+1`.
+- **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
+- **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
+
+The planned predictor-reference panel is `T = 2014` through `2024`. Training uses `2014-2019`, validation uses `2020-2021`, and the final temporal test uses `2022-2024`. The required ICNF annual burned-area archive range is `2004-2025` inclusive, covering pre-`T` history and observed `T+1` outcomes.
+
+There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the actual ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` is an assumption to validate before finalising the model panel.
+
 ## Scope
 
 ### In scope
