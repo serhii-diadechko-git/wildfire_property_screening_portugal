@@ -61,16 +61,16 @@ Each analytical record is one 1 km x 1 km grid cell for predictor reference year
 - **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
 - **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
 
-The planned predictor-reference panel is `T = 2014` through `2024`: training years `2014-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. This requires ICNF annual burned-area archives for `2004-2025` inclusive: pre-`T` fire history and observed `T+1` outcome labels have distinct roles. No temporal gap is required because the historical-fire window is strictly before `T` and is information genuinely available when making a prediction.
+The approved predictor-reference panel is `T = 2015` through `2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. This requires ICNF annual burned-area archives for `2005-2025` inclusive. ICNF supplies only strictly pre-`T` historical-fire context and observed `T+1` outcome labels; it is never a same-year predictor. No temporal gap is required because the historical-fire window is `T-10` through `T-1`.
 
-Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the corresponding ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` remains an assumption to validate before finalising the model panel.
+CLC is broad, release-aware land-cover context rather than annual parcel-level land cover. ERA5-Land is coarse regional climate context, not 1 km weather: June–September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Climate values are assigned by the containing ERA5-Land cell without interpolation or downscaling. This is a retrospective reproducible evaluation, not an exact reconstruction of what was available in real time on every historical date.
 
 ## Data sources
 
 The initial project uses four public source groups:
 
 - ICNF annual burned-area cartography;
-- DGT COS/COSc land cover and CAOP administrative boundaries;
+- Copernicus CLC broad land-cover context and CAOP administrative boundaries;
 - Copernicus DEM GLO-30 terrain data;
 - ERA5-Land temperature and precipitation data.
 

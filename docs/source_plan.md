@@ -9,21 +9,21 @@ These sources support the agreed MVP schema. Optional feature sources are intent
 | Source | Expected fields / products | Access method | Accessibility | Main limitation | Official URL |
 |---|---|---|---|---|---|
 | ICNF GeoCATALOGO - burned areas 1975-2025 | Annual burned-area polygon geometry and year | Shapefile, KML, WFS, or WMS | Public data with attribution requirements | Shows burned extent, not ignition cause, suppression effectiveness, or property damage | https://geocatalogo.icnf.pt/catalogo_tema5.html |
-| DGT COS/COSc | Built/artificial land and combined forest/shrubland classes | DGT Open Data, SNIG, OGC services, or official download | Public/open under DGT conditions | Product editions and class definitions must be checked; built-up land is not automatically residential | https://www.dgterritorio.gov.pt/dados-abertos and https://smos.dgterritorio.gov.pt/cartografia-de-uso-e-ocupacao-do-solo |
+| Copernicus CLC | Broad built/artificial and forest/shrubland context | Copernicus catalogue/download | Published Copernicus licence and access conditions | Release-aware broad land-cover context, not annual parcel-level land cover; mapping-unit limits must be retained | https://land.copernicus.eu/en/products/corine-land-cover |
 | DGT CAOP | Mainland boundary and municipality/parish boundaries for reporting | OGC API or official download | Available without charge | Administrative versions change; one version must be fixed for the project | https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop |
 | Copernicus DEM GLO-30 | Elevation raster used to derive `mean_slope_2km` | Copernicus Data Space download/API | Free access under published licence conditions | Static elevation model; national tile processing must be tested | https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM |
-| Copernicus ERA5-Land | Temperature and precipitation used for warm-season aggregates | Climate Data Store API/download, NetCDF or GRIB | Free account and licence acceptance required | Reanalysis at about 9 km, much coarser than the 1 km analytical grid | https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land |
+| Copernicus ERA5-Land | JJAS `T`-only mean 2 m temperature, total precipitation, and mean layer-1 soil water | Climate Data Store API/download, NetCDF or GRIB | Free account and licence acceptance required | Coarse regional reanalysis context at about 9 km; values are assigned by containing ERA5-Land cell, without interpolation or downscaling to 1 km | https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land |
 
 ## ICNF temporal scope and roles
 
-The agreed model design requires ICNF annual burned-area archives for `2004-2025` inclusive. This is a project data requirement, not a statement that every required annual archive has already been collected or its availability confirmed.
+The agreed model design requires ICNF annual burned-area archives for `2005-2025` inclusive. This is a project data requirement, not a statement that every required annual archive has already been collected or its availability confirmed.
 
 | Role | Years required | Use in the model panel |
 |---|---|---|
-| Historical-fire input | `2004-2023` | For each predictor reference year `T` from `2014` through `2024`, calculate `fire_years_previous_10y_2km` from the inclusive pre-`T` window `T-10` through `T-1`. |
-| Observed outcome label | `2015-2025` | For each `T` from `2014` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
+| Historical-fire input | `2005-2023` | For each predictor reference year `T` from `2015` through `2024`, calculate `fire_years_previous_10y_2km` from the inclusive pre-`T` window `T-10` through `T-1`. |
+| Observed outcome label | `2016-2025` | For each `T` from `2015` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
 
-The predictor-reference panel is `T = 2014-2024`: training years `2014-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time.
+The predictor-reference panel is `T = 2015-2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad, release-aware land-cover context, not annual parcel-level land cover. ERA5-Land uses only JJAS observations/reanalysis values from `T` and is coarse regional context assigned to 1 km cells by containing ERA5-Land cell, without interpolation.
 
 ## Validation and comparison source
 

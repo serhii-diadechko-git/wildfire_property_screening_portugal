@@ -46,9 +46,9 @@ Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. 
 - **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
 - **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
 
-The planned predictor-reference panel is `T = 2014` through `2024`. Training uses `2014-2019`, validation uses `2020-2021`, and the final temporal test uses `2022-2024`. The required ICNF annual burned-area archive range is `2004-2025` inclusive, covering pre-`T` history and observed `T+1` outcomes.
+The approved predictor-reference panel is `T = 2015` through `2024`. Training uses `2015-2019`, validation uses `2020-2021`, and the final temporal test uses `2022-2024`. The required ICNF annual burned-area archive range is `2005-2025` inclusive, covering pre-`T` history and observed `T+1` outcomes.
 
-There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the actual ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` is an assumption to validate before finalising the model panel.
+There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. CLC provides broad, release-aware land-cover context; it is not annual parcel-level land cover. ERA5-Land supplies coarse regional climate context, not 1 km weather: use only June–September (`JJAS`) values from `T`, assigning each 1 km cell the value of its containing ERA5-Land cell without interpolation or downscaling. This is a retrospective reproducible evaluation and does not claim an exact real-time historical reconstruction.
 
 ## Scope
 

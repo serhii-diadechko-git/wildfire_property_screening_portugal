@@ -16,11 +16,11 @@ The 2 km buffer is not a second grid resolution. It is an initial modelling para
 
 ## Temporal scope and split
 
-The planned predictor-reference panel is `T = 2014-2024`: training years `2014-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. The required ICNF annual burned-area archive range is `2004-2025` inclusive.
+The approved predictor-reference panel is `T = 2015-2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. The required ICNF annual burned-area archive range is `2005-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
-Operationally, data available for the latest completed year `T` produces a prediction for `T+1`; the actual ICNF outcome is observed later. Comparable land-cover and climate coverage for every predictor year `2014-2024` remains an assumption to validate before finalising the model panel.
+CLC is broad, release-aware land-cover context rather than annual parcel-level land cover. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only are assigned by containing ERA5-Land cell, without interpolation or downscaling. This is a retrospective reproducible evaluation; it does not claim an exact real-time historical reconstruction.
 
 ## Technical identifiers
 
@@ -39,12 +39,13 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 | Column | Type | Unit / values | Description | Source / derivation |
 |---|---|---|---|---|
 | `cell_year_id` | string | `<cell_id>_<year>` | Unique key for one 1 km cell and observation year. | Generated from `cell_id` and `observation_year` |
-| `built_up_share` | float | 0-1 | Share of the 1 km cell classified as built or artificial land. It is an initial residential-relevance proxy, not proof that the cell is residential. | DGT COS/COSc |
-| `forest_shrub_share_2km` | float | 0-1 | Combined forest and shrubland share within the initial 2 km buffer around the cell. | DGT COSc |
+| `built_up_share` | float | 0-1 | Share of the 1 km cell classified as built or artificial land. It is an initial residential-relevance proxy, not proof that the cell is residential. | Release-aware Copernicus CLC broad classes |
+| `forest_shrub_share_2km` | float | 0-1 | Combined forest and shrubland share within the initial 2 km buffer around the cell. | Release-aware Copernicus CLC broad classes |
 | `mean_slope_2km` | float | degrees | Mean terrain slope within the same 2 km buffer. | Derived from Copernicus DEM GLO-30 |
 | `fire_years_previous_10y_2km` | integer | count | Number of years from `T-10` through `T-1` inclusive in which the 2 km buffer intersected an ICNF burned-area polygon. This is strictly pre-`T` information. | ICNF burned-area intersections |
-| `warm_season_mean_temp` | float | degrees Celsius | Mean temperature for the defined warm-season period in observation year `T`. | ERA5-Land aggregation |
-| `warm_season_precip_total` | float | millimetres | Total precipitation for the same warm-season period in observation year `T`. | ERA5-Land aggregation |
+| `warm_season_mean_2m_temperature_c` | float | degrees Celsius | Mean ERA5-Land 2 m temperature for June–September (`JJAS`) in predictor year `T`. | ERA5-Land `2m_temperature` |
+| `warm_season_total_precipitation_mm` | float | millimetres | Total ERA5-Land precipitation for `JJAS` in predictor year `T`. | ERA5-Land `total_precipitation` |
+| `warm_season_mean_soil_water_layer1` | float | m³/m³ | Mean ERA5-Land volumetric soil water in layer 1 for `JJAS` in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1` |
 | `burned_share_next_year` | float | 0-1 | Share of the 1 km cell intersected by burned-area polygons in observed outcome year `T+1`. This is the main continuous target. | ICNF burned-area intersections |
 
 ## Derived classification target
@@ -73,7 +74,7 @@ A cell can receive a predictive score only when these groups are complete:
 1. historical burned-area feature;
 2. land-cover features;
 3. terrain feature;
-4. temperature and precipitation features.
+4. temperature, precipitation, and layer-1 soil-water features.
 
 Missing mandatory data must not be interpreted as low exposure. The result must be marked as **insufficient evidence** or excluded with a documented reason.
 
