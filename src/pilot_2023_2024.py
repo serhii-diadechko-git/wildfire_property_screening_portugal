@@ -4,6 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 import json
+import shutil
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -90,3 +91,34 @@ def run():
     report=ROOT/'reports/validation/pilot_2023_2024_validation.md'; report.parent.mkdir(parents=True,exist_ok=True)
     missing=f.drop(columns='geometry').isna().sum().to_dict(); report.write_text(f"# Pilot validation\n\nRows: {len(f)}. Unique cell_id: {f.cell_id.is_unique}. ICNF 2023 used: no. Target range: {f.burned_share_next_year.min()}–{f.burned_share_next_year.max()}.\n\nMissing values: `{json.dumps(missing)}`\n\nRepair log: `{json.dumps(log)}`\n")
     return f,log
+
+def run_enrichment(tile_size: int = 2000):
+    """Enrich the existing ICNF/CAOP stage without reconstructing the grid."""
+    base=ROOT/'data/processed/pilot_2023_to_2024/pilot_2023_to_2024_icnf_caop.gpkg'
+    g=gpd.read_file(base).to_crs(3763)
+    if len(g)!=89112 or not g.cell_id.is_unique or not g.burned_share_next_year.between(0,1).all():
+        raise ValueError('Existing ICNF/CAOP pilot stage failed validation')
+    if set(g.observation_year)!={2023}: raise ValueError('Pilot predictor year is not 2023')
+    # CLC intersections are tiled: only the indexed CLC candidates for each tile enter memory.
+    clc=gpd.read_file(ROOT/'data/interim/clc_2018_mainland.gpkg').to_crs(3035)
+    gg=g[['cell_id','geometry']].to_crs(3035); shares=pd.DataFrame(0.,index=g.cell_id,columns=['built_up_share','forest_shrub_share','agricultural_share'])
+    groups={'built_up_share':{'111','112','121','122','123','124','131','132','133','141','142'},'forest_shrub_share':{'311','312','313','321','322','323','324'},'agricultural_share':{'211','212','213','221','222','223','231','241','242','243','244'}}
+    idx=clc.sindex
+    for start in range(0,len(gg),tile_size):
+        tile=gg.iloc[start:start+tile_size]; hits=list(idx.intersection(tile.total_bounds));
+        if not hits: continue
+        o=gpd.overlay(tile,clc.iloc[hits][['Code_18','geometry']],how='intersection'); o['area']=o.area
+        denom=tile.set_index('cell_id').area
+        for col,codes in groups.items(): shares.loc[tile.cell_id,col]=o[o.Code_18.astype(str).isin(codes)].groupby('cell_id').area.sum().reindex(tile.cell_id,fill_value=0).div(denom.reindex(tile.cell_id)).to_numpy()
+    g=g.join(shares,on='cell_id')
+    # Containing ERA5-Land grid cell: nearest coordinate selects the containing 0.1 degree centre.
+    climate(g)  # verifies the raw GRIB remains readable before assignment
+    vals=climate(g); g=g.join(vals)
+    if not g.burned_share_next_year.between(0,1).all(): raise ValueError('Target outside [0,1]')
+    columns=['cell_id','observation_year','fire_years_previous_10y_2km','built_up_share','forest_shrub_share','agricultural_share','warm_season_mean_2m_temperature_c','warm_season_total_precipitation_mm','warm_season_mean_soil_water_layer1','burned_share_next_year','geometry']
+    g=g[columns]
+    processed=ROOT/'data/processed/pilot_2023_2024_features.parquet'; gpkg=ROOT/'data/processed/pilot_2023_2024_features.gpkg'; processed.parent.mkdir(parents=True,exist_ok=True)
+    g.to_parquet(processed,index=False); g.to_file(gpkg,driver='GPKG')
+    map_out=ROOT/'reports/figures/pilot_2024_observed_burned_share_enriched.png'; shutil.copyfile(ROOT/'reports/figures/pilot_2023_to_2024_burned_share.png',map_out)
+    missing=g.drop(columns='geometry').isna().sum().to_dict(); report=ROOT/'reports/validation/pilot_2023_2024_validation.md'; report.write_text('# Enriched 2023 → 2024 pilot validation\n\n'+json.dumps({'rows':len(g),'unique_cell_id':bool(g.cell_id.is_unique),'target_range':[float(g.burned_share_next_year.min()),float(g.burned_share_next_year.max())],'icnf_2023_used':False,'clc_method':'EPSG:3035 tiled polygon intersections','era5_method':'containing 0.1 degree ERA5-Land cell; no interpolation/downscaling','missingness':missing},indent=2))
+    return g,missing
