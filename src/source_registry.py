@@ -33,6 +33,34 @@ class IcnfValidationFacts:
     required_fields: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class InterimDerivativeRecord:
+    """Provenance for a reproducible interim derivative, never a raw source."""
+
+    key: str
+    input_source_path: str
+    boundary_path: str
+    output_path: str
+    clip_method: str
+    crs: str
+    registered_date: str
+    validation_facts: "ClcInterimValidationFacts | None" = None
+
+
+@dataclass(frozen=True)
+class ClcInterimValidationFacts:
+    """Observed read-only facts for the CLC mainland interim derivative."""
+
+    layer_name: str
+    feature_count: int
+    geometry_type: str
+    class_code_field: str
+    unique_valid_clc_code_count: int
+    null_geometry_count: int
+    empty_geometry_count: int
+    invalid_geometry_count: int
+
+
 CAOP_2025 = SourceRecord(
     key="caop_2025",
     dataset_edition_or_year="CAOP 2025 Mainland Portugal boundary",
@@ -128,3 +156,23 @@ PILOT_ICNF_ARCHIVES = {2013: ICNF_2013, 2014: ICNF_2014, 2015: ICNF_2015, 2016: 
                        2024: ICNF_2024}
 
 REGISTERED_SOURCES = {record.key: record for record in (CAOP_2025, *PILOT_ICNF_HISTORY, ICNF_2024)}
+
+CLC_2018_MAINLAND_INTERIM = InterimDerivativeRecord(
+    key="clc_2018_mainland_interim",
+    input_source_path="data/raw/clc/u2018_clc2018_v2020_20u1_geoPackage.zip",
+    boundary_path="data/interim/mainland_portugal_boundary.gpkg",
+    output_path="data/interim/clc_2018_mainland.gpkg",
+    clip_method="vector clip/intersection to the mainland boundary; validate as an existing interim derivative",
+    crs="EPSG:3035",
+    registered_date="2026-08-04",
+    validation_facts=ClcInterimValidationFacts(
+        layer_name="clc_2018_mainland",
+        feature_count=54191,
+        geometry_type="MultiPolygon",
+        class_code_field="Code_18",
+        unique_valid_clc_code_count=42,
+        null_geometry_count=0,
+        empty_geometry_count=0,
+        invalid_geometry_count=0,
+    ),
+)
