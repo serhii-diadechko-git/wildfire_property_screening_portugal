@@ -8,6 +8,7 @@ Raw ZIP files were inspected in place; Shapefile members were extracted only to 
 | `ardida_2009.zip` / `ardida_2009.shp` | 1441 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 22 | (-101347.83, -273690.6, 159805.49, 272353.75) | 2009 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2010.zip` / `ardida_2010.shp` | 2513 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 40 | (-116373.94, -241917.46, 158859.42, 275293.01) | 2010 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2011.zip` / `ardida_2011.shp` | 3686 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 33 | (-117367.39, -283537.86, 159568.98, 274356.24) | 2011 | Yes: polygon, CRS/schema require derived validation |
+| `ardida_2012.zip` / `ardida_2012.shp` | 2971 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 41 | (-117090.83, -289392.99, 161669.74, 274733.56) | 2012 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2013.zip` / `ardida_2013.shp` | 3150 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 111 | (-116751.69, -284207.68, 159849.48, 273521.37) | 2013 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2014.zip` / `ardida_2014.shp` | 1100 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 72 | (-118224.61, -282968.48, 130461.41, 264933.42) | 2014 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2015.zip` / `ardida_2015.shp` | 1651 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 83 | (-95745.95, -267377.19, 128278.6, 270480.94) | 2015 | Yes: polygon, CRS/schema require derived validation |
@@ -20,5 +21,5 @@ Raw ZIP files were inspected in place; Shapefile members were extracted only to 
 | `ardida_2022.zip` / `ardida_2022.shp` | 1786 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 13 | (-108896.85, -292928.05, 153168.81, 271971.91) | 2022 | Yes: polygon, CRS/schema require derived validation |
 | `ardida_2024.zip` / `ardida_2024.shp` | 1558 | MultiPolygon,Polygon | EPSG:3763 | True | 0 / 0 | (-114626.28, -293212.8, 152470.2, 273517.69) | 2024 | Yes: polygon, CRS/schema require derived validation |
 
-Missing annual coverage in 2005–2025: 2012, 2023, 2025.
+Missing annual coverage in 2005–2025: 2023, 2025.
 `ardida_2000_2008.zip` members: ardida_2000_2008.cst, ardida_2000_2008.dbf, ardida_2000_2008.prj, ardida_2000_2008.shp, ardida_2000_2008.shx, wfsrequest.txt.

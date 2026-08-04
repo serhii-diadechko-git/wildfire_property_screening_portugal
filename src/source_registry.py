@@ -144,7 +144,7 @@ def _icnf_record(
     checksum: str,
     feature_count: int,
     invalid_geometry_count: int,
-    field_names: tuple[str, ...],
+    field_names: tuple[str, ...] | None,
 ) -> SourceRecord:
     """Create one manually acquired, immutable annual ICNF provenance record."""
     filename = f"ardida_{year}.zip"
@@ -170,6 +170,7 @@ def _icnf_record(
 
 
 ICNF_2013 = _icnf_record(2013, "0B611EDABEE80665E9FB8EBCBAE4B2792A51EDAC7635ADCCCAA7821BC120A9C2", 3150, 111, ("Ano", "AreaHaSIG"))
+ICNF_2012 = _icnf_record(2012, "F98281D4F3A03E10BC9F34952EE1E9E6B0990DAF6FBB1602455AF75997696AE4", 2971, 41, None)
 ICNF_2014 = _icnf_record(2014, "B10723986742F3F801A9C811495470A2C2D4A1F393BB758334215D1F85C3E57C", 1100, 72, _ICNF_STANDARD_FIELDS)
 ICNF_2015 = _icnf_record(2015, "0BA69E168349A39E67E1AF851629DD04E814E071B685DEFE87D31196396845DD", 1651, 83, _ICNF_STANDARD_FIELDS)
 ICNF_2016 = _icnf_record(2016, "DAD27A6A87E2AA6D31C07DFE3715FCDAE333CBA08B06C5E91AA54E4CB5841189", 2838, 111, _ICNF_STANDARD_FIELDS)
@@ -189,6 +190,7 @@ PILOT_ICNF_ARCHIVES = {2013: ICNF_2013, 2014: ICNF_2014, 2015: ICNF_2015, 2016: 
                        2024: ICNF_2024}
 
 REGISTERED_SOURCES = {record.key: record for record in (CAOP_2025, *PILOT_ICNF_HISTORY, ICNF_2024)}
+PANEL_ICNF_ARCHIVES = {2012: ICNF_2012, **PILOT_ICNF_ARCHIVES}
 
 CLC_2018_MAINLAND_INTERIM = InterimDerivativeRecord(
     key="clc_2018_mainland_interim",
