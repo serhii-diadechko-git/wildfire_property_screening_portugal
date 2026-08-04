@@ -4,10 +4,10 @@
 
 | Year | Raw status | Required role |
 |---:|---|---|
-| 2015–2021 | Missing | Training predictor climate context |
+| 2015–2021 | Present and validated | Training predictor climate context |
 | 2023 | Present and registered | Untouched final-test predictor climate context |
 
-The only local raw file is `data/raw/climate/era5_land/era5_land_monthly_jjas_2023_mainland_portugal.grib`.
+Eight local annual GRIB files are present: 2015–2021 and 2023.
 It is the CDS `reanalysis-era5-land-monthly-means` product for June–September 2023, area `[42.2, -9.6, 36.8, -6.0]` (north, west, south, east).
 
 ## 2023 technical facts
@@ -35,4 +35,4 @@ Make seven separate immutable CDS requests for **2015, 2016, 2017, 2018, 2019, 2
 
 ## Readiness conclusion
 
-2023 is ready for the untouched final test. Training-climate readiness is blocked only by the seven missing raw annual GRIB files. An older validation-note string in the bounded pipeline states that precipitation is present at water-mask cells; the corrected assignment code supersedes it by masking precipitation consistently, so that wording should be updated with the next pipeline validation run.
+All required annual ERA5-Land raw inputs are present and validated. 2023 remains ready for the untouched final test; 2015–2021 are ready for bounded training-panel processing. An older validation-note string in the bounded pipeline states that precipitation is present at water-mask cells; the corrected assignment code supersedes it by masking precipitation consistently, so that wording should be updated with the next pipeline validation run.

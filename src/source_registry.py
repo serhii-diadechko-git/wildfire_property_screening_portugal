@@ -236,3 +236,14 @@ ERA5_LAND_2023_JJAS_PILOT = Era5LandRawRecord(
         missing_value_counts=(("2t", 1928), ("tp", 1928), ("swvl1", 1928)),
     ),
 )
+
+_ERA5_TRAINING_SHA256 = {
+    2015: "6EDF9352FD95A0BBC5A404BDB0BED73309A01763E424B501CB21FB4E459C1692", 2016: "594C17D2CE2E4BF71D06F38CC6628993DC053FE74240383B25ACB78A98BF90FA",
+    2017: "DD4B37392C445A0C94AFE62853CC3AA0A23DF4B34076EE788EC230158220070C", 2018: "93AF3DE52CD3F3C88547C680D0D1431638877C1CD11E4E98149E0744A9D3CED4",
+    2019: "267FBC7544C6505D9221499B3AD7A3C3EB587267BA4DDCA94D713BE9CD45513C", 2020: "7FC86BCE3358FE95C63670167ADC3AC9A73AC60C39BC9C66E806AB9E7EA94060",
+    2021: "47CCEB82F8322DFD92ECC3497A10467E80E13DCDB6AE8A7F9C802561611EE2F5",
+}
+ERA5_LAND_TRAINING_ARCHIVES = {
+    year: Era5LandRawRecord(f"era5_land_{year}_jjas_mainland_portugal", "reanalysis-era5-land-monthly-means", "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means", "CDS dataset terms accepted by the account holder before retrieval.", "2026-08-04", "CDS API retrieval", f"data/raw/climate/era5_land/era5_land_monthly_jjas_{year}_mainland_portugal.grib", f"era5_land_monthly_jjas_{year}_mainland_portugal.grib", checksum, "monthly_averaged_reanalysis", year, ("06","07","08","09"), "00:00", ("2m_temperature","total_precipitation","volumetric_soil_water_layer_1"), (42.2,-9.6,36.8,-6.0), "grib", Era5LandValidationFacts((4,55,37),("06","07","08","09"),("2t","tp","swvl1"),()))
+    for year, checksum in _ERA5_TRAINING_SHA256.items()
+}
