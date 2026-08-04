@@ -147,6 +147,21 @@ The validation script checks:
 - required project files;
 - execution of `00_environment_test.ipynb`.
 
+### CDS / ERA5-Land setup
+
+To retrieve ERA5-Land data, create a CDS account and accept the terms for the required dataset in the CDS download form. Create `%USERPROFILE%\.cdsapirc` with the structure below, replacing the placeholder locally:
+
+```text
+url: https://cds.climate.copernicus.eu/api
+key: TOKEN_PLACEHOLDER
+```
+
+Never commit, share, print, or copy the token into this repository. After dependencies are installed, retrieve the approved 2023 JJAS pilot GRIB with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\request_era5_land_pilot.py --download
+```
+
 ## Notebook execution order
 
 Run the notebooks in this order:

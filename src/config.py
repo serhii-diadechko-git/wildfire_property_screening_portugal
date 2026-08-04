@@ -58,4 +58,24 @@ class PilotConfig:
 
 TEMPORAL = TemporalDesign()
 ERA5_LAND = Era5LandFeatureConfig()
+
+
+@dataclass(frozen=True)
+class Era5LandCdsConfig:
+    """Smallest approved CDS request for the 2023 predictor-year pilot."""
+
+    dataset_id: str = "reanalysis-era5-land-monthly-means"
+    product_type: str = "monthly_averaged_reanalysis"
+    # The current CDS dataset metadata declares GRIB as its file format.
+    data_format: str = "grib"
+    download_format: str = "unarchived"
+    # CDS order: North, West, South, East. Rounded outward from CAOP mainland.
+    mainland_portugal_area: tuple[float, float, float, float] = (42.2, -9.6, 36.8, -6.0)
+    pilot_raw_output: str = (
+        "data/raw/climate/era5_land/"
+        "era5_land_monthly_jjas_2023_mainland_portugal.grib"
+    )
+
+
+ERA5_LAND_CDS = Era5LandCdsConfig()
 PILOT_2023_TO_2024 = PilotConfig()

@@ -61,6 +61,39 @@ class ClcInterimValidationFacts:
     invalid_geometry_count: int
 
 
+@dataclass(frozen=True)
+class Era5LandValidationFacts:
+    """Observed read-only facts for the raw 2023 ERA5-Land pilot GRIB."""
+
+    grid_shape: tuple[int, int, int]
+    months: tuple[str, ...]
+    grib_short_names: tuple[str, ...]
+    missing_value_counts: tuple[tuple[str, int], ...]
+
+
+@dataclass(frozen=True)
+class Era5LandRawRecord:
+    """Provenance and observed facts for one immutable CDS GRIB retrieval."""
+
+    key: str
+    dataset_id: str
+    official_source_url: str
+    licence_or_terms_reference: str
+    retrieval_date: str
+    acquisition_method: str
+    raw_path: str
+    filename: str
+    sha256: str
+    product_type: str
+    year: int
+    months: tuple[str, ...]
+    time: str
+    variables: tuple[str, ...]
+    area_north_west_south_east: tuple[float, float, float, float]
+    data_format: str
+    validation_facts: Era5LandValidationFacts
+
+
 CAOP_2025 = SourceRecord(
     key="caop_2025",
     dataset_edition_or_year="CAOP 2025 Mainland Portugal boundary",
@@ -174,5 +207,30 @@ CLC_2018_MAINLAND_INTERIM = InterimDerivativeRecord(
         null_geometry_count=0,
         empty_geometry_count=0,
         invalid_geometry_count=0,
+    ),
+)
+
+ERA5_LAND_2023_JJAS_PILOT = Era5LandRawRecord(
+    key="era5_land_2023_jjas_mainland_portugal",
+    dataset_id="reanalysis-era5-land-monthly-means",
+    official_source_url="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
+    licence_or_terms_reference="CDS dataset terms accepted by the account holder before retrieval.",
+    retrieval_date="2026-08-04",
+    acquisition_method="CDS API retrieval",
+    raw_path="data/raw/climate/era5_land/era5_land_monthly_jjas_2023_mainland_portugal.grib",
+    filename="era5_land_monthly_jjas_2023_mainland_portugal.grib",
+    sha256="333C9C63C810F44522A42DCC8654B0CE32C4895D62D4C79C2583244B07B83C08",
+    product_type="monthly_averaged_reanalysis",
+    year=2023,
+    months=("06", "07", "08", "09"),
+    time="00:00",
+    variables=("2m_temperature", "total_precipitation", "volumetric_soil_water_layer_1"),
+    area_north_west_south_east=(42.2, -9.6, 36.8, -6.0),
+    data_format="grib",
+    validation_facts=Era5LandValidationFacts(
+        grid_shape=(4, 55, 37),
+        months=("06", "07", "08", "09"),
+        grib_short_names=("2t", "tp", "swvl1"),
+        missing_value_counts=(("2t", 1928), ("tp", 1928), ("swvl1", 1928)),
     ),
 )
