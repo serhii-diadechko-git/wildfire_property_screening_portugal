@@ -26,6 +26,12 @@ class TemporalDesign:
     required_icnf_start_year: int = 2005
     required_icnf_end_year: int = 2025
 
+    def historical_years(self, predictor_year: int) -> tuple[int, ...]:
+        return tuple(range(predictor_year - self.historical_fire_window_years, predictor_year))
+
+    def outcome_year(self, predictor_year: int) -> int:
+        return predictor_year + 1
+
 
 @dataclass(frozen=True)
 class Era5LandFeatureConfig:
