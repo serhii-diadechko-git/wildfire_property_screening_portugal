@@ -40,6 +40,8 @@ It does not recommend the purchase of a specific property.
 
 ## Temporal methodology and model evaluation
 
+> Canonical gate: train T=2015–2019; validate T=2020–2021; reserve T=2022–2024 for final temporal test. `burned_share_next_year` is the sole current target; `burned_next_year` is deferred.
+
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
 
 - **Continuous target:** `burned_share_next_year`, the share of the cell burned in `T+1`.

@@ -1,5 +1,7 @@
 # Source Plan
 
+> Canonical land-cover governance: use Copernicus CLC, not COS/COSc. Store CLC reference year, release ID/version, and release date; prove availability by 31 December of T. 2015 uses original CLC 2006 only if proven available or is excluded; 2016–2018 use CLC 2012; 2019 uses original CLC 2018 only if Portugal availability in 2019 is proven, otherwise CLC 2012; 2020–2024 use CLC 2018 V2020_20u1. Copernicus DEM GLO-30 supplies static 2 km slope context with version/licence/tile/CRS/checksum provenance.
+
 Collection date for this initial plan: **31 July 2026**.
 
 ## Required model sources

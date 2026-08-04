@@ -55,6 +55,8 @@ The 2 km value is not a second resolution. It is a modelling assumption that wil
 
 ## Temporal methodology and data scope
 
+> Canonical gate: train T=2015–2019; validate T=2020–2021; final temporal test T=2022–2024 (outcomes 2023–2025). The 1 km EPSG:3763 cell is the only analytical unit; 2 km is an outward context buffer. The 2023→2024 artifact is a feasibility pilot, not a final test.
+
 Each analytical record is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` is used to estimate the observed wildfire outcome in `T+1`.
 
 - **Continuous target:** `burned_share_next_year`, the share of the cell burned in `T+1`.

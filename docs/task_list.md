@@ -1,5 +1,7 @@
 # Task List - Data Collection and Analysis
 
+> Canonical sequence: resolve source blockers, build/validate the full panel, then freeze modelling decisions before final T=2022–2024 evaluation. The 2023→2024 work is a feasibility pilot only.
+
 ## Phase 0 - Freeze the MVP
 
 - [ ] Confirm the project title and decision statement.

@@ -2,6 +2,8 @@
 
 ## Analytical unit
 
+> Canonical schema: seven predictors are `built_up_share`, `forest_shrub_share_2km`, `mean_slope_2km`, `fire_years_previous_10y_2km`, and three T-only JJAS ERA5-Land fields. Identifiers/geometry are stored separately.
+
 One analytical record represents one **1 km grid cell and one predictor reference year `T`**.
 
 Predictors available for year `T` are used to estimate the observed wildfire outcome in year `T+1`.

@@ -1,5 +1,7 @@
 # Success Criteria and Model Acceptance Rules
 
+> Canonical readiness gate: defer national panel/model work until ICNF 2023/2025, ERA5-Land 2022/2024, governed CLC packages/evidence, and DEM GLO-30 provenance/tiles are available.
+
 ## Purpose
 
 This document separates:
