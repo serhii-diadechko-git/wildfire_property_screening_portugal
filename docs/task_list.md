@@ -5,7 +5,7 @@
 ## Phase 0 - Freeze the MVP
 
 - [ ] Confirm the project title and decision statement.
-- [ ] Use the completed workbook as the scope and terminology source of truth.
+- [ ] Use `reports/validation/canonical_full_scope_readiness.md` as the authoritative design gate.
 - [ ] Freeze the required source list.
 - [ ] Freeze the 1 km grid and initial 2 km context buffer for the pilot.
 - [ ] Freeze the MVP columns listed in `docs/data_dictionary.md`.
@@ -15,9 +15,9 @@
 
 - [ ] Download one recent ICNF burned-area dataset.
 - [ ] Inspect its CRS, fields, geometry validity, and feature count.
-- [ ] Download one DGT COS/COSc edition and inspect classes and coverage.
+- [ ] Acquire and validate governed CLC 2006/2012/2018 packages, classes, coverage, and release-availability evidence.
 - [ ] Download a Copernicus DEM sample.
-- [ ] Download an ERA5-Land temperature and precipitation sample.
+- [ ] Validate ERA5-Land JJAS temperature, day-weighted precipitation, and layer-1 soil-water inputs.
 - [ ] Build a 1 km pilot grid for one selected area.
 - [ ] Create the initial 2 km buffer around each pilot cell.
 - [ ] Prove that the required sources can produce one complete cell-year record.
@@ -46,7 +46,7 @@
 - [ ] Calculate `forest_shrub_share_2km` inside each 2 km buffer.
 - [ ] Derive `mean_slope_2km` from Copernicus DEM.
 - [ ] Calculate `fire_years_previous_10y_2km` without temporal leakage.
-- [ ] Aggregate warm-season temperature and precipitation.
+- [ ] Aggregate JJAS mean temperature, day-weighted total precipitation, and mean layer-1 soil water from predictor year `T` only.
 - [ ] Calculate `burned_share_next_year` for each 1 km cell.
 - [ ] Create `cell_year_id` and the required technical identifiers.
 - [ ] Validate the residential-relevance rule.
@@ -67,13 +67,12 @@
 ## Phase 5 - Modelling and acceptance evaluation
 
 - [ ] Freeze model-acceptance rules before reviewing final test results.
-- [ ] Build the baseline using `fire_years_previous_10y_2km`.
-- [ ] Train logistic regression.
-- [ ] Train one tree-based model covered by the course.
+- [ ] Build the historical-fire regression baseline using `fire_years_previous_10y_2km`.
+- [ ] Train a Random Forest Regressor for continuous `burned_share_next_year`.
 - [ ] Use temporal train, validation, and test splits.
 - [ ] Add a geographic holdout or spatial cross-validation where practical.
-- [ ] Evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, and capture@20%.
-- [ ] Compare PR-AUC with positive-class prevalence.
+- [ ] Evaluate regression with MAE and RMSE by later year.
+- [ ] Only after target-distribution review and a documented threshold decision, optionally derive `burned_next_year`, train logistic regression, and evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, capture@20%, and prevalence.
 - [ ] Compare each model with the historical baseline.
 - [ ] Compare results by year and region.
 - [ ] Record whether the model is accepted for predictive recommendation.

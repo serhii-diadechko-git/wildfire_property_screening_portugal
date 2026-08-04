@@ -62,9 +62,9 @@ For every downloaded dataset, record:
 
 ## Feasibility risks to resolve first
 
-1. Confirm which COS/COSc editions can be compared consistently.
+1. Acquire and validate governed CLC 2006/2012/2018 packages and availability evidence under the canonical assignment rule.
 2. Inspect an ICNF burned-area sample for schema and geometry validity.
 3. Test the Copernicus DEM download and `mean_slope_2km` calculation.
-4. Test ERA5-Land temperature and precipitation aggregation.
+4. Test ERA5-Land temperature, day-weighted precipitation, and layer-1 soil-water aggregation.
 5. Validate the 1 km cell and initial 2 km buffer workflow.
 6. Confirm that national processing is feasible within course time and hardware limits.

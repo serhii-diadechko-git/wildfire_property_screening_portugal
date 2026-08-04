@@ -10,7 +10,14 @@ from src.collection_validation import (
     validate_zip_archive,
 )
 from src.config import PILOT_2023_TO_2024
-from src.source_registry import CAOP_2025, ICNF_2024, PILOT_ICNF_ARCHIVES, PILOT_ICNF_HISTORY
+from src.source_registry import (
+    CAOP_2025,
+    ICNF_2023,
+    ICNF_2024,
+    ICNF_2025,
+    PILOT_ICNF_ARCHIVES,
+    PILOT_ICNF_HISTORY,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -46,6 +53,16 @@ class CollectionValidationTests(unittest.TestCase):
             self.assertEqual(result["year"], year)
             self.assertEqual(result["non_empty_geometry_count"], result["feature_count"])
             self.assertGreater(result["invalid_geometry_count"], 0)
+
+    def test_final_test_icnf_archives_match_registered_facts(self) -> None:
+        for year, record, expected_count, expected_invalid in (
+            (2023, ICNF_2023, 1736, 11),
+            (2025, ICNF_2025, 2084, 2),
+        ):
+            result = validate_icnf_archive(record, PROJECT_ROOT, expected_year=year)
+            self.assertEqual(result["feature_count"], expected_count)
+            self.assertEqual(result["non_empty_geometry_count"], expected_count)
+            self.assertEqual(result["invalid_geometry_count"], expected_invalid)
 
 
 if __name__ == "__main__":
