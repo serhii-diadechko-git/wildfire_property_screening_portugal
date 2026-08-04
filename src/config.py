@@ -14,6 +14,38 @@ SPATIAL = SpatialConfig()
 
 
 @dataclass(frozen=True)
+class ClcGovernanceConfig:
+    """Retrospective CLC reference-layer assignment for the approved panel."""
+
+    current_package_release_id: str = "V2020_20u1"
+    assignment_by_predictor_year: tuple[tuple[int, int], ...] = (
+        (2015, 2006),
+        (2016, 2012),
+        (2017, 2012),
+        (2018, 2012),
+        (2019, 2018),
+        (2020, 2018),
+        (2021, 2018),
+        (2022, 2018),
+        (2023, 2018),
+        (2024, 2018),
+    )
+    reconstruction_rule: str = (
+        "reference_year_not_after_predictor_year; use the current official revised "
+        "package for each assigned historical reference layer"
+    )
+
+    def reference_year(self, predictor_year: int) -> int:
+        assignments = dict(self.assignment_by_predictor_year)
+        if predictor_year not in assignments:
+            raise ValueError("Predictor year is outside the approved CLC assignment")
+        reference_year = assignments[predictor_year]
+        if reference_year > predictor_year:
+            raise ValueError("CLC reference year must not be after predictor year")
+        return reference_year
+
+
+@dataclass(frozen=True)
 class TemporalDesign:
     """The approved retrospective cell-year design."""
 
@@ -59,11 +91,12 @@ class PilotConfig:
     outcome_year: int = 2024
     historical_fire_years: tuple[int, ...] = tuple(range(2013, 2023))
     clc_release: str = "CLC 2018"
-    clc_role: str = "broad release-aware land-cover context; not annual parcel-level land cover"
+    clc_role: str = "broad retrospective land-cover context; not annual parcel-level land cover"
 
 
 TEMPORAL = TemporalDesign()
 ERA5_LAND = Era5LandFeatureConfig()
+CLC = ClcGovernanceConfig()
 
 
 @dataclass(frozen=True)

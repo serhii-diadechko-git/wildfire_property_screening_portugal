@@ -13,12 +13,12 @@ The 2 km context buffer applies to `forest_shrub_share_2km`, `mean_slope_2km`, a
 | Source | Required coverage | Acquisition/validation status | Panel gate |
 |---|---|---|---|
 | ICNF annual burned areas | 2005-2025 | All required years are local. New official 2023 and 2025 ZIPs pass checksum, CRC, CRS, schema/year and geometry-presence checks. | Ready, subject to the established derived-only `make_valid` policy. |
-| ERA5-Land JJAS | T=2015-2024 | All annual files are local. 2024 is valid after the official March 2024 fix. The official known accumulated-variable issue affects JJAS precipitation in 2022 and 2023. | **Blocked for precipitation in 2022 and 2023.** |
-| Copernicus CLC | governed release assignments | Release dates are proven and preserved. V2020_20u1 is local and validated. Exact historical V17, V18_5_1 and V20 vector packages are not exposed by the current official catalogue and are not local. | **Blocked on archived historical packages.** |
+| ERA5-Land JJAS | T=2015-2024 | All annual three-variable files are local. Separate precipitation-only 2022 and 2023 GRIBs pass the official by-hour-of-day workaround contract. | Ready; use the corrected precipitation files only for 2022 and 2023. |
+| Copernicus CLC | CLC 2006 for T=2015; CLC 2012 for T=2016-2018; CLC 2018 for T=2019-2024 | Current official revised V2020_20u1 vector packages are identified. CLC 2018 is local and validated; CLC 2006 and 2012 require authenticated CLMS acquisition and are not local. | **Blocked on CLC 2006 and CLC 2012 package acquisition.** |
 | Copernicus DEM GLO-30 | mainland plus outward 2 km context | 21 required land/coastal COG tiles acquired and validated; one intersecting edge tile is an official ocean/no-source case. | Ready; slope remains intentionally uncomputed. |
 | CAOP | fixed mainland boundary/reporting areas | CAOP 2025 remains the fixed grid boundary in EPSG:3763. | Ready. |
 
-The national panel and final temporal test are **not ready** while the ERA5-Land and CLC blockers remain.
+The national panel and final temporal test are **not ready** while the two governed CLC packages remain absent. The ERA5-Land precipitation blocker is closed.
 
 ## ICNF 2023 and 2025
 
@@ -33,7 +33,7 @@ The accepted schema includes `Cod_SGIF`, `Ano`, `DH_Inicio`, and `AreaHaSIG`. Th
 
 The previously audited combined 2000-2008 layer supplies 2005-2008 after filtering `Ano`; individual archives supply 2009-2025. Therefore ICNF coverage for the canonical history and outcomes is complete.
 
-## ERA5-Land 2022 and 2024
+## ERA5-Land 2022-2024
 
 Dataset: `reanalysis-era5-land-monthly-means`; product: `monthly_averaged_reanalysis`; request: JJAS, 00:00, `2m_temperature`, `total_precipitation`, `volumetric_soil_water_layer_1`, area `[42.2, -9.6, 36.8, -6.0]`, GRIB. Licence: CDS CC-BY and accepted dataset terms. Retrieval date: 2026-08-04.
 
@@ -42,22 +42,30 @@ Dataset: `reanalysis-era5-land-monthly-means`; product: `monthly_averaged_reanal
 | 2022 | `data/raw/climate/era5_land/era5_land_monthly_jjas_2022_mainland_portugal.grib` | `816B12E0F93F109996AA4208EABEB73E3FF6C3694F3867D0A7603E970802E6F0` | GRIB; 4 x 55 x 37; 0.1-degree regular latitude/longitude grid; exact request extent; `2t` K, `tp` m, `swvl1` m3/m3; 1,928 masked values per variable across four months; `stream=moda`, `expver=0001`. | `tp` is encoded `avgad`, step 0-24, but the official known issue makes monthly accumulated fields for Sep 2022-Feb 2024 incorrect. JJAS 2022 is not usable. |
 | 2024 | `data/raw/climate/era5_land/era5_land_monthly_jjas_2024_mainland_portugal.grib` | `40A363CD2C265CBB1E0D587F992B638AD96E66DBAF293DB2E3A8ECAA313522E7` | Same grid, variables, units, extent and mask contract. | JJAS is after the March 2024 fix. `tp` uses the corrected `avgas`, step 23-24 encoding and is accepted as an explicit metadata variant. |
 
-Official ECMWF documentation states that `stream=moda` is the monthly mean of daily means and that accumulated fields are per-day quantities. The established JJAS total remains the day-weighted sum in metres times 1,000. However, the same documentation identifies incorrect accumulated variables from September 2022 through February 2024. This also invalidates precipitation in the existing 2023 pilot GRIB for national-panel use; temperature and layer-1 soil water are unaffected.
+Official ECMWF documentation states that `stream=moda` is the monthly mean of daily means and that accumulated fields are per-day quantities. The established JJAS total remains the day-weighted sum in metres times 1,000. The same documentation identifies incorrect accumulated variables from September 2022 through February 2024 and directs affected users to the monthly-by-hour-of-day data at 00:00.
 
-Smallest safe corrective acquisition: retrieve **only total precipitation** for 2022 and 2023 from the same dataset using `monthly_averaged_reanalysis_by_hour_of_day` at 00:00, JJAS and the same area, following ECMWF's documented workaround. Save each as a new immutable annual GRIB and validate separately. Do not overwrite the files above.
+Two separate immutable replacements were retrieved on 2026-08-04 without overwriting the affected originals:
 
-## Governed CLC releases
-
-Official product pages: CLC 2006, CLC 2012 and CLC 2018 under <https://land.copernicus.eu/en/products/corine-land-cover>. Licence: Copernicus full, open and free access with source attribution and adaptation disclosure. Vector status layers use EPSG:3035, 44 classes, a 25 ha minimum mapping unit and 100 m minimum mapping width. The preserved official release-lineage, coverage and nomenclature evidence is registered in `src/source_registry.py`.
-
-| Predictor years | Governed release | Availability evidence | Local package status |
+| Year | Corrected raw path | SHA-256 | Validation |
 |---|---|---|---|
-| T=2015 | CLC 2006 V17, released 2013-12-02 | Official lineage proves a full CLC/CLCC time series including Portuguese Azores, hence mainland Portugal, before end-2015. | Exact V17 vector package unavailable in the current official catalogue; blocked. |
-| T=2016-2018 | CLC 2012 V18_5_1, released 2016-09-19 | Official lineage calls this the corrected final CLC2012 release; coverage is EEA39 including Portugal. | Exact V18_5_1 vector package unavailable in the current official catalogue; blocked. |
-| T=2019 | CLC 2018 V20, released 2019-05-01 | V20 is the final corrected release. Pre-final V20b2 was already complete except Italy and Turkey, proving Portugal availability before and during 2019. | Exact V20 vector package unavailable in the current official catalogue; blocked. If it cannot be obtained, the canonical fallback is the governed CLC 2012 package. |
-| T=2020-2024 | CLC 2018 V2020_20u1, released in 2020 | Current official CLC2018 metadata and file naming identify the 2020 update. | Ready: local raw ZIP is checksum/CRC-valid; SHA-256 `AC302982BE6EA027762CC1973123B452157B0C4AD536BB32167C486448316492`. |
+| 2022 | `data/raw/climate/era5_land/era5_land_monthly_by_hour_00_jjas_total_precipitation_2022_mainland_portugal.grib` | `7AAF9EADA365270AF5F0876C64635F30532E1FD52C961369F82040EA6B670B3B` | 20,112-byte GRIB; four JJAS messages; 4 x 55 x 37 regular 0.1-degree latitude/longitude grid; exact `[42.2, -9.6, 36.8, -6.0]` extent; `tp` only, unit m, `stream=mnth`, `stepType=avgas`, `stepRange=23-24`, `expver=0001`; 1,928 masked values across four months. |
+| 2023 | `data/raw/climate/era5_land/era5_land_monthly_by_hour_00_jjas_total_precipitation_2023_mainland_portugal.grib` | `726B7F239862AF6A9011E77617741D344ACE040B8D5DF648336FAEAF7E67D511` | Same request, grid, units, encoding, extent and water-mask contract as the 2022 replacement. |
 
-The current official download catalogue exposes revised V2020_20u1 packages for the historical reference years. Those files are not substituted for V17/V18_5_1/V20 because doing so would silently use later revisions. The next action is to obtain exact archived official package URLs from the CLMS/EEA service desk or another official archive.
+For 2022 and 2023, temperature and layer-1 soil water remain sourced from the original annual three-variable GRIB, while precipitation is sourced only from the validated replacement. This closes the ERA5-Land acquisition blocker without altering either original file.
+
+## Governed CLC reference layers
+
+Official product pages: [CLC 2006](https://land.copernicus.eu/en/products/corine-land-cover/clc-2006), [CLC 2012](https://land.copernicus.eu/en/products/corine-land-cover/clc-2012), and [CLC 2018](https://land.copernicus.eu/en/products/corine-land-cover/clc2018). Catalogue access date: 2026-08-04. Licence: [Copernicus Land Monitoring Service data policy](https://land.copernicus.eu/en/data-policy), providing full, open and free access with source attribution and adaptation disclosure. The current product pages identify revised `V2020_20u1` packages. Vector status layers use EPSG:3035, 44 classes, a 25 ha minimum mapping unit and 100 m minimum mapping width.
+
+The governing rule is deliberately minimal: the CLC reference year must be no later than predictor year `T`, and the current official revised package is used for each historical reference layer. This is retrospective covariate reconstruction for present-day residential-location screening. It does not claim that the revised package was operationally downloadable at `T`.
+
+| Predictor years | Reference layer and current package | Official package metadata | Local package status |
+|---|---|---|---|
+| T=2015 | CLC 2006 `V2020_20u1` | Reference year 2006; update year 2020 (exact day unavailable in current official metadata); vector GeoPackage `u2012_clc2006_v2020_20u1_geoPackage.zip`; catalogue dataset UID `d443c86fec2f49e08ff12c7decdbf2af`, file ID `46d516c6-b749-4064-a556-854b85ba5175`. | Not local. CLMS presented EU Login before creating the download request; acquisition and checksum/package validation remain blocked on authenticated access. |
+| T=2016-2018 | CLC 2012 `V2020_20u1` | Reference year 2012; update year 2020 (exact day unavailable); vector GeoPackage `u2018_clc2012_v2020_20u1_geoPackage.zip`; catalogue dataset UID `a5ee71470be04d66bcff498f94ceb5dc`, file ID `2c674919-0baf-44d6-9c13-a0a585cbe931`. | Not local. Same authenticated-access blocker. |
+| T=2019-2024 | CLC 2018 `V2020_20u1` | Reference year 2018; update year 2020 (exact day unavailable); vector GeoPackage. | Ready: local raw ZIP is checksum/CRC-valid; SHA-256 `AC302982BE6EA027762CC1973123B452157B0C4AD536BB32167C486448316492`; EPSG:3035; validated mainland derivative contains 54,191 valid, non-empty MultiPolygon features, `Code_18`, and 42 valid CLC codes. |
+
+The future package validation must confirm ZIP integrity, GeoPackage readability, EPSG:3035, European coverage including mainland Portugal, the expected `Code_06`/`Code_12` field, valid three-digit CLC codes, and the registered canonical mapping before national feature derivation.
 
 Canonical broad mapping: `built_up_share` uses codes 111-142 in the artificial-surface branch; `forest_shrub_share_2km` uses 311, 312, 313, 321, 322, 323 and 324. Exact code tuples are auditable in `src/source_registry.py`. Shares must be area-based and must not be described as parcel-level land cover.
 
@@ -66,6 +74,8 @@ Preserved evidence:
 - [Official release lineage](https://land.copernicus.eu/en/technical-library/clc-release-lineage/@@download/file): `data/raw/clc/evidence/clc_release_lineage.pdf`, SHA-256 `CBFF53799AD7A73AEB3A83C67DBB5214C3D3D4FEBAD019E5B3B723D071A69941`.
 - [Official V20u1 country coverage](https://land.copernicus.eu/en/technical-library/clc-country-coverage-1990-2018-v20u1/@@download/file): `data/raw/clc/evidence/clc_country_coverage_v20u1.pdf`, SHA-256 `5A265ADE38795CF486D839F31CCC8F423DDEC685F2D1B802B748A7A47CF68D7D`.
 - [Official nomenclature guidelines](https://land.copernicus.eu/en/technical-library/clc-illustrated-nomenclature-guidelines/@@download/file): `data/raw/clc/evidence/clc_nomenclature_guidelines.pdf`, SHA-256 `8D69D31993481AA334E5391F717EB27558A5290AA039980D06FC5E937CC7F325`.
+
+The preserved release-lineage evidence still records the earlier V17, V18_5_1 and V20 publication history. Those facts remain useful provenance, but exact archived packages are no longer part of the governing acquisition rule.
 
 ## Copernicus DEM GLO-30
 
@@ -91,7 +101,7 @@ The CAOP mainland boundary was buffered outward by exactly 2,000 m in EPSG:3763 
 
 ## Remaining concrete acquisition blockers
 
-1. ERA5-Land: acquire corrected, separate 2022 and 2023 `total_precipitation` GRIBs with the official by-hour-of-day 00:00 workaround; preserve the affected originals.
-2. CLC: obtain exact official archived vector packages for CLC 2006 V17, CLC 2012 V18_5_1, and CLC 2018 V20. If V20 cannot be obtained, use the governed V18_5_1 CLC 2012 fallback for T=2019.
+1. Authenticate through EU Login on the official CLMS portal and download the identified current revised CLC 2006 and CLC 2012 vector GeoPackage ZIPs. No credential was read, requested, or stored during this pass.
+2. Validate and register both downloaded packages with checksums and observed package/CRS/coverage/schema/class facts.
 
-Do not build the national panel until both blockers are resolved and checksums, URLs, licence/version evidence, CRS, coverage and schemas are registered.
+The acquisition gate remains open solely because CLC 2006 and CLC 2012 are not yet local and validated. Do not begin national feature derivation until both blockers are resolved. Slope and the combined panel were intentionally not calculated in this task.

@@ -4,7 +4,12 @@ from pathlib import Path
 import unittest
 
 from src.era5_land_validation import validate_era5_land_grib_record, validate_era5_land_pilot_grib
-from src.source_registry import ERA5_LAND_2022_JJAS, ERA5_LAND_2024_JJAS
+from src.source_registry import (
+    ERA5_LAND_2022_CORRECTED_PRECIPITATION,
+    ERA5_LAND_2022_JJAS,
+    ERA5_LAND_2023_CORRECTED_PRECIPITATION,
+    ERA5_LAND_2024_JJAS,
+)
 
 
 class Era5LandValidationTests(unittest.TestCase):
@@ -26,6 +31,21 @@ class Era5LandValidationTests(unittest.TestCase):
         self.assertEqual(result_2024["precipitation_status"], "validated-post-fix")
         self.assertEqual(result_2022["grib_metadata"]["tp"]["step_type"], "avgad")
         self.assertEqual(result_2024["grib_metadata"]["tp"]["step_type"], "avgas")
+
+    def test_corrected_precipitation_files_match_official_workaround_contract(self) -> None:
+        project_root = Path(__file__).resolve().parents[1]
+        for record in (
+            ERA5_LAND_2022_CORRECTED_PRECIPITATION,
+            ERA5_LAND_2023_CORRECTED_PRECIPITATION,
+        ):
+            with self.subTest(year=record.year):
+                result = validate_era5_land_grib_record(record, project_root)
+                self.assertEqual(tuple(result["variables"]), ("tp",))
+                self.assertEqual(result["grib_metadata"]["tp"]["unit"], "m")
+                self.assertEqual(result["grib_metadata"]["tp"]["step_type"], "avgas")
+                self.assertEqual(result["grib_metadata"]["tp"]["step_range"], "23-24")
+                self.assertEqual(result["grib_metadata"]["tp"]["stream"], "mnth")
+                self.assertEqual(result["precipitation_status"], "validated-official-workaround")
 
 
 if __name__ == "__main__":

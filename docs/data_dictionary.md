@@ -22,7 +22,7 @@ The approved predictor-reference panel is `T = 2015-2024`: training years `2015-
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
-CLC is broad, release-aware land-cover context rather than annual parcel-level land cover. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only are assigned by containing ERA5-Land cell, without interpolation or downscaling. This is a retrospective reproducible evaluation; it does not claim an exact real-time historical reconstruction.
+CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only are assigned by containing ERA5-Land cell, without interpolation or downscaling.
 
 ## Technical identifiers
 
@@ -33,6 +33,9 @@ These fields are required to store and join the analytical records. They are not
 | `cell_id` | string | Stable identifier for one 1 km grid cell. | Generated analytical grid |
 | `observation_year` | integer | Year associated with the predictor data. | Derived |
 | `geometry` | geometry | Polygon geometry of the 1 km grid cell. | Generated analytical grid |
+| `land_cover_reference_year` | integer | CLC reference year assigned under the governed retrospective rule; must be `<= observation_year`. | CLC governance metadata |
+| `land_cover_release_id` | string | Current official revised package identifier used for that reference layer. | CLC package provenance |
+| `land_cover_release_date` | string/date | Official package release/update date, or an explicit statement that the exact day is unavailable. | CLC package provenance |
 
 ## MVP analytical columns
 
@@ -41,8 +44,8 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 | Column | Type | Unit / values | Description | Source / derivation |
 |---|---|---|---|---|
 | `cell_year_id` | string | `<cell_id>_<year>` | Unique key for one 1 km cell and observation year. | Generated from `cell_id` and `observation_year` |
-| `built_up_share` | float | 0-1 | Share of the 1 km cell classified as built or artificial land. It is an initial residential-relevance proxy, not proof that the cell is residential. | Release-aware Copernicus CLC broad classes |
-| `forest_shrub_share_2km` | float | 0-1 | Combined forest and shrubland share within the initial 2 km buffer around the cell. | Release-aware Copernicus CLC broad classes |
+| `built_up_share` | float | 0-1 | Share of the 1 km cell classified as built or artificial land. It is an initial residential-relevance proxy, not proof that the cell is residential. | Governed retrospective Copernicus CLC broad classes |
+| `forest_shrub_share_2km` | float | 0-1 | Combined forest and shrubland share within the initial 2 km buffer around the cell. | Governed retrospective Copernicus CLC broad classes |
 | `mean_slope_2km` | float | degrees | Mean terrain slope within the same 2 km buffer. | Derived from Copernicus DEM GLO-30 |
 | `fire_years_previous_10y_2km` | integer | count | Number of years from `T-10` through `T-1` inclusive in which the 2 km buffer intersected an ICNF burned-area polygon. This is strictly pre-`T` information. | ICNF burned-area intersections |
 | `warm_season_mean_2m_temperature_c` | float | degrees Celsius | Mean ERA5-Land 2 m temperature for June–September (`JJAS`) in predictor year `T`. | ERA5-Land `2m_temperature` |

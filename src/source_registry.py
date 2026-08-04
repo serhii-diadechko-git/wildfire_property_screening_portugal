@@ -107,7 +107,7 @@ class Era5LandRawRecord:
 
 @dataclass(frozen=True)
 class ClcRawRecord:
-    """Governed CLC release record, including unavailable historical packages."""
+    """CLC package provenance and validation status."""
 
     key: str
     reference_year: int
@@ -126,6 +126,8 @@ class ClcRawRecord:
     class_code_field: str
     class_mapping: tuple[tuple[str, tuple[str, ...]], ...]
     validation_status: str
+    catalogue_dataset_uid: str | None = None
+    catalogue_file_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -335,8 +337,8 @@ _CLC_RELEASE_LINEAGE_URL = (
     "https://land.copernicus.eu/en/technical-library/clc-release-lineage/@@download/file"
 )
 _CLC_LICENCE = (
-    "Copernicus Land Monitoring Service data policy: full, open and free access; "
-    "source attribution and identification of adaptations are required."
+    "https://land.copernicus.eu/en/data-policy — full, open and free access; source "
+    "attribution and identification of adaptations are required."
 )
 _CLC_CLASS_MAPPING = (
     ("built_up_share", ("111", "112", "121", "122", "123", "124", "131", "132", "133", "141", "142")),
@@ -361,8 +363,8 @@ CLC_2006_V17 = ClcRawRecord(
     class_code_field="Code_06",
     class_mapping=_CLC_CLASS_MAPPING,
     validation_status=(
-        "availability by end-2015 proven; exact V17 package is not exposed by the current "
-        "official catalogue and is not yet locally acquired"
+        "preserved historical release evidence only; this exact archived package is no "
+        "longer required by the retrospective reconstruction rule"
     ),
 )
 
@@ -384,8 +386,8 @@ CLC_2012_V18_5_1 = ClcRawRecord(
     class_code_field="Code_12",
     class_mapping=_CLC_CLASS_MAPPING,
     validation_status=(
-        "availability for T=2016-2018 proven; exact V18_5_1 package is not exposed by the "
-        "current official catalogue and is not yet locally acquired"
+        "preserved historical release evidence only; this exact archived package is no "
+        "longer required by the retrospective reconstruction rule"
     ),
 )
 
@@ -407,9 +409,65 @@ CLC_2018_V20 = ClcRawRecord(
     class_code_field="Code_18",
     class_mapping=_CLC_CLASS_MAPPING,
     validation_status=(
-        "Portugal availability during 2019 is proven; exact V20 package is not exposed by "
-        "the current official catalogue and is not yet locally acquired"
+        "preserved historical release evidence only; this exact archived package is no "
+        "longer required by the retrospective reconstruction rule"
     ),
+)
+
+CLC_HISTORICAL_RELEASE_EVIDENCE = (
+    CLC_2006_V17,
+    CLC_2012_V18_5_1,
+    CLC_2018_V20,
+)
+
+CLC_2006_V2020_20U1 = ClcRawRecord(
+    key="clc_2006_v2020_20u1",
+    reference_year=2006,
+    release_id="V2020_20u1",
+    release_date="2020 (exact day unavailable in the official product metadata)",
+    official_source_url="https://land.copernicus.eu/en/products/corine-land-cover/clc-2006",
+    availability_evidence_url=_CLC_RELEASE_LINEAGE_URL,
+    licence_or_terms_reference=_CLC_LICENCE,
+    access_date="2026-08-04",
+    raw_path="data/raw/clc/u2012_clc2006_v2020_20u1_geoPackage.zip",
+    filename="u2012_clc2006_v2020_20u1_geoPackage.zip",
+    sha256=None,
+    crs="EPSG:3035",
+    coverage="Europe, including mainland Portugal",
+    format="GeoPackage in ZIP",
+    class_code_field="Code_06",
+    class_mapping=_CLC_CLASS_MAPPING,
+    validation_status=(
+        "official revised package identified; local acquisition is pending authenticated "
+        "Copernicus Land Monitoring Service access"
+    ),
+    catalogue_dataset_uid="d443c86fec2f49e08ff12c7decdbf2af",
+    catalogue_file_id="46d516c6-b749-4064-a556-854b85ba5175",
+)
+
+CLC_2012_V2020_20U1 = ClcRawRecord(
+    key="clc_2012_v2020_20u1",
+    reference_year=2012,
+    release_id="V2020_20u1",
+    release_date="2020 (exact day unavailable in the official product metadata)",
+    official_source_url="https://land.copernicus.eu/en/products/corine-land-cover/clc-2012",
+    availability_evidence_url=_CLC_RELEASE_LINEAGE_URL,
+    licence_or_terms_reference=_CLC_LICENCE,
+    access_date="2026-08-04",
+    raw_path="data/raw/clc/u2018_clc2012_v2020_20u1_geoPackage.zip",
+    filename="u2018_clc2012_v2020_20u1_geoPackage.zip",
+    sha256=None,
+    crs="EPSG:3035",
+    coverage="Europe, including mainland Portugal",
+    format="GeoPackage in ZIP",
+    class_code_field="Code_12",
+    class_mapping=_CLC_CLASS_MAPPING,
+    validation_status=(
+        "official revised package identified; local acquisition is pending authenticated "
+        "Copernicus Land Monitoring Service access"
+    ),
+    catalogue_dataset_uid="a5ee71470be04d66bcff498f94ceb5dc",
+    catalogue_file_id="2c674919-0baf-44d6-9c13-a0a585cbe931",
 )
 
 CLC_2018_V2020_20U1 = ClcRawRecord(
@@ -436,10 +494,9 @@ CLC_2018_V2020_20U1 = ClcRawRecord(
 )
 
 CLC_GOVERNED_RELEASES = {
-    "2015": CLC_2006_V17,
-    "2016-2018": CLC_2012_V18_5_1,
-    "2019": CLC_2018_V20,
-    "2020-2024": CLC_2018_V2020_20U1,
+    "2015": CLC_2006_V2020_20U1,
+    "2016-2018": CLC_2012_V2020_20U1,
+    "2019-2024": CLC_2018_V2020_20U1,
 }
 
 CLC_RELEASE_LINEAGE_EVIDENCE = EvidenceRecord(
@@ -585,6 +642,63 @@ ERA5_LAND_2024_JJAS = _era5_full_scope_record(
         "differs from the older files (avgas, step 23-24) and is intentionally allow-listed."
     ),
 )
+
+
+def _era5_corrected_precipitation_record(year: int, checksum: str) -> Era5LandRawRecord:
+    """Register the separate official by-hour-of-day precipitation workaround."""
+    filename = (
+        "era5_land_monthly_by_hour_00_jjas_total_precipitation_"
+        f"{year}_mainland_portugal.grib"
+    )
+    return Era5LandRawRecord(
+        key=f"era5_land_{year}_jjas_corrected_precipitation",
+        dataset_id="reanalysis-era5-land-monthly-means",
+        official_source_url="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
+        licence_or_terms_reference="Copernicus Climate Data Store CC-BY licence and dataset terms.",
+        retrieval_date="2026-08-04",
+        acquisition_method="CDS API retrieval using the official by-hour-of-day workaround",
+        raw_path=f"data/raw/climate/era5_land/{filename}",
+        filename=filename,
+        sha256=checksum,
+        product_type="monthly_averaged_reanalysis_by_hour_of_day",
+        year=year,
+        months=("06", "07", "08", "09"),
+        time="00:00",
+        variables=("total_precipitation",),
+        area_north_west_south_east=(42.2, -9.6, 36.8, -6.0),
+        data_format="grib",
+        validation_facts=Era5LandValidationFacts(
+            grid_shape=(4, 55, 37),
+            months=("06", "07", "08", "09"),
+            grib_short_names=("tp",),
+            missing_value_counts=(("tp", 1928),),
+            units=(("tp", "m"),),
+            step_types=(("tp", "avgas"),),
+            step_ranges=(("tp", "23-24"),),
+            stream="mnth",
+            precipitation_status="validated-official-workaround",
+            validation_note=(
+                "Separate immutable precipitation-only replacement retrieved with "
+                "monthly_averaged_reanalysis_by_hour_of_day at 00:00. It replaces only "
+                "the affected precipitation field; temperature and soil water remain in "
+                "the original annual GRIB."
+            ),
+        ),
+    )
+
+
+ERA5_LAND_2022_CORRECTED_PRECIPITATION = _era5_corrected_precipitation_record(
+    2022,
+    "7AAF9EADA365270AF5F0876C64635F30532E1FD52C961369F82040EA6B670B3B",
+)
+ERA5_LAND_2023_CORRECTED_PRECIPITATION = _era5_corrected_precipitation_record(
+    2023,
+    "726B7F239862AF6A9011E77617741D344ACE040B8D5DF648336FAEAF7E67D511",
+)
+ERA5_LAND_PRECIPITATION_CORRECTIONS = {
+    2022: ERA5_LAND_2022_CORRECTED_PRECIPITATION,
+    2023: ERA5_LAND_2023_CORRECTED_PRECIPITATION,
+}
 
 ERA5_LAND_FULL_SCOPE_ARCHIVES = {
     **ERA5_LAND_TRAINING_ARCHIVES,
