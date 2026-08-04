@@ -15,7 +15,6 @@ from src.source_registry import SourceRecord
 
 
 ANALYSIS_CRS = CRS.from_epsg(3763)
-ICNF_REQUIRED_FIELDS = ("Cod_SGIF", "Ano", "DH_Inicio", "AreaHaSIG")
 ERA5_LAND_DOCUMENTED_START_YEAR = 1950
 ERA5_LAND_EXPECTED_VARIABLES = {
     "2m_temperature",
@@ -72,7 +71,11 @@ def validate_icnf_archive(
     expected_year: int,
     expected_feature_count: int | None = None,
 ) -> dict[str, object]:
-    """Validate an ICNF Shapefile after temporary extraction outside the repository."""
+    """Inspect and validate an ICNF Shapefile after temporary external extraction.
+
+    Validation is against the registered archive facts.  It deliberately reports
+    invalid geometries rather than repairing, dropping, or treating them as no fire.
+    """
     archive_validation = validate_zip_archive(record, project_root)
     archive_path = project_root / record.raw_path
     shapefile_name = next(member for member in record.required_members if member.endswith(".shp"))
@@ -86,23 +89,39 @@ def validate_icnf_archive(
 
     if frame.crs is None or CRS.from_user_input(frame.crs) != ANALYSIS_CRS:
         raise ValueError(f"ICNF: expected EPSG:3763, found {frame.crs}")
-    if expected_feature_count is not None and len(frame) != expected_feature_count:
-        raise ValueError(f"ICNF: expected {expected_feature_count} features, found {len(frame)}")
-    missing_fields = [field for field in ICNF_REQUIRED_FIELDS if field not in frame.columns]
+    facts = record.validation_facts
+    expected_count = expected_feature_count if expected_feature_count is not None else (facts.feature_count if facts else None)
+    if expected_count is not None and len(frame) != expected_count:
+        raise ValueError(f"ICNF: expected {expected_count} features, found {len(frame)}")
+    required_fields = facts.required_fields if facts else ("Ano", "AreaHaSIG")
+    missing_fields = [field for field in required_fields if field not in frame.columns]
     if missing_fields:
         raise ValueError(f"ICNF: missing required fields {missing_fields}")
     if not frame["Ano"].eq(expected_year).all():
         raise ValueError(f"ICNF: all Ano values must equal {expected_year}")
-    if frame.geometry.isna().any() or frame.geometry.is_empty.any() or not frame.geometry.is_valid.all():
-        raise ValueError("ICNF: geometry must be non-null, non-empty, and valid")
+    null_geometry_count = int(frame.geometry.isna().sum())
+    non_empty_geometry_count = int((~frame.geometry.isna() & ~frame.geometry.is_empty).sum())
+    invalid_geometry_count = int((~frame.geometry.is_valid).sum())
+    field_names = tuple(column for column in frame.columns if column != "geometry")
+    if null_geometry_count:
+        raise ValueError("ICNF: geometry contains null values")
+    if facts and facts.field_names is not None and field_names != facts.field_names:
+        raise ValueError(f"ICNF: schema differs from registered facts for {record.filename}")
+    if facts and non_empty_geometry_count != facts.non_empty_geometry_count:
+        raise ValueError(f"ICNF: non-empty geometry count differs from registered facts for {record.filename}")
+    if facts and invalid_geometry_count != facts.invalid_geometry_count:
+        raise ValueError(f"ICNF: invalid geometry count differs from registered facts for {record.filename}")
 
     return archive_validation | {
         "crs": "EPSG:3763",
         "feature_count": len(frame),
         "year_field": "Ano",
         "year": expected_year,
+        "field_names": field_names,
         "required_fields_present": True,
-        "geometries_valid_and_non_empty": True,
+        "non_empty_geometry_count": non_empty_geometry_count,
+        "invalid_geometry_count": invalid_geometry_count,
+        "geometries_valid_and_non_empty": invalid_geometry_count == 0 and non_empty_geometry_count == len(frame),
     }
 
 

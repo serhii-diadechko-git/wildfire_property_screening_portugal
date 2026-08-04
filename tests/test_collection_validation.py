@@ -9,7 +9,8 @@ from src.collection_validation import (
     validate_icnf_archive,
     validate_zip_archive,
 )
-from src.source_registry import CAOP_2025, ICNF_2024
+from src.config import PILOT_2023_TO_2024
+from src.source_registry import CAOP_2025, ICNF_2024, PILOT_ICNF_ARCHIVES, PILOT_ICNF_HISTORY
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +34,18 @@ class CollectionValidationTests(unittest.TestCase):
         self.assertEqual(caop["zip_integrity"], "passed")
         self.assertEqual(icnf["feature_count"], 1558)
         self.assertTrue(icnf["geometries_valid_and_non_empty"])
+
+    def test_pilot_icnf_archives_match_registered_facts_without_predictor_year(self) -> None:
+        expected_history = tuple(range(2013, 2023))
+        self.assertEqual(tuple(int(record.filename.removeprefix("ardida_").removesuffix(".zip")) for record in PILOT_ICNF_HISTORY), expected_history)
+        self.assertEqual(tuple(PILOT_ICNF_ARCHIVES), expected_history + (2024,))
+        self.assertNotIn(PILOT_2023_TO_2024.predictor_year, PILOT_ICNF_ARCHIVES)
+
+        for year in expected_history:
+            result = validate_icnf_archive(PILOT_ICNF_ARCHIVES[year], PROJECT_ROOT, expected_year=year)
+            self.assertEqual(result["year"], year)
+            self.assertEqual(result["non_empty_geometry_count"], result["feature_count"])
+            self.assertGreater(result["invalid_geometry_count"], 0)
 
 
 if __name__ == "__main__":
