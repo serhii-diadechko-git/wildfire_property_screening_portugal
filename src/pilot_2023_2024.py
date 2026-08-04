@@ -101,7 +101,8 @@ def _era5_context() -> tuple[dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]
     path = ROOT / ERA5_LAND_CDS.pilot_raw_output
     specifications = (
         ("2t", "warm_season_mean_2m_temperature_c", lambda values: np.nanmean(values, axis=0) - 273.15, "degrees_celsius"),
-        ("tp", "warm_season_total_precipitation_mm", lambda values: np.nansum(values, axis=0) * 1000.0, "millimetres"),
+        # Monthly ERA5-Land total precipitation is average accumulation in m/day.
+        ("tp", "warm_season_total_precipitation_mm", lambda values: np.nansum(values * np.array([30, 31, 31, 30])[:, None, None], axis=0) * 1000.0, "millimetres"),
         ("swvl1", "warm_season_mean_soil_water_layer1", lambda values: np.nanmean(values, axis=0), "m3_per_m3"),
     )
     grids: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
@@ -127,6 +128,8 @@ def _assign_era5(tile_3763: gpd.GeoDataFrame, grids: dict[str, tuple[np.ndarray,
         lat_index = np.abs(latitude[:, None] - centres.y.to_numpy()).argmin(axis=0)
         lon_index = np.abs(longitude[:, None] - centres.x.to_numpy()).argmin(axis=0)
         result[feature] = values[lat_index, lon_index]
+    # The land-mask water cells decode as zero for precipitation; align missingness.
+    result.loc[result["warm_season_mean_2m_temperature_c"].isna(), "warm_season_total_precipitation_mm"] = np.nan
     return result
 
 
