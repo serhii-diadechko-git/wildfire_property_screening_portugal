@@ -49,7 +49,7 @@ Build a reproducible geospatial data-science workflow that:
 - `data/processed/pilot_2023_to_2024/pilot_2023_to_2024_icnf_caop.gpkg` remains the reusable EPSG:3763 canonical grid-geometry lookup.
 - `data/processed/spatial_qa/era5_land_coastal_fallback_qa.gpkg`, layer `era5_coastal_fallback_qa`, is a 1,506-feature QA/presentation layer documenting the systematic ERA5-Land coastal fallback.
 - `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
-- `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It uses 2016-2025 fire recurrence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
+- `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using 2016-2025 evidence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
 
 No predictive, probability, or purchase-recommendation GeoPackage is authorized: the tested regression candidates did not pass the validation gate.
 

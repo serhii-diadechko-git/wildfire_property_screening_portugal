@@ -75,7 +75,7 @@ These fields were conditional design concepts. No predictive output was accepted
 
 ## Historical exposure screening output
 
-These fields exist in `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`. They are descriptive evidence, not model features or predictions.
+These fields exist in `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`. They describe **1 km mainland grid cells with fire recurrence measured in a 2 km context**. They are descriptive evidence, not model features or predictions.
 
 | Column | Type | Meaning |
 |---|---|---|

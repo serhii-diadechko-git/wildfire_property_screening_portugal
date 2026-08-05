@@ -1,0 +1,31 @@
+{
+  "project": "qgis/wildfire_exposure_screening_portugal.qgz",
+  "crs": "EPSG:3763",
+  "layer_names": [
+    "ERA5 coastal fallback QA",
+    "Historical exposure bands \u2014 1 km cells",
+    "ICNF structural hazard class \u2014 predominant class per 1 km cell",
+    "Mainland Portugal boundary",
+    "National 2024 snapshot \u2014 retrospective EDA only"
+  ],
+  "layouts": [
+    "Historical Wildfire Exposure Screening \u2014 Mainland Portugal",
+    "Historical Exposure and Official ICNF Structural Hazard \u2014 Comparison"
+  ],
+  "aliases_validated": true,
+  "screening_view_feature_count": 89112,
+  "exports": {
+    "historical": {
+      "png": "reports/figures/historical_wildfire_exposure_screening_mainland_portugal.png",
+      "png_bytes": 853968,
+      "pdf": "reports/figures/historical_wildfire_exposure_screening_mainland_portugal.pdf",
+      "pdf_bytes": 1810144
+    },
+    "comparison": {
+      "png": "reports/figures/historical_exposure_and_official_icnf_structural_hazard_comparison.png",
+      "png_bytes": 1154646,
+      "pdf": "reports/figures/historical_exposure_and_official_icnf_structural_hazard_comparison.pdf",
+      "pdf_bytes": 3430988
+    }
+  }
+}
