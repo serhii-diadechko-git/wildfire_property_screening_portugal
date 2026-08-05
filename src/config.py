@@ -30,6 +30,17 @@ class ClcGovernanceConfig:
         (2023, 2018),
         (2024, 2018),
     )
+    prepared_path_by_reference_year: tuple[tuple[int, str], ...] = (
+        (2006, "data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg"),
+        (2012, "data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg"),
+        (2018, "data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg"),
+    )
+    prepared_layer_by_reference_year: tuple[tuple[int, str], ...] = (
+        (2006, "u2012_clc2006_v2020_20u1_pt"),
+        (2012, "u2018_clc2012_v2020_20u1_pt"),
+        (2018, "u2018_clc2018_v2020_20u1_pt"),
+    )
+    area_processing_crs: str = "EPSG:3035"
     reconstruction_rule: str = (
         "reference_year_not_after_predictor_year; use the current official revised "
         "package for each assigned historical reference layer"
@@ -43,6 +54,14 @@ class ClcGovernanceConfig:
         if reference_year > predictor_year:
             raise ValueError("CLC reference year must not be after predictor year")
         return reference_year
+
+    def prepared_dataset(self, predictor_year: int) -> tuple[str, str]:
+        """Return the configured Portugal GeoPackage and layer for predictor year."""
+        reference_year = self.reference_year(predictor_year)
+        return (
+            dict(self.prepared_path_by_reference_year)[reference_year],
+            dict(self.prepared_layer_by_reference_year)[reference_year],
+        )
 
 
 @dataclass(frozen=True)

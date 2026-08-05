@@ -62,7 +62,7 @@ For every downloaded dataset, record:
 
 ## Feasibility risks to resolve first
 
-1. Acquire and validate the current official revised CLC 2006/2012 packages, reuse the validated revised CLC 2018 package, and enforce `reference_year <= T` under the canonical assignment rule.
+1. Use the validated Portugal-clipped CLC 2006/2012/2018 GeoPackages under `data/processed/clc/`, preserve their immutable Europe-wide ZIP lineage under `data/raw/clc/`, and enforce `reference_year <= T`.
 2. Inspect an ICNF burned-area sample for schema and geometry validity.
 3. Test the Copernicus DEM download and `mean_slope_2km` calculation.
 4. Test ERA5-Land temperature, day-weighted precipitation, and layer-1 soil-water aggregation.

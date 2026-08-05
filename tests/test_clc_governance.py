@@ -33,6 +33,17 @@ class ClcGovernanceTests(unittest.TestCase):
             all(record.release_id == "V2020_20u1" for record in CLC_GOVERNED_RELEASES.values())
         )
 
+    def test_predictor_years_resolve_to_prepared_portugal_layers(self) -> None:
+        expected_reference_tokens = {2015: "clc2006", 2016: "clc2012", 2019: "clc2018"}
+        for predictor_year, token in expected_reference_tokens.items():
+            with self.subTest(predictor_year=predictor_year):
+                path, layer = CLC.prepared_dataset(predictor_year)
+                self.assertTrue(path.startswith("data/processed/clc/"))
+                self.assertTrue(path.endswith("_pt.gpkg"))
+                self.assertIn(token, path)
+                self.assertIn(token, layer)
+        self.assertEqual(CLC.area_processing_crs, "EPSG:3035")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

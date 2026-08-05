@@ -1,6 +1,6 @@
 # Canonical full-scope acquisition and readiness gate
 
-Updated 2026-08-04. This report is the authoritative gate for national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during this acquisition pass.
+Updated 2026-08-05. This report is the authoritative gate for national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during this acquisition pass.
 
 ## Canonical design
 
@@ -14,11 +14,11 @@ The 2 km context buffer applies to `forest_shrub_share_2km`, `mean_slope_2km`, a
 |---|---|---|---|
 | ICNF annual burned areas | 2005-2025 | All required years are local. New official 2023 and 2025 ZIPs pass checksum, CRC, CRS, schema/year and geometry-presence checks. | Ready, subject to the established derived-only `make_valid` policy. |
 | ERA5-Land JJAS | T=2015-2024 | All annual three-variable files are local. Separate precipitation-only 2022 and 2023 GRIBs pass the official by-hour-of-day workaround contract. | Ready; use the corrected precipitation files only for 2022 and 2023. |
-| Copernicus CLC | CLC 2006 for T=2015; CLC 2012 for T=2016-2018; CLC 2018 for T=2019-2024 | Current official revised V2020_20u1 vector packages are identified. CLC 2018 is local and validated; CLC 2006 and 2012 require authenticated CLMS acquisition and are not local. | **Blocked on CLC 2006 and CLC 2012 package acquisition.** |
+| Copernicus CLC | CLC 2006 for T=2015; CLC 2012 for T=2016-2018; CLC 2018 for T=2019-2024 | All three immutable V2020_20u1 raw ZIPs and Portugal-clipped GeoPackages are local, checksum-registered, and validated. | Ready. |
 | Copernicus DEM GLO-30 | mainland plus outward 2 km context | 21 required land/coastal COG tiles acquired and validated; one intersecting edge tile is an official ocean/no-source case. | Ready; slope remains intentionally uncomputed. |
 | CAOP | fixed mainland boundary/reporting areas | CAOP 2025 remains the fixed grid boundary in EPSG:3763. | Ready. |
 
-The national panel and final temporal test are **not ready** while the two governed CLC packages remain absent. The ERA5-Land precipitation blocker is closed.
+**Acquisition gate closed — feature derivation may begin.** This means the canonical raw/prepared source inputs are available and validated; it does not mean that the national panel, final temporal test, or model is ready.
 
 ## ICNF 2023 and 2025
 
@@ -61,11 +61,17 @@ The governing rule is deliberately minimal: the CLC reference year must be no la
 
 | Predictor years | Reference layer and current package | Official package metadata | Local package status |
 |---|---|---|---|
-| T=2015 | CLC 2006 `V2020_20u1` | Reference year 2006; update year 2020 (exact day unavailable in current official metadata); vector GeoPackage `u2012_clc2006_v2020_20u1_geoPackage.zip`; catalogue dataset UID `d443c86fec2f49e08ff12c7decdbf2af`, file ID `46d516c6-b749-4064-a556-854b85ba5175`. | Not local. CLMS presented EU Login before creating the download request; acquisition and checksum/package validation remain blocked on authenticated access. |
-| T=2016-2018 | CLC 2012 `V2020_20u1` | Reference year 2012; update year 2020 (exact day unavailable); vector GeoPackage `u2018_clc2012_v2020_20u1_geoPackage.zip`; catalogue dataset UID `a5ee71470be04d66bcff498f94ceb5dc`, file ID `2c674919-0baf-44d6-9c13-a0a585cbe931`. | Not local. Same authenticated-access blocker. |
-| T=2019-2024 | CLC 2018 `V2020_20u1` | Reference year 2018; update year 2020 (exact day unavailable); vector GeoPackage. | Ready: local raw ZIP is checksum/CRC-valid; SHA-256 `AC302982BE6EA027762CC1973123B452157B0C4AD536BB32167C486448316492`; EPSG:3035; validated mainland derivative contains 54,191 valid, non-empty MultiPolygon features, `Code_18`, and 42 valid CLC codes. |
+| T=2015 | CLC 2006 `V2020_20u1` | Reference year 2006; update year 2020 (exact day unavailable in current official metadata); raw `u2012_clc2006_v2020_20u1_geoPackage.zip`; catalogue dataset UID `d443c86fec2f49e08ff12c7decdbf2af`, file ID `46d516c6-b749-4064-a556-854b85ba5175`. | Raw ZIP: 3,273,013,641 bytes, SHA-256 `A752E0E1415493DAB5931133AF4AFE8104F1166D1D7AB2B22531B683389B1CFB`, 27/27 member CRCs passed. Prepared GeoPackage: `data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg`, SHA-256 `3C38FA3F067A0008AB6EB9841AE5A7C482ABA59EC029612E30C7FFEB5B37DDB9`. |
+| T=2016-2018 | CLC 2012 `V2020_20u1` | Reference year 2012; update year 2020 (exact day unavailable); raw `u2018_clc2012_v2020_20u1_geoPackage.zip`; catalogue dataset UID `a5ee71470be04d66bcff498f94ceb5dc`, file ID `2c674919-0baf-44d6-9c13-a0a585cbe931`. | Raw ZIP: 3,778,706,973 bytes, SHA-256 `228821CEB49E3D0E22DBC7BEF5F995CDFD3F416C285334833FCFD31F0DB09802`, 27/27 member CRCs passed. Prepared GeoPackage: `data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg`, SHA-256 `D1192AB4C2E277677D8E7E7F00BF64A31D77776C4667E3C9D2A2BA767ACCB83F`. |
+| T=2019-2024 | CLC 2018 `V2020_20u1` | Reference year 2018; update year 2020 (exact day unavailable); raw `u2018_clc2018_v2020_20u1_geoPackage.zip`. | Raw ZIP: 3,755,307,202 bytes, SHA-256 `AC302982BE6EA027762CC1973123B452157B0C4AD536BB32167C486448316492`, 28/28 member CRCs passed. Prepared GeoPackage: `data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg`, SHA-256 `B0E8F1CDFE9BEB87FC9968D27C16BEFB18E6DC989E786E67A14F259CC7C31509`. |
 
-The future package validation must confirm ZIP integrity, GeoPackage readability, EPSG:3035, European coverage including mainland Portugal, the expected `Code_06`/`Code_12` field, valid three-digit CLC codes, and the registered canonical mapping before national feature derivation.
+Prepared-layer validation used bounded 5,000-feature reads. CLC 2006 has 51,555 features and `Code_06`; CLC 2012 has 54,041 and `Code_12`; CLC 2018 has 54,191 and `Code_18`. Each is a readable single-layer GeoPackage in EPSG:3035 containing only valid, non-empty MultiPolygons, with no null, invalid, non-polygonal, or non-mainland-intersecting geometries. Each contains 42 valid observed CLC codes, including every code required for the canonical mapping. Each layer's bounds exactly match the canonical mainland boundary after reprojection, and union comparison found zero missing-mainland and zero outside-mainland area.
+
+Read-only `gpkg_contents` inspection of the expanded official packages independently confirmed the Europe layers `U2012_CLC2006_V2020_20u1`, `U2018_CLC2012_V2020_20u1`, and `U2018_CLC2018_V2020_20u1`, each in EPSG:3035 with the corresponding `Code_06`, `Code_12`, or `Code_18` field. This supports the prepared files' reference-year and `V2020_20u1` lineage.
+
+`data/processed/clc/` is retained because these are project-prepared Portugal clips, while the unchanged official Europe-wide ZIPs remain under `data/raw/clc/`. The exact clipping command/tool and original clipping-boundary file are not embedded in the prepared GeoPackages and therefore remain unverified. Traceability is nevertheless complete at file level: official raw ZIP → user-supplied Portugal clip → checksum-registered prepared GeoPackage → future analytical share derivation. Analytical validation used `data/processed/reference/mainland_boundary_caop2025.gpkg` and proved exact mainland coverage.
+
+The prepared CLC layers remain in EPSG:3035 by design. During feature derivation, reproject the EPSG:3763 1 km cells and outward 2 km context buffers to EPSG:3035 for equal-area CLC intersection; do not treat EPSG:3035 storage as a grid-resolution change.
 
 Canonical broad mapping: `built_up_share` uses codes 111-142 in the artificial-surface branch; `forest_shrub_share_2km` uses 311, 312, 313, 321, 322, 323 and 324. Exact code tuples are auditable in `src/source_registry.py`. Shares must be area-based and must not be described as parcel-level land cover.
 
@@ -99,9 +105,8 @@ The CAOP mainland boundary was buffered outward by exactly 2,000 m in EPSG:3763 
 
 `N37W010` intersects only the ocean-side rectangular selection envelope and has no public tile, consistent with the official no-ocean-tile distribution rule. It is not a mainland terrain gap. Future slope processing must mask to CAOP mainland land before the 2 km context aggregation and must not interpret numeric coastal/ocean values as land elevation.
 
-## Remaining concrete acquisition blockers
+## Remaining acquisition blockers
 
-1. Authenticate through EU Login on the official CLMS portal and download the identified current revised CLC 2006 and CLC 2012 vector GeoPackage ZIPs. No credential was read, requested, or stored during this pass.
-2. Validate and register both downloaded packages with checksums and observed package/CRS/coverage/schema/class facts.
+None. ICNF 2005-2025, ERA5-Land T=2015-2024 including the corrected 2022/2023 precipitation files, the three governed CLC reference layers, Copernicus DEM GLO-30, and CAOP 2025 are locally registered and validated for acquisition readiness.
 
-The acquisition gate remains open solely because CLC 2006 and CLC 2012 are not yet local and validated. Do not begin national feature derivation until both blockers are resolved. Slope and the combined panel were intentionally not calculated in this task.
+Feature derivation may begin under the canonical gate. Slope, the combined national panel, the final temporal evaluation, and model training remain intentionally unperformed and must pass their own later validation gates.

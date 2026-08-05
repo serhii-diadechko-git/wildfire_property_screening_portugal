@@ -128,6 +128,46 @@ class ClcRawRecord:
     validation_status: str
     catalogue_dataset_uid: str | None = None
     catalogue_file_id: str | None = None
+    size_bytes: int | None = None
+
+
+@dataclass(frozen=True)
+class ClcPreparedValidationFacts:
+    """Observed facts for one Portugal-clipped CLC GeoPackage."""
+
+    layer_name: str
+    feature_count: int
+    geometry_type: str
+    class_code_field: str
+    observed_codes: tuple[str, ...]
+    null_geometry_count: int
+    empty_geometry_count: int
+    invalid_geometry_count: int
+    non_polygonal_geometry_count: int
+    non_intersecting_mainland_count: int
+    missing_mainland_area_share: float
+    outside_mainland_area_share: float
+
+
+@dataclass(frozen=True)
+class ClcPreparedRecord:
+    """Trace one project-prepared CLC layer back to its immutable raw ZIP."""
+
+    key: str
+    reference_year: int
+    release_id: str
+    raw_source_path: str
+    raw_source_sha256: str
+    prepared_path: str
+    prepared_sha256: str
+    prepared_size_bytes: int
+    storage_format: str
+    crs: str
+    coverage: str
+    analytical_boundary_path: str
+    preparation_method: str
+    registered_date: str
+    validation_facts: ClcPreparedValidationFacts
 
 
 @dataclass(frozen=True)
@@ -428,21 +468,21 @@ CLC_2006_V2020_20U1 = ClcRawRecord(
     official_source_url="https://land.copernicus.eu/en/products/corine-land-cover/clc-2006",
     availability_evidence_url=_CLC_RELEASE_LINEAGE_URL,
     licence_or_terms_reference=_CLC_LICENCE,
-    access_date="2026-08-04",
+    access_date="2026-08-05",
     raw_path="data/raw/clc/u2012_clc2006_v2020_20u1_geoPackage.zip",
     filename="u2012_clc2006_v2020_20u1_geoPackage.zip",
-    sha256=None,
+    sha256="A752E0E1415493DAB5931133AF4AFE8104F1166D1D7AB2B22531B683389B1CFB",
     crs="EPSG:3035",
     coverage="Europe, including mainland Portugal",
     format="GeoPackage in ZIP",
     class_code_field="Code_06",
     class_mapping=_CLC_CLASS_MAPPING,
     validation_status=(
-        "official revised package identified; local acquisition is pending authenticated "
-        "Copernicus Land Monitoring Service access"
+        "local immutable ZIP present; SHA-256 and all 27 member CRCs validated"
     ),
     catalogue_dataset_uid="d443c86fec2f49e08ff12c7decdbf2af",
     catalogue_file_id="46d516c6-b749-4064-a556-854b85ba5175",
+    size_bytes=3273013641,
 )
 
 CLC_2012_V2020_20U1 = ClcRawRecord(
@@ -453,21 +493,21 @@ CLC_2012_V2020_20U1 = ClcRawRecord(
     official_source_url="https://land.copernicus.eu/en/products/corine-land-cover/clc-2012",
     availability_evidence_url=_CLC_RELEASE_LINEAGE_URL,
     licence_or_terms_reference=_CLC_LICENCE,
-    access_date="2026-08-04",
+    access_date="2026-08-05",
     raw_path="data/raw/clc/u2018_clc2012_v2020_20u1_geoPackage.zip",
     filename="u2018_clc2012_v2020_20u1_geoPackage.zip",
-    sha256=None,
+    sha256="228821CEB49E3D0E22DBC7BEF5F995CDFD3F416C285334833FCFD31F0DB09802",
     crs="EPSG:3035",
     coverage="Europe, including mainland Portugal",
     format="GeoPackage in ZIP",
     class_code_field="Code_12",
     class_mapping=_CLC_CLASS_MAPPING,
     validation_status=(
-        "official revised package identified; local acquisition is pending authenticated "
-        "Copernicus Land Monitoring Service access"
+        "local immutable ZIP present; SHA-256 and all 27 member CRCs validated"
     ),
     catalogue_dataset_uid="a5ee71470be04d66bcff498f94ceb5dc",
     catalogue_file_id="2c674919-0baf-44d6-9c13-a0a585cbe931",
+    size_bytes=3778706973,
 )
 
 CLC_2018_V2020_20U1 = ClcRawRecord(
@@ -491,12 +531,108 @@ CLC_2018_V2020_20U1 = ClcRawRecord(
         "raw ZIP checksum and CRC validated; mainland derivative has 54,191 valid, non-empty "
         "MultiPolygon features and 42 valid CLC codes"
     ),
+    size_bytes=3755307202,
 )
 
 CLC_GOVERNED_RELEASES = {
     "2015": CLC_2006_V2020_20U1,
     "2016-2018": CLC_2012_V2020_20U1,
     "2019-2024": CLC_2018_V2020_20U1,
+}
+
+_CLC_PORTUGAL_CODES = (
+    "111", "112", "121", "122", "123", "124", "131", "132", "133", "141", "142",
+    "211", "212", "213", "221", "222", "223", "231", "241", "242", "243", "244",
+    "311", "312", "313", "321", "322", "323", "324", "331", "332", "333", "334",
+    "411", "421", "422", "423", "511", "512", "521", "522", "523",
+)
+
+
+def _prepared_clc_record(
+    reference_year: int,
+    raw_record: ClcRawRecord,
+    *,
+    prepared_path: str,
+    prepared_sha256: str,
+    prepared_size_bytes: int,
+    layer_name: str,
+    feature_count: int,
+    class_code_field: str,
+) -> ClcPreparedRecord:
+    """Create one validated Portugal CLC derivative provenance record."""
+    if raw_record.sha256 is None:
+        raise ValueError("Prepared CLC lineage requires a validated raw checksum")
+    return ClcPreparedRecord(
+        key=f"clc_{reference_year}_v2020_20u1_portugal_prepared",
+        reference_year=reference_year,
+        release_id="V2020_20u1",
+        raw_source_path=str(raw_record.raw_path),
+        raw_source_sha256=raw_record.sha256,
+        prepared_path=prepared_path,
+        prepared_sha256=prepared_sha256,
+        prepared_size_bytes=prepared_size_bytes,
+        storage_format="GeoPackage",
+        crs="EPSG:3035",
+        coverage="CAOP 2025 mainland analytical boundary; zero measured coverage gap or outside area",
+        analytical_boundary_path="data/processed/reference/mainland_boundary_caop2025.gpkg",
+        preparation_method=(
+            "Portugal clip supplied by the user. The exact clipping command/tool and original "
+            "boundary input are not embedded in the GeoPackage and remain unverified; read-only "
+            "validation confirms that the prepared footprint exactly covers the canonical CAOP "
+            "2025 mainland boundary."
+        ),
+        registered_date="2026-08-05",
+        validation_facts=ClcPreparedValidationFacts(
+            layer_name=layer_name,
+            feature_count=feature_count,
+            geometry_type="MultiPolygon",
+            class_code_field=class_code_field,
+            observed_codes=_CLC_PORTUGAL_CODES,
+            null_geometry_count=0,
+            empty_geometry_count=0,
+            invalid_geometry_count=0,
+            non_polygonal_geometry_count=0,
+            non_intersecting_mainland_count=0,
+            missing_mainland_area_share=0.0,
+            outside_mainland_area_share=0.0,
+        ),
+    )
+
+
+CLC_2006_PORTUGAL_PREPARED = _prepared_clc_record(
+    2006,
+    CLC_2006_V2020_20U1,
+    prepared_path="data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg",
+    prepared_sha256="3C38FA3F067A0008AB6EB9841AE5A7C482ABA59EC029612E30C7FFEB5B37DDB9",
+    prepared_size_bytes=121466880,
+    layer_name="u2012_clc2006_v2020_20u1_pt",
+    feature_count=51555,
+    class_code_field="Code_06",
+)
+CLC_2012_PORTUGAL_PREPARED = _prepared_clc_record(
+    2012,
+    CLC_2012_V2020_20U1,
+    prepared_path="data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg",
+    prepared_sha256="D1192AB4C2E277677D8E7E7F00BF64A31D77776C4667E3C9D2A2BA767ACCB83F",
+    prepared_size_bytes=146411520,
+    layer_name="u2018_clc2012_v2020_20u1_pt",
+    feature_count=54041,
+    class_code_field="Code_12",
+)
+CLC_2018_PORTUGAL_PREPARED = _prepared_clc_record(
+    2018,
+    CLC_2018_V2020_20U1,
+    prepared_path="data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg",
+    prepared_sha256="B0E8F1CDFE9BEB87FC9968D27C16BEFB18E6DC989E786E67A14F259CC7C31509",
+    prepared_size_bytes=147329024,
+    layer_name="u2018_clc2018_v2020_20u1_pt",
+    feature_count=54191,
+    class_code_field="Code_18",
+)
+CLC_PREPARED_PORTUGAL_LAYERS = {
+    2006: CLC_2006_PORTUGAL_PREPARED,
+    2012: CLC_2012_PORTUGAL_PREPARED,
+    2018: CLC_2018_PORTUGAL_PREPARED,
 }
 
 CLC_RELEASE_LINEAGE_EVIDENCE = EvidenceRecord(

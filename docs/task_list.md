@@ -15,7 +15,7 @@
 
 - [ ] Download one recent ICNF burned-area dataset.
 - [ ] Inspect its CRS, fields, geometry validity, and feature count.
-- [ ] Acquire and validate the current official revised CLC 2006/2012 packages, reuse the validated revised CLC 2018 package, and enforce `reference_year <= T`.
+- [x] Acquire and validate the current official revised CLC 2006/2012/2018 packages and Portugal clips, and enforce `reference_year <= T`.
 - [ ] Download a Copernicus DEM sample.
 - [ ] Validate ERA5-Land JJAS temperature, day-weighted precipitation, and layer-1 soil-water inputs.
 - [ ] Build a 1 km pilot grid for one selected area.
