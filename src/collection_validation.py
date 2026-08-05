@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from hashlib import sha256
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
 import geopandas as gpd
@@ -71,7 +70,7 @@ def validate_icnf_archive(
     expected_year: int,
     expected_feature_count: int | None = None,
 ) -> dict[str, object]:
-    """Inspect and validate an ICNF Shapefile after temporary external extraction.
+    """Inspect and validate an ICNF Shapefile directly through GDAL `/vsizip`.
 
     Validation is against the registered archive facts.  It deliberately reports
     invalid geometries rather than repairing, dropping, or treating them as no fire.
@@ -80,12 +79,8 @@ def validate_icnf_archive(
     archive_path = project_root / record.raw_path
     shapefile_name = next(member for member in record.required_members if member.endswith(".shp"))
 
-    with TemporaryDirectory(prefix="wildfire_exposure_icnf_") as temporary_directory:
-        temporary_directory_path = Path(temporary_directory)
-        with ZipFile(archive_path) as archive:
-            for member in record.required_members:
-                archive.extract(member, temporary_directory_path)
-        frame = gpd.read_file(temporary_directory_path / shapefile_name)
+    virtual_path = f"/vsizip/{archive_path.resolve().as_posix()}/{shapefile_name}"
+    frame = gpd.read_file(virtual_path)
 
     if frame.crs is None or CRS.from_user_input(frame.crs) != ANALYSIS_CRS:
         raise ValueError(f"ICNF: expected EPSG:3763, found {frame.crs}")
