@@ -9,16 +9,16 @@ import unittest
 
 import pandas as pd
 
-from src.final_visuals import FIGURE_PATHS
+from src.final_visuals import ALL_PRESENTATION_FIGURE_PATHS, validate_final_visuals
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT_PATH = ROOT / "qgis" / "wildfire_exposure_screening_portugal.qgz"
 SCREENING_METRICS_PATH = ROOT / "reports" / "validation" / "historical_exposure_screening_and_icnf_comparison.json"
 CROSSTAB_PATH = ROOT / "reports" / "tables" / "historical_exposure_band_by_icnf_hazard_class.csv"
-QGIS_MAPS = [
-    ROOT / "reports" / "figures" / "historical_wildfire_exposure_screening_mainland_portugal.png",
-    ROOT / "reports" / "figures" / "historical_exposure_and_official_icnf_structural_hazard_comparison.png",
+NOTEBOOK_PATHS = [
+    ROOT / "notebooks" / "05_evaluation_recommendations.ipynb",
+    ROOT / "notebooks" / "06_final_charts.ipynb",
 ]
 
 
@@ -28,9 +28,17 @@ class PresentationOutputTests(unittest.TestCase):
         self.assertTrue(metrics["no_predictive_claim"])
         cross = pd.read_csv(CROSSTAB_PATH)
         self.assertEqual(int(cross.cell_count.sum()), 89_112)
-        for path in [*FIGURE_PATHS.values(), *QGIS_MAPS]:
+        for path in ALL_PRESENTATION_FIGURE_PATHS.values():
             self.assertTrue(path.exists(), path)
             self.assertGreater(path.stat().st_size, 5_000)
+
+    def test_read_only_figure_verifier_uses_all_six_stable_paths(self) -> None:
+        result = validate_final_visuals()
+        self.assertEqual(result["figure_count"], 6)
+        self.assertEqual(result["history_window"], "2016-2025")
+        self.assertEqual(result["canonical_cell_count"], 89_112)
+        self.assertFalse(result["images_rewritten"])
+        self.assertTrue(all(item["status"] == "verified_existing" for item in result["figures"].values()))
 
     def test_qgis_project_contains_required_relative_layer_paths_and_layouts(self) -> None:
         self.assertTrue(PROJECT_PATH.exists())
@@ -49,3 +57,20 @@ class PresentationOutputTests(unittest.TestCase):
             "Cell ID",
         ):
             self.assertIn(text, project_xml)
+
+    def test_consolidated_notebooks_link_real_presentation_outputs(self) -> None:
+        combined = "\n".join(path.read_text(encoding="utf-8") for path in NOTEBOOK_PATHS)
+        for text in (
+            "1 km mainland grid cells with fire recurrence measured in a 2 km context",
+            "data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg",
+            "qgis/wildfire_exposure_screening_portugal.qgz",
+            "reports/validation/historical_exposure_screening_and_icnf_comparison.md",
+            "validate_final_visuals",
+        ):
+            self.assertIn(text, combined)
+
+    def test_notebooks_do_not_embed_absolute_personal_paths(self) -> None:
+        for path in (ROOT / "notebooks").glob("*.ipynb"):
+            content = path.read_text(encoding="utf-8").lower()
+            self.assertNotIn("c:\\\\personal\\\\", content, path)
+            self.assertNotIn("c:/personal/", content, path)

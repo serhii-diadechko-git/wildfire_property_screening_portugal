@@ -44,6 +44,42 @@ FIGURE_PATHS = {
     "summary_table": FIGURES_DIR / "historical_exposure_screening_summary_table.png",
 }
 
+QGIS_FIGURE_PATHS = {
+    "historical_exposure_map": FIGURES_DIR / "historical_wildfire_exposure_screening_mainland_portugal.png",
+    "historical_icnf_comparison_map": FIGURES_DIR / "historical_exposure_and_official_icnf_structural_hazard_comparison.png",
+}
+
+ALL_PRESENTATION_FIGURE_PATHS = {**QGIS_FIGURE_PATHS, **FIGURE_PATHS}
+
+FIGURE_SOURCE_PATHS = {
+    "historical_exposure_map": (
+        "data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg",
+        "scripts/build_qgis_presentation_project.py",
+    ),
+    "historical_icnf_comparison_map": (
+        "data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg",
+        "scripts/build_qgis_presentation_project.py",
+    ),
+    "crosstab": (
+        "reports/tables/historical_exposure_band_by_icnf_hazard_class.csv",
+        "src/final_visuals.py",
+    ),
+    "model_comparison": (
+        "reports/validation/train_validation_model_selection.json",
+        "src/final_visuals.py",
+    ),
+    "decision_limitations": (
+        "reports/validation/historical_exposure_screening_and_icnf_comparison.json",
+        "src/final_visuals.py",
+    ),
+    "summary_table": (
+        "reports/tables/historical_exposure_band_summary.csv and reports/tables/historical_exposure_band_by_icnf_hazard_class.csv",
+        "src/final_visuals.py",
+    ),
+}
+
+QGIS_VALIDATION_PATH = VALIDATION_DIR / "qgis_presentation_project_validation.json"
+
 
 def _atomic_savefig(figure: plt.Figure, path: Path, *, dpi: int = 180) -> None:
     """Save a figure without leaving a partially written presentation asset."""
@@ -217,3 +253,54 @@ def build_final_visuals() -> dict[str, str]:
         validation[name] = {"path": path.relative_to(ROOT).as_posix(), "bytes": path.stat().st_size}
     return {name: record["path"] for name, record in validation.items()}
 
+
+def validate_final_visuals() -> dict[str, object]:
+    """Verify every existing presentation figure against validated source artefacts.
+
+    This function is intentionally read-only. It validates the stable paths and
+    the source-data contracts used by the figures without rewriting any image.
+    """
+    screening, model_selection, bands, hazards, cross = _inputs()
+    qgis_validation = json.loads(QGIS_VALIDATION_PATH.read_text(encoding="utf-8"))
+
+    if not screening.get("no_predictive_claim"):
+        raise ValueError("Historical screening evidence does not satisfy the non-predictive contract")
+    evidence = screening["evidence_snapshot"]
+    if (evidence["history_start_year"], evidence["history_end_year"]) != (2016, 2025):
+        raise ValueError("Historical evidence window changed")
+    if int(bands.cell_count.sum()) != 89_112 or int(hazards.cell_count.sum()) != 89_112:
+        raise ValueError("Screening summary tables no longer cover all canonical cells")
+    if int(cross.cell_count.sum()) != 89_112:
+        raise ValueError("Historical/ICNF cross-tab no longer covers all canonical cells")
+    if model_selection["selection"]["provisional_model"] is not None:
+        raise ValueError("A model appears selected despite the closed predictive gate")
+    if model_selection["selection"]["final_temporal_test_may_begin"]:
+        raise ValueError("Final-test gate unexpectedly opened")
+    if qgis_validation["screening_view_feature_count"] != 89_112:
+        raise ValueError("QGIS validation no longer resolves all screening cells")
+
+    records: dict[str, dict[str, object]] = {}
+    for name, path in ALL_PRESENTATION_FIGURE_PATHS.items():
+        if not path.exists() or path.stat().st_size < 5_000:
+            raise ValueError(f"Missing or incomplete presentation figure: {path}")
+        image = plt.imread(path)
+        if image.ndim not in (2, 3) or min(image.shape[:2]) < 500:
+            raise ValueError(f"Presentation figure has an unexpected image shape: {path} {image.shape}")
+        source_data, source_code = FIGURE_SOURCE_PATHS[name]
+        records[name] = {
+            "path": path.relative_to(ROOT).as_posix(),
+            "source_data": source_data,
+            "source_code": source_code,
+            "bytes": path.stat().st_size,
+            "pixel_height": int(image.shape[0]),
+            "pixel_width": int(image.shape[1]),
+            "status": "verified_existing",
+        }
+
+    return {
+        "figure_count": len(records),
+        "history_window": "2016-2025",
+        "canonical_cell_count": 89_112,
+        "figures": records,
+        "images_rewritten": False,
+    }

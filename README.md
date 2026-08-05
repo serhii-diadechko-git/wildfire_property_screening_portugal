@@ -2,9 +2,9 @@
 
 ## Project overview
 
-This capstone project will help a prospective homebuyer compare residential areas in mainland Portugal from a **wildfire-exposure perspective**.
+This capstone project helps a prospective homebuyer compare residential areas in mainland Portugal from a **wildfire-exposure perspective**.
 
-The project will combine public geospatial data on historical burned areas, land cover, terrain, and climate. The result will be a reproducible screening process that identifies residential areas with comparatively lower or higher wildfire exposure and can be updated when new annual data becomes available.
+The project combines public geospatial data on historical burned areas, land cover, terrain, and climate. The result is a reproducible screening process that identifies residential areas with comparatively lower or higher historical wildfire exposure and can be updated when new annual data becomes available.
 
 > The project supports **area shortlisting only**. It does not determine whether a specific house is safe or whether it is the best property to buy.
 
@@ -35,10 +35,12 @@ Build a reproducible geospatial data-science workflow that:
 5. records limitations and unmatched official evidence explicitly;
 6. supports a reproducible update when a later complete burned-area year becomes available.
 
-## Planned outputs
+## Completed outputs
 
-- a national historical wildfire-exposure screening layer;
+- a national historical wildfire-exposure screening GeoPackage;
+- a portable QGIS presentation project with two print layouts;
 - recurrence-band and official ICNF hazard comparison tables;
+- six validated presentation maps, charts, and summary visuals;
 - a reproducible data-preparation and screening pipeline;
 - the fixed train/validation evidence explaining why no predictive model was accepted;
 - a documented limitations and update procedure.
@@ -55,10 +57,10 @@ No predictive, probability, or purchase-recommendation GeoPackage is authorized:
 
 ## Spatial design
 
-- **1 km × 1 km grid cell:** the analytical and prediction unit.
-- **2 km surrounding buffer:** an initial distance used for selected vegetation, slope, and previous-fire features.
+- **1 km x 1 km grid cell:** the sole analytical unit.
+- **2 km surrounding buffer:** the outward context used for vegetation, slope, and previous-fire features.
 
-The 2 km value is not a second resolution. It is a modelling assumption that will be tested during sensitivity analysis.
+The 2 km value is not a second analytical resolution. The final descriptive screening represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**.
 
 ## Temporal methodology and data scope
 
@@ -81,7 +83,7 @@ The initial project uses four public source groups:
 - ICNF annual burned-area cartography and the official structural wildfire-hazard raster;
 - Copernicus CLC broad land-cover context and CAOP administrative boundaries;
 - Copernicus DEM GLO-30 terrain data;
-- ERA5-Land temperature and precipitation data.
+- ERA5-Land temperature, precipitation, and layer-1 soil-water data.
 
 Access methods, expected fields, and known limitations are documented in the [source plan](docs/source_plan.md).
 
@@ -133,12 +135,6 @@ Open [`notebooks/00_environment_test.ipynb`](notebooks/00_environment_test.ipynb
 4. restart the kernel if another interpreter was previously selected;
 5. choose **Run All**.
 
-The first notebook cell prints the active Python executable. It should point to:
-
-```text
-...\wildfire_property_screening_portugal\.venv\Scripts\python.exe
-```
-
 If an import such as `matplotlib` cannot be found, the notebook is almost certainly using a different kernel. Re-select the `.venv` kernel and run the notebook again.
 
 ### 5. Run the repository validation
@@ -175,13 +171,36 @@ Never commit, share, print, or copy the token into this repository. After depend
 
 Run the notebooks in this order:
 
-1. [`00_environment_test.ipynb`](notebooks/00_environment_test.ipynb) — validate the environment, imports, coordinate transformation, modelling library, and output paths.
-2. [`01_data_collection.ipynb`](notebooks/01_data_collection.ipynb) — collect or import public raw data and record source metadata.
-3. [`02_data_preparation.ipynb`](notebooks/02_data_preparation.ipynb) — clean, validate, standardise, and integrate the geospatial data.
+1. [`00_environment_test.ipynb`](notebooks/00_environment_test.ipynb) — validate the environment, imports, coordinate transformation, and output paths.
+2. [`01_data_collection.ipynb`](notebooks/01_data_collection.ipynb) — inspect the immutable source inventory and provenance records.
+3. [`02_data_preparation.ipynb`](notebooks/02_data_preparation.ipynb) — inspect preparation and validation evidence for canonical inputs.
 4. [`03_eda.ipynb`](notebooks/03_eda.ipynb) — analyse coverage, missing values, distributions, and historical wildfire patterns.
 5. [`04_modelling.ipynb`](notebooks/04_modelling.ipynb) — record the completed fixed train/validation experiment and why no predictive model was selected; run no new modelling.
 6. [`05_evaluation_recommendations.ipynb`](notebooks/05_evaluation_recommendations.ipynb) — inspect the historical/descriptive screening and official ICNF comparison.
-7. [`06_final_charts.ipynb`](notebooks/06_final_charts.ipynb) — export final maps, figures, and tables for the report and README.
+7. [`06_final_charts.ipynb`](notebooks/06_final_charts.ipynb) — verify the six final presentation visuals against their real source artefacts without creating duplicate versions.
+
+## Reviewer quick start
+
+After installing the environment, run the notebooks in the order above from fresh kernels. The notebooks are inspection and orchestration layers: they use the existing validated artefacts and do not require a national rebuild for routine review.
+
+Open [`qgis/wildfire_exposure_screening_portugal.qgz`](qgis/wildfire_exposure_screening_portugal.qgz) in QGIS for the interactive presentation. Its layers use repository-relative paths. See [`qgis/README.md`](qgis/README.md) for layer meanings, layout names, provenance, and limitations.
+
+Key reviewer outputs are:
+
+- screening GeoPackage: `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`;
+- final maps and charts: `reports/figures/`;
+- comparison tables: `reports/tables/`;
+- validated analytical and presentation reports: `reports/validation/`.
+
+Run full processing scripts only when regeneration is explicitly required. Read-only verification is available with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\build_historical_exposure_screening.py --validate-existing
+.\.venv\Scripts\python.exe -m unittest tests.test_presentation_outputs -v
+scripts\run_qgis_presentation_project.bat --validate-existing
+```
+
+Regenerating the QGIS project or presentation figures is a deliberate maintenance action; it is not part of the normal notebook review path.
 
 ## Project structure
 
@@ -198,7 +217,7 @@ wildfire_property_screening_portugal/
 ├── tests/                    # Environment and notebook validation
 ├── reports/
 │   ├── figures/              # Exported maps and charts
-│   ├── tables/               # Exported ranked tables
+│   ├── tables/               # Exported summary and comparison tables
 │   ├── bi_exports/           # Optional Power BI or Tableau files
 │   └── validation/           # Validation reports
 ├── docs/                     # Project documentation
@@ -223,7 +242,7 @@ Detailed definitions are available in the [success criteria](docs/success_criter
 
 ## Current status and findings
 
-The canonical panel and EDA are validated. The fixed train/validation regression experiment is complete, and no candidate passed the predeclared gate; predictive modelling is closed and final-test performance remains unopened. The final historical screening layer contains 89,112 mainland cells, uses observed 2016-2025 recurrence, and is compared descriptively with the official ICNF structural-hazard raster.
+The canonical panel and EDA are validated. The fixed train/validation regression experiment is complete, and no candidate passed the predeclared gate; predictive modelling is closed and final-test performance remains unopened. The final historical screening layer contains 89,112 mainland cells, uses observed 2016-2025 recurrence, and is compared descriptively with the official ICNF structural-hazard raster. The portable QGIS project, two map layouts, and four supporting presentation visuals are complete and validated.
 
 ## BI dashboard
 

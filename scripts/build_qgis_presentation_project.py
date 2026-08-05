@@ -6,12 +6,24 @@ environment.  It reads existing GeoPackages only and never rewrites their data.
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
 from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+# Python 3.8+ requires dependent DLL locations to be registered explicitly on
+# Windows. Keep the handles alive for the process lifetime so the standalone
+# PyQGIS runner can import Qt without relying on the caller's current directory.
+_QGIS_DLL_HANDLES = []
+if os.name == "nt" and os.environ.get("OSGEO4W_ROOT"):
+    qgis_root = Path(os.environ["OSGEO4W_ROOT"])
+    for relative_path in ("bin", "apps/qt5/bin", "apps/qgis-ltr/bin"):
+        dll_path = qgis_root / relative_path
+        if dll_path.is_dir():
+            _QGIS_DLL_HANDLES.append(os.add_dll_directory(dll_path))
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -370,13 +382,25 @@ def build_project() -> dict[str, object]:
     return record
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--validate-existing",
+        action="store_true",
+        help="Open and validate the existing portable project without rebuilding or exporting it.",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    arguments = _parse_args()
     qgis_prefix = os.environ.get("QGIS_PREFIX_PATH")
     QgsApplication.setPrefixPath(qgis_prefix or "", True)
     # Layout export needs the Qt GUI resources even though QT_QPA_PLATFORM is offscreen.
     application = QgsApplication([], True)
     application.initQgis()
     try:
-        print(json.dumps(build_project(), indent=2))
+        result = _validate_project() if arguments.validate_existing else build_project()
+        print(json.dumps(result, indent=2))
     finally:
         application.exitQgis()

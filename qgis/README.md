@@ -2,7 +2,7 @@
 
 Open `wildfire_exposure_screening_portugal.qgz` in QGIS 3.44 or later. The project uses EPSG:3763 and stores project-relative paths where QGIS can resolve them from the repository root. It reads existing GeoPackages only; it does not duplicate or alter them.
 
-To regenerate the project and its layout exports on this workstation, run `scripts\run_qgis_presentation_project.bat` from the repository root. It uses the installed QGIS runtime and creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
+For a read-only package/layer/layout-path check, run `.\.venv\Scripts\python.exe -m unittest tests.test_presentation_outputs -v` and `scripts\run_qgis_presentation_project.bat --validate-existing` from the repository root. To deliberately regenerate the project and its layout exports, run the latter command without the flag. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
 
 ## Layer tree
 
@@ -19,6 +19,8 @@ The historical palette progresses from sand through orange to dark red. It delib
 - `Historical Exposure and Official ICNF Structural Hazard — Comparison`
 
 Both layouts include a scale bar, north arrow, source note, EPSG:3763, the 1 km / 2 km context statement, and the mandatory limitations statement. PNG and PDF exports are stored in `reports/figures/`.
+
+The two map exports and four validated chart/table visuals are indexed and checked by `notebooks/06_final_charts.ipynb`. That notebook verifies their stable paths and source artefacts without duplicating or rewriting the images.
 
 ## Provenance and limitations
 
