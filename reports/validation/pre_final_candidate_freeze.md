@@ -1,5 +1,7 @@
 # Pre-final candidate freeze
 
+> **Superseded for final evaluation:** this is the historical pre-extension freeze for the original T=2015-2019 training experiment. The final test used the separately frozen extended candidates trained on T=2010-2019; see `final_temporal_test_protocol.md` and `extended_training_model_refit.md`. The historical record is preserved for traceability.
+
 Updated 2026-08-05. This record freezes candidate artefacts after train/validation work only. It does **not** open, score, or otherwise use final-test predictor years T=2022-2024.
 
 ## Frozen candidates

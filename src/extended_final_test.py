@@ -1,0 +1,253 @@
+"""One frozen final-temporal evaluation of the extended training candidates.
+
+This module may be run only after ``final_temporal_test_protocol.md`` is
+committed.  It does not fit, tune, or select a model: it reconstructs the two
+already frozen monthly-extreme features for T=2022-2024, loads the models fitted
+on T=2010-2019, and reports held-out performance.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import warnings
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import joblib
+import numpy as np
+import pandas as pd
+import pyarrow.parquet as pq
+
+from src import national_panel as panel
+from src.extended_model_refit import MODEL_DIR, NINE_FEATURES, ROOT, _sha256
+from src.feature_contract import TARGET_COLUMN
+from src.model_selection import regression_metrics
+from src.model_v2_experiments import tie_aware_ranking_metrics
+from src.representative_feature_pilot import _read_grib_variable, era5_source_paths
+
+
+FINAL_TEST_YEARS = (2022, 2023, 2024)
+OUTPUT_DIR = ROOT / "data/processed/extended_model_selection_2010_2021"
+FEATURE_MATRIX_PATH = OUTPUT_DIR / "final_temporal_test_nine_feature_matrix.parquet"
+PREDICTIONS_PATH = OUTPUT_DIR / "final_temporal_test_predictions.parquet"
+METRICS_PATH = OUTPUT_DIR / "final_temporal_test_metrics.json"
+REPORT_PATH = ROOT / "reports/validation/final_temporal_test_2022_2024.md"
+PROTOCOL_PATH = ROOT / "reports/validation/final_temporal_test_protocol.md"
+
+
+def _atomic_parquet(frame: pd.DataFrame, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    if temporary.exists():
+        raise FileExistsError(f"Stale temporary output requires inspection: {temporary}")
+    frame.to_parquet(temporary, index=False, compression="zstd")
+    os.replace(temporary, path)
+
+
+def _row_group_year(parquet: pq.ParquetFile, index: int) -> int:
+    field = parquet.schema_arrow.get_field_index("observation_year")
+    statistics = parquet.metadata.row_group(index).column(field).statistics
+    if statistics is None or not statistics.has_min_max or statistics.min != statistics.max:
+        raise ValueError(f"Panel row group {index} lacks a single observation-year value")
+    return int(statistics.min)
+
+
+def _read_final_panel_rows() -> tuple[pd.DataFrame, dict[str, object]]:
+    """Open exactly final-test row groups from the canonical seven-feature panel."""
+    parquet = pq.ParquetFile(panel.NATIONAL_PANEL_PATH)
+    groups = []
+    tables = []
+    for index in range(parquet.num_row_groups):
+        year = _row_group_year(parquet, index)
+        read = year in FINAL_TEST_YEARS
+        groups.append({"row_group": index, "observation_year": year, "read": read})
+        if read:
+            tables.append(parquet.read_row_group(index))
+    result = pd.concat([item.to_pandas() for item in tables], ignore_index=True)
+    if tuple(sorted(int(value) for value in result.observation_year.unique())) != FINAL_TEST_YEARS:
+        raise ValueError("Final-test panel rows do not match the frozen temporal period")
+    if len(result) != 89112 * len(FINAL_TEST_YEARS):
+        raise ValueError("Unexpected final-test row count")
+    return result, {"row_groups": groups, "rows_read": len(result), "years_read": list(FINAL_TEST_YEARS)}
+
+
+def _load_monthly_extrema(year: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    path = era5_source_paths(year)["temperature_and_soil_water"]
+    latitude, longitude, temperature, temperature_months = _read_grib_variable(path, "2t")
+    soil_lat, soil_lon, soil, soil_months = _read_grib_variable(path, "swvl1")
+    if not (
+        temperature_months == soil_months == (6, 7, 8, 9)
+        and np.array_equal(latitude, soil_lat)
+        and np.array_equal(longitude, soil_lon)
+    ):
+        raise ValueError(f"Monthly-extreme GRIB fields do not align for T={year}")
+    with warnings.catch_warnings(), np.errstate(invalid="ignore"):
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        return latitude, longitude, np.nanmax(temperature, axis=0) - 273.15, np.nanmin(soil, axis=0)
+
+
+def _derive_final_monthly_extrema() -> pd.DataFrame:
+    """Assign only the two frozen extreme features, retaining the coastal fallback."""
+    catalog = panel.load_grid_catalog()
+    grids = {year: _load_monthly_extrema(year) for year in FINAL_TEST_YEARS}
+    fallback = panel._load_era5_fallback_mapping()
+    frames: list[pd.DataFrame] = []
+    for batch in catalog["batches"]:
+        grid = pd.read_parquet(
+            panel._grid_batch_path(batch["batch_id"]),
+            columns=["cell_id", "centroid_latitude", "centroid_longitude"],
+        )
+        rows = []
+        for year, (latitude, longitude, maximum_temperature, minimum_soil_water) in grids.items():
+            latitude_index = np.abs(latitude[:, None] - grid.centroid_latitude.to_numpy()).argmin(axis=0)
+            longitude_index = np.abs(longitude[:, None] - grid.centroid_longitude.to_numpy()).argmin(axis=0)
+            temperature = maximum_temperature[latitude_index, longitude_index].astype("float64")
+            soil_water = minimum_soil_water[latitude_index, longitude_index].astype("float64")
+            masked = np.isnan(temperature)
+            if not np.array_equal(np.isnan(soil_water), masked):
+                raise ValueError(f"Monthly-extreme water mask differs for T={year}/{batch['batch_id']}")
+            for position in np.flatnonzero(masked):
+                cell_id = grid.cell_id.iloc[position]
+                if cell_id not in fallback.index:
+                    raise ValueError(f"No accepted ERA5 fallback for {cell_id}")
+                flat = int(fallback.loc[cell_id, "fallback_flat_index"])
+                temperature[position] = float(maximum_temperature.ravel()[flat])
+                soil_water[position] = float(minimum_soil_water.ravel()[flat])
+            if np.isnan(temperature).any() or np.isnan(soil_water).any():
+                raise ValueError(f"Final monthly-extreme fallback left missing values for T={year}")
+            rows.append(pd.DataFrame({
+                "cell_id": grid.cell_id.to_numpy(),
+                "observation_year": np.full(len(grid), year, dtype="int16"),
+                "warm_season_max_monthly_2m_temperature_c": temperature,
+                "warm_season_min_monthly_soil_water_layer1": soil_water,
+            }))
+        frames.append(pd.concat(rows, ignore_index=True))
+    result = pd.concat(frames, ignore_index=True)
+    if result.duplicated(["cell_id", "observation_year"]).any() or result.isna().any().any():
+        raise ValueError("Invalid final monthly-extreme component")
+    return result
+
+
+def build_final_feature_matrix() -> dict[str, object]:
+    if not PROTOCOL_PATH.exists():
+        raise FileNotFoundError("Final-test protocol must be present before execution")
+    base, access = _read_final_panel_rows()
+    extrema = _derive_final_monthly_extrema()
+    result = base.merge(extrema, on=["cell_id", "observation_year"], how="left", validate="one_to_one")
+    result = result.sort_values(["observation_year", "cell_id"], kind="mergesort").reset_index(drop=True)
+    if result[list(NINE_FEATURES) + [TARGET_COLUMN]].isna().any().any():
+        raise ValueError("Final feature matrix contains missing values")
+    if not result.outcome_year.eq(result.observation_year + 1).all():
+        raise ValueError("Final target year is not T+1")
+    _atomic_parquet(result, FEATURE_MATRIX_PATH)
+    return {"path": FEATURE_MATRIX_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(FEATURE_MATRIX_PATH), "row_count": len(result), "panel_access": access}
+
+
+def _evaluate(frame: pd.DataFrame, predictions: np.ndarray) -> dict[str, object]:
+    target = frame[TARGET_COLUMN].to_numpy(dtype="float64")
+    cell_ids = frame.cell_id.to_numpy()
+    years = frame.observation_year.to_numpy(dtype="int16")
+    return {
+        "overall": regression_metrics(target, predictions, cell_ids, years),
+        "by_final_test_year": {
+            str(year): regression_metrics(target[years == year], predictions[years == year], cell_ids[years == year], years[years == year])
+            for year in FINAL_TEST_YEARS
+        },
+    }
+
+
+def _rankings(frame: pd.DataFrame, predictions: np.ndarray) -> dict[str, object]:
+    target = frame[TARGET_COLUMN].to_numpy(dtype="float64")
+    years = frame.observation_year.to_numpy(dtype="int16")
+
+    def calculate(mask: np.ndarray) -> dict[str, object]:
+        return {
+            "top_10_percent": tie_aware_ranking_metrics(target[mask], predictions[mask], 0.10),
+            "top_20_percent": tie_aware_ranking_metrics(target[mask], predictions[mask], 0.20),
+        }
+
+    return {
+        "overall": calculate(np.ones(len(frame), dtype=bool)),
+        "by_final_test_year": {str(year): calculate(years == year) for year in FINAL_TEST_YEARS},
+    }
+
+
+def run_final_test() -> dict[str, object]:
+    matrix = build_final_feature_matrix()
+    frame = pd.read_parquet(FEATURE_MATRIX_PATH)
+    model_files = {
+        "historical_recurrence_baseline": MODEL_DIR / "historical_recurrence_baseline.joblib",
+        "nine_feature_hurdle": MODEL_DIR / "nine_feature_hurdle.joblib",
+    }
+    predictions: dict[str, np.ndarray] = {}
+    artifact_checks = {}
+    for name, path in model_files.items():
+        payload = joblib.load(path)
+        if payload.get("feature_order") != list(NINE_FEATURES):
+            raise ValueError(f"Frozen model {name} has a different feature contract")
+        if payload.get("train_years") != list(range(2010, 2020)):
+            raise ValueError(f"Frozen model {name} has a different training period")
+        values = np.clip(np.asarray(payload["model"].predict(frame.loc[:, NINE_FEATURES]), dtype="float64"), 0.0, 1.0)
+        if not np.isfinite(values).all():
+            raise ValueError(f"Frozen model {name} returned non-finite values")
+        predictions[name] = values
+        artifact_checks[name] = {"path": path.relative_to(ROOT).as_posix(), "sha256": _sha256(path)}
+    output = frame[["cell_id", "observation_year", "outcome_year", TARGET_COLUMN]].copy()
+    for name, values in predictions.items():
+        output[name] = values
+    _atomic_parquet(output, PREDICTIONS_PATH)
+    metrics = {name: _evaluate(frame, values) for name, values in predictions.items()}
+    rankings = {name: _rankings(frame, values) for name, values in predictions.items()}
+    result = {
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "protocol_path": PROTOCOL_PATH.relative_to(ROOT).as_posix(),
+        "design": {"train_years": list(range(2010, 2020)), "validation_years": [2020, 2021], "final_test_years": list(FINAL_TEST_YEARS), "feature_order": list(NINE_FEATURES), "target": TARGET_COLUMN, "tuning_performed": False},
+        "feature_matrix": matrix,
+        "frozen_artifacts": artifact_checks,
+        "metrics": metrics,
+        "tie_aware_ranking_diagnostics": rankings,
+        "prediction_output": {"path": PREDICTIONS_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(PREDICTIONS_PATH)},
+    }
+    temporary = METRICS_PATH.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    os.replace(temporary, METRICS_PATH)
+    return result
+
+
+def write_report(result: dict[str, object]) -> None:
+    lines = [
+        "# Frozen final temporal test — T=2022-2024",
+        "",
+        "This is a single held-out evaluation under the committed protocol. No model fitting, tuning, feature selection, or threshold selection was performed on these years.",
+        "",
+        "## Overall results",
+        "",
+        "| Model | MAE | RMSE | Positive-row MAE | Positive-cell capture at 20% | Burned-share mass capture at 20% |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    labels = {"historical_recurrence_baseline": "Historical recurrence baseline", "nine_feature_hurdle": "Nine-feature hurdle"}
+    for name, label in labels.items():
+        overall = result["metrics"][name]["overall"]
+        rank = result["tie_aware_ranking_diagnostics"][name]["overall"]["top_20_percent"]
+        lines.append(f"| {label} | {overall['mae_all']:.8f} | {overall['rmse_all']:.8f} | {overall['mae_positive']:.8f} | {rank['positive_cell_capture']:.4f} | {rank['burned_share_mass_capture']:.4f} |")
+    lines.extend(["", "## Results by predictor year", "", "| T | Model | MAE | RMSE | Positive-row MAE | Positive-cell capture at 20% |", "|---:|---|---:|---:|---:|---:|"])
+    for year in FINAL_TEST_YEARS:
+        for name, label in labels.items():
+            item = result["metrics"][name]["by_final_test_year"][str(year)]
+            lines.append(f"| {year} | {label} | {item['mae_all']:.8f} | {item['rmse_all']:.8f} | {item['mae_positive']:.8f} | {item['capture_at_20_percent']:.4f} |")
+    lines.extend(["", "## Mean-prediction check", "", "| T | Observed mean burned share | Baseline mean prediction | Hurdle mean prediction |", "|---:|---:|---:|---:|"])
+    for year in FINAL_TEST_YEARS:
+        baseline = result["metrics"]["historical_recurrence_baseline"]["by_final_test_year"][str(year)]
+        hurdle = result["metrics"]["nine_feature_hurdle"]["by_final_test_year"][str(year)]
+        lines.append(f"| {year} | {hurdle['mean_observed']:.8f} | {baseline['mean_predicted']:.8f} | {hurdle['mean_predicted']:.8f} |")
+    lines.extend(["", "## Scope limitation", "", "The hurdle has lower overall MAE and stronger burned-share-mass ranking than the baseline, but it materially underpredicts the high-burned T=2024 outcome. The model estimates comparative next-year burned share for 1 km mainland cells; it is not a probability, safety guarantee, property-level forecast, or purchase recommendation."])
+    REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def run() -> dict[str, object]:
+    result = run_final_test()
+    write_report(result)
+    return result

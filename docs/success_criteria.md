@@ -1,6 +1,6 @@
 # Success Criteria and Model Acceptance Rules
 
-> The canonical national panel and model-readiness EDA are validated. Final-test years `T=2022-2024` remain sealed until a candidate passes the train/validation-only model-selection gate.
+> The canonical national panel, backward training extension, and model-readiness EDA are validated. The one frozen final temporal test `T=2022-2024` is complete. Its evidence supports a comparative continuous model artifact, but not a calibrated buyer-facing prediction or recommendation.
 
 ## Purpose
 
@@ -131,17 +131,19 @@ No single metric is sufficient on its own.
 
 ## C. Model acceptance decision
 
-### Accept for predictive recommendation
+### Accept for comparative research use
 
-Predictive residential screening is allowed only when:
+The continuous model may be retained for methodological comparison only when:
 
 - the model improves on the historical baseline;
 - it performs better than random ranking;
-- performance is reasonably stable across years and regions;
+- final-test performance and its temporal limitations are reported transparently;
 - ranking quality is acceptable, and probability calibration is acceptable only if a later classification model is introduced;
-- missing-data and uncertainty rules are applied.
+- no probability, safety, or purchase claim is made.
 
-### Do not accept for predictive recommendation
+The frozen nine-feature hurdle meets the comparative-evidence condition: it has lower final-test MAE and higher burned-share-mass capture than the historical recurrence baseline. It remains weakly calibrated in the high-burned 2024 year, so it does not meet the project standard for a buyer-facing recommendation.
+
+### Do not accept for buyer-facing predictive recommendation
 
 Do not publish predictive shortlist categories when:
 

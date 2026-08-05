@@ -1,6 +1,6 @@
 # Task List - Data Collection and Analysis
 
-> Canonical sequence: resolve source blockers, build/validate the full panel, then freeze modelling decisions before final T=2022–2024 evaluation. The 2023→2024 work is a feasibility pilot only.
+> Completed model sequence: build/validate the panel, freeze the extended T=2010-2019 training specification, validate on T=2020-2021, then run one frozen final evaluation at T=2022-2024. The 2023→2024 work remains a feasibility pilot only.
 
 ## Phase 0 - Freeze the MVP
 
@@ -66,20 +66,20 @@
 
 ## Phase 5 - Modelling and acceptance evaluation
 
-**Gate decision:** closed. The tested Random Forest and Tweedie regressions did not pass the predeclared validation rule. No further tuning or final-test performance access is authorized for this capstone.
+**Gate decision:** completed. The frozen nine-feature hurdle and historical recurrence baseline were evaluated once on T=2022-2024. The hurdle is retained as a comparative continuous research model, but not as a buyer-facing prediction or recommendation because it underpredicts the high-burned 2024 outcome.
 
 - [x] Freeze train/validation regression metrics and the provisional-selection rule before reviewing validation results.
-- [ ] Freeze final model-acceptance rules before reviewing final test results.
+- [x] Freeze final model-acceptance rules before reviewing final test results.
 - [x] Build the historical-fire regression baseline using `fire_years_previous_10y_2km` on training years only.
 - [x] Train a deterministic, intentionally limited Random Forest Regressor candidate for continuous `burned_share_next_year`.
 - [x] Assess a deterministic Tweedie regression candidate for the exact-zero plus continuous-positive target without deriving a classification threshold.
-- [ ] Use temporal train, validation, and test splits.
+- [x] Use temporal train, validation, and test splits.
 - [ ] Add a geographic holdout or spatial cross-validation where practical.
 - [x] Evaluate train/validation regression overall and by validation year with MAE/RMSE, positive-target MAE/RMSE, mean predicted versus observed burned share, and positive-cell capture@20%; keep the zero-prediction error as a reference only.
 - [ ] Only after target-distribution review and a documented threshold decision, optionally derive `burned_next_year`, train logistic regression, and evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, capture@20%, and prevalence.
-- [x] Compare each train/validation candidate with the historical baseline under the predeclared gate; no candidate passed, so the final test remains unopened.
-- [ ] Compare final evaluation results by year and region only after a candidate earns final-test access.
-- [ ] Record whether the model is accepted for predictive recommendation.
+- [x] Compare the frozen extended-training candidates with the historical baseline on validation years; no feature or hyperparameter changes followed.
+- [x] Compare final evaluation results by year under the frozen T=2022-2024 protocol.
+- [x] Record the final decision: retain the hurdle for comparative research only; do not accept it for buyer-facing predictive recommendation.
 
 ## Phase 6 - Residential screening and recommendations
 

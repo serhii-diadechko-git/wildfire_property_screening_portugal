@@ -1,5 +1,7 @@
 # Train/validation regression model selection
 
+> **Historical record — superseded for the final modelling decision.** This report records the original seven-feature, `T=2015–2019` / `T=2020–2021` gate. The later, frozen expanded-training evaluation and its one authorised final temporal test are recorded in `extended_training_model_refit.md`, `final_temporal_test_protocol.md`, `final_temporal_test_2022_2024.md`, and `model_final_decision.md`. This report is retained unchanged as pre-extension evidence.
+
 **No candidate passed the predeclared validation gate.** Final temporal testing must not begin until the model design is reconsidered without consulting final-test outcomes.
 
 No records from final-test years `T=2022-2024` were opened, fitted, tuned, scored, or reported. This report covers training `T=2015-2019` and validation `T=2020-2021` only.

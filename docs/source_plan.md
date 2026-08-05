@@ -1,6 +1,6 @@
 # Source Plan
 
-> Canonical land-cover governance: use Copernicus CLC, not COS/COSc. The reference year must be no later than predictor year `T`. Use the current official revised package for each historical reference layer: CLC 2006 for `T=2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Record reference year, current package version, package release/update date, URL, licence, checksum, CRS, and coverage. This is retrospective covariate reconstruction, not proof that the revised package was operationally available at `T`. Copernicus DEM GLO-30 supplies static 2 km slope context with version/licence/tile/CRS/checksum provenance.
+> Canonical land-cover governance: use Copernicus CLC, not COS/COSc. The reference year must be no later than predictor year `T`. Use the current official revised package for each historical reference layer: CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Record reference year, current package version, package release/update date, URL, licence, checksum, CRS, and coverage. This is retrospective covariate reconstruction, not proof that the revised package was operationally available at `T`. Copernicus DEM GLO-30 supplies static 2 km slope context with version/licence/tile/CRS/checksum provenance.
 
 Collection date for this initial plan: **31 July 2026**.
 
@@ -18,14 +18,14 @@ These sources support the agreed MVP schema. Optional feature sources are intent
 
 ## ICNF temporal scope and roles
 
-The agreed model design requires ICNF annual burned-area archives for `2005-2025` inclusive. This is a project data requirement, not a statement that every required annual archive has already been collected or its availability confirmed.
+The expanded model-development and final-test design requires ICNF annual burned-area archives for `2000-2025` inclusive. These local archives are registered with immutable paths, checksums, CRS/schema facts, and derived-only geometry-repair logs.
 
 | Role | Years required | Use in the model panel |
 |---|---|---|
-| Historical-fire input | `2005-2023` | For each predictor reference year `T` from `2015` through `2024`, calculate `fire_years_previous_10y_2km` from the inclusive pre-`T` window `T-10` through `T-1`. |
-| Observed outcome label | `2016-2025` | For each `T` from `2015` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
+| Historical-fire input | `2000-2023` | For each predictor reference year `T` from `2010` through `2024`, calculate `fire_years_previous_10y_2km` from the inclusive pre-`T` window `T-10` through `T-1`. |
+| Observed outcome label | `2011-2025` | For each `T` from `2010` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
 
-The predictor-reference panel is `T = 2015-2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad retrospective land-cover context, not annual parcel-level land cover; its governed reference year is always no later than `T`, while its current revised package version is provenance rather than historical availability evidence. ERA5-Land uses only JJAS observations/reanalysis values from `T`; use the containing valid source cell or, for a water-masked containing cell, the validated deterministic nearest valid land cell, without interpolation.
+The canonical national seven-feature panel is `T=2015-2024`. The model-development extension uses fitting years `2010-2019`, validation years `2020-2021`, and a completed frozen final temporal test at `T=2022-2024`. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad retrospective land-cover context, not annual parcel-level land cover; its governed reference year is always no later than `T`, while its current revised package version is provenance rather than historical availability evidence. ERA5-Land uses only JJAS observations/reanalysis values from `T`; use the containing valid source cell or, for a water-masked containing cell, the validated deterministic nearest valid land cell, without interpolation.
 
 ## Validation and comparison source
 
@@ -60,11 +60,11 @@ For every downloaded dataset, record:
 - missing coverage and warnings;
 - checksum or file size where practical.
 
-## Feasibility risks to resolve first
+## Verified processing controls
 
-1. Use the validated Portugal-clipped CLC 2006/2012/2018 GeoPackages under `data/processed/clc/`, preserve their immutable Europe-wide ZIP lineage under `data/raw/clc/`, and enforce `reference_year <= T`.
-2. Inspect an ICNF burned-area sample for schema and geometry validity.
-3. Test the Copernicus DEM download and `mean_slope_2km` calculation.
-4. Test ERA5-Land temperature, day-weighted precipitation, and layer-1 soil-water aggregation.
-5. Validate the 1 km cell and initial 2 km buffer workflow.
-6. Confirm that national processing is feasible within course time and hardware limits.
+1. The Portugal-clipped CLC 2006/2012/2018 GeoPackages are validated under `data/processed/clc/`; immutable Europe-wide ZIP lineage is retained under `data/raw/clc/`; `reference_year <= T` is enforced.
+2. ICNF archives are schema/CRS/checksum-validated and use a derived-only geometry-repair policy.
+3. Copernicus DEM GLO-30 supplies the metric `mean_slope_2km` calculation.
+4. ERA5-Land uses T-only JJAS temperature, corrected day-weighted precipitation, and layer-1 soil-water aggregation.
+5. The 1 km grid and mainland-masked 2 km context-buffer workflow is validated and restartable.
+6. National processing is feasible in bounded batches. The final model refit and its final-test evidence are separate from raw-source preparation.

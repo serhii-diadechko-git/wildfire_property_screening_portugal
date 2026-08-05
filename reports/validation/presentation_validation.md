@@ -1,5 +1,7 @@
 # Capstone presentation validation
 
+> **Historical presentation record.** This validation predates the frozen expanded-training model evaluation and authorised final temporal test. Before a final presentation is delivered, refresh the model-results slides from `reports/validation/model_final_decision.md`; the validated historical screening/QGIS material remains the buyer-facing comparative output.
+
 Validation date: 2026-08-05  
 Author: Serhii Diadechko  
 Presentation: `reports/presentation/wildfire_exposure_screening_capstone_presentation.pptx`  

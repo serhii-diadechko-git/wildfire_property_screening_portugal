@@ -2,7 +2,7 @@
 
 ## Analytical unit
 
-> Canonical schema: seven predictors are `built_up_share`, `forest_shrub_share_2km`, `mean_slope_2km`, `fire_years_previous_10y_2km`, and three T-only JJAS ERA5-Land fields. Identifiers/geometry are stored separately.
+> Canonical national-panel schema: seven predictors are `built_up_share`, `forest_shrub_share_2km`, `mean_slope_2km`, `fire_years_previous_10y_2km`, and three T-only JJAS ERA5-Land fields. The fixed final model adds two explicitly documented monthly-extreme climate fields. Identifiers/geometry are stored separately.
 
 One analytical record represents one **1 km grid cell and one predictor reference year `T`**.
 
@@ -18,11 +18,11 @@ The 2 km buffer is not a second grid resolution. It is an initial modelling para
 
 ## Temporal scope and split
 
-The approved predictor-reference panel is `T = 2015-2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. The required ICNF annual burned-area archive range is `2005-2025` inclusive.
+The canonical national seven-feature panel is `T=2015-2024`. The validated model-development extension uses fitting years `2010-2019`, validation years `2020-2021`, and one completed frozen final temporal test at `T=2022-2024`. The expanded ICNF archive range is `2000-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
-CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
+CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
 
 ## Technical identifiers
 
@@ -61,17 +61,26 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 
 ## Model and decision outputs
 
-These fields were conditional design concepts. No predictive output was accepted because the tested regression candidates failed the validation gate; none is present in the historical screening layer.
+The retained final model is a continuous comparative research artifact, not a probability, safety score, or buyer-facing recommendation. None of these model-output fields is present in the historical screening layer.
 
 | Column | Type | Meaning |
 |---|---|---|
-| `predicted_burned_share_next_year` | float, 0-1 | Initial regression output: predicted share of the cell's mainland-land area burned in `T+1`. It is a continuous burned-share estimate, not a probability. |
+| `predicted_burned_share_next_year` | float, 0-1 | Fixed nine-feature hurdle output: estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
 | `predicted_wildfire_probability` | float, 0-1 | Conditional future output only if a separate classification model and `burned_next_year` threshold are later documented. Probability metrics and calibration do not apply to the initial regression output. |
 | `structural_exposure_score` | float or category | Exposure estimate based mainly on slower-changing features and historical fire activity. Final calculation is defined only after model validation. |
 | `annual_outlook_score` | float or category | Updated result using the latest available annual inputs. Final calculation is defined only after model validation. |
 | `score_stability` | float or category | Stability of the result across test years and reasonable model variants. |
 | `uncertainty_flag` | category | Normal, caution, or insufficient evidence. |
-| `recommendation_category` | category | Stronger shortlist candidate, candidate with caution, higher-exposure area, or insufficient evidence. |
+| `recommendation_category` | category | Conditional future concept only; no buyer-facing recommendation category is authorized by the current model evidence. |
+
+## Fixed final-model additions
+
+These two fields are used only in `data/processed/extended_model_selection_2010_2021/nine_feature_train_validation_matrix.parquet` and the fixed nine-feature model. They are not part of the canonical seven-feature national panel.
+
+| Column | Type | Unit | Description | Source / derivation |
+|---|---|---|---|---|
+| `warm_season_max_monthly_2m_temperature_c` | float | degrees Celsius | Maximum of the four monthly mean 2 m temperatures for June-September in predictor year `T`. | ERA5-Land `2m_temperature`; T-only JJAS GRIB |
+| `warm_season_min_monthly_soil_water_layer1` | float | m³/m³ | Minimum of the four monthly mean layer-1 volumetric soil-water values for June-September in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1`; T-only JJAS GRIB |
 
 ## Historical exposure screening output
 

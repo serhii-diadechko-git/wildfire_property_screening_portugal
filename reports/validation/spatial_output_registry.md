@@ -21,6 +21,6 @@ The canonical machine-learning dataset remains `data/processed/national_panel_20
 
 ## Conditional future outputs
 
-- No model prediction/exposure or purchase-recommendation GeoPackage is authorized because no candidate passed the train/validation gate.
+- No model prediction/exposure or purchase-recommendation GeoPackage is authorized. The final retained model is a continuous comparative research artifact with a documented high-burn-year calibration limitation; see `model_final_decision.md`.
 - Such outputs would require a separate future methodology decision and a new validated predictive gate; they are not part of the current capstone result.
 - Important spatial EDA diagnostics may be added when they answer a defined analytical question; ten geometry copies of the national panel are not planned.

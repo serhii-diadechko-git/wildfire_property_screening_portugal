@@ -42,7 +42,8 @@ Build a reproducible geospatial data-science workflow that:
 - recurrence-band and official ICNF hazard comparison tables;
 - six validated presentation maps, charts, and summary visuals;
 - a reproducible data-preparation and screening pipeline;
-- the fixed train/validation evidence explaining why no predictive model was accepted;
+- a frozen final-temporal evaluation of the historical baseline and nine-feature hurdle model;
+- a reusable fixed-specification continuous burned-share model trained on T=2010-2021, with documented limitations;
 - a documented limitations and update procedure.
 
 ## Analytical and spatial output layers
@@ -53,7 +54,7 @@ Build a reproducible geospatial data-science workflow that:
 - `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
 - `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using 2016-2025 evidence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
 
-No predictive, probability, or purchase-recommendation GeoPackage is authorized: the tested regression candidates did not pass the validation gate.
+No model-based purchase-recommendation GeoPackage is authorized. The retained model is a continuous comparative burned-share research artifact, not a probability, safety score, forecast guarantee, or buyer recommendation.
 
 ## Spatial design
 
@@ -64,7 +65,7 @@ The 2 km value is not a second analytical resolution. The final descriptive scre
 
 ## Temporal methodology and data scope
 
-> Canonical gate: train T=2015–2019; validate T=2020–2021; final temporal test T=2022–2024 (outcomes 2023–2025). The 1 km EPSG:3763 cell is the only analytical unit; 2 km is an outward context buffer. The 2023→2024 artifact is a feasibility pilot, not a final test.
+> Final model-evaluation design: fit T=2010-2019; validate T=2020-2021; one frozen final temporal test T=2022-2024 (outcomes 2023-2025). The 1 km EPSG:3763 cell is the only analytical unit; 2 km is an outward context buffer. The 2023->2024 artifact is a feasibility pilot, not the final test.
 
 Each analytical record is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` is used to estimate the observed wildfire outcome in `T+1`.
 
@@ -72,9 +73,9 @@ Each analytical record is one 1 km x 1 km grid cell for predictor reference year
 - **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
 - **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
 
-The approved predictor-reference panel is `T = 2015` through `2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. This requires ICNF annual burned-area archives for `2005-2025` inclusive. ICNF supplies only strictly pre-`T` historical-fire context and observed `T+1` outcome labels; it is never a same-year predictor. No temporal gap is required because the historical-fire window is `T-10` through `T-1`.
+The canonical national seven-feature panel covers `T=2015-2024`. A separately validated backward extension provides `T=2010-2021` for model development: fitting uses `T=2010-2019`, validation uses `T=2020-2021`, and the final temporal test uses `T=2022-2024`. This requires ICNF annual burned-area archives for `2000-2025` inclusive. ICNF supplies only strictly pre-`T` historical-fire context and observed `T+1` outcome labels; it is never a same-year predictor. No temporal gap is required because the historical-fire window is `T-10` through `T-1`.
 
-CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June–September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Use the centroid-containing ERA5-Land cell when valid. For a mainland cell whose containing coarse cell is water-masked, use the deterministic nearest valid ERA5-Land land cell established by the coastal QA analysis. This preserves the product and `T`-only aggregation and is neither interpolation nor downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
+CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June-September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Use the centroid-containing ERA5-Land cell when valid. For a mainland cell whose containing coarse cell is water-masked, use the deterministic nearest valid ERA5-Land land cell established by the coastal QA analysis. This preserves the product and `T`-only aggregation and is neither interpolation nor downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
 
 ## Data sources
 
@@ -175,7 +176,7 @@ Run the notebooks in this order:
 2. [`01_data_collection.ipynb`](notebooks/01_data_collection.ipynb) — inspect the immutable source inventory and provenance records.
 3. [`02_data_preparation.ipynb`](notebooks/02_data_preparation.ipynb) — inspect preparation and validation evidence for canonical inputs.
 4. [`03_eda.ipynb`](notebooks/03_eda.ipynb) — analyse coverage, missing values, distributions, and historical wildfire patterns.
-5. [`04_modelling.ipynb`](notebooks/04_modelling.ipynb) — record the completed fixed train/validation experiment and why no predictive model was selected; run no new modelling.
+5. [`04_modelling.ipynb`](notebooks/04_modelling.ipynb) — inspect the frozen train/validation and final-temporal model evidence; it does not tune or retrain models.
 6. [`05_evaluation_recommendations.ipynb`](notebooks/05_evaluation_recommendations.ipynb) — inspect the historical/descriptive screening and official ICNF comparison.
 7. [`06_final_charts.ipynb`](notebooks/06_final_charts.ipynb) — verify the six final presentation visuals against their real source artefacts without creating duplicate versions.
 
@@ -233,16 +234,16 @@ The project will be considered complete when it:
 - covers mainland Portugal and explains any exclusions;
 - produces a complete historical recurrence layer while reporting unmatched official evidence;
 - produces clear maps/tables and limitations without purchase recommendations;
-- records the failed predictive model-selection gate honestly;
+- reports final-temporal model evidence honestly, including its calibration limitation;
 - compares historical recurrence with official ICNF hazard without treating either as validation of the other.
 
-The earlier predictive evaluation targets remain in the archived model-selection evidence, but no model passed the gate and they are not used to label this historical screening output.
+The historical screening output remains descriptive. The retained model is not used to label a location safe or to issue a purchase recommendation.
 
 Detailed definitions are available in the [success criteria](docs/success_criteria.md).
 
 ## Current status and findings
 
-The canonical panel and EDA are validated. The fixed train/validation regression experiment is complete, and no candidate passed the predeclared gate; predictive modelling is closed and final-test performance remains unopened. The final historical screening layer contains 89,112 mainland cells, uses observed 2016-2025 recurrence, and is compared descriptively with the official ICNF structural-hazard raster. The portable QGIS project, two map layouts, and four supporting presentation visuals are complete and validated.
+The canonical panel, backward training extension, and EDA are validated. The frozen nine-feature hurdle has lower final-test MAE and substantially higher top-20% burned-share-mass capture than the historical baseline, but underpredicts the high-burned 2024 outcome. It is retained only as a comparative continuous research model; the final buyer-facing output remains the historical screening layer. See `reports/validation/model_final_decision.md`.
 
 ## BI dashboard
 

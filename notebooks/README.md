@@ -18,11 +18,11 @@ Run each notebook from a fresh kernel in the order below. Routine notebook revie
 2. `01_data_collection.ipynb` — immutable source inventory and provenance only; no new collection.
 3. `02_data_preparation.ipynb` — preparation and validation evidence for canonical inputs.
 4. `03_eda.ipynb` — descriptive EDA and spatial/temporal evidence.
-5. `04_modelling.ipynb` — records the fixed train/validation experiment and why no predictive model was selected; it runs no new modelling.
+5. `04_modelling.ipynb` — inspects the frozen train/validation and final-temporal model evidence; it does not tune or retrain models.
 6. `05_evaluation_recommendations.ipynb` — inspects the historical/descriptive exposure screening and official ICNF comparison created by `scripts/build_historical_exposure_screening.py`.
 7. `06_final_charts.ipynb` — verifies the six presentation-ready visuals, their stable paths, and their real source artefacts; it does not create duplicate figure versions.
 
-The predictive modelling gate is closed. The final deliverable is a historical wildfire-exposure screening layer for broad location comparison, not a prediction, probability, property-level safety assessment, or purchase recommendation.
+The final temporal evaluation is complete. The retained nine-feature hurdle is a continuous comparative research model with a documented high-burn-year calibration limitation; it is not a probability, property-level safety assessment, or purchase recommendation. The final buyer-facing deliverable remains the historical wildfire-exposure screening layer for broad location comparison.
 
 The validated result represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using observed ICNF evidence from 2016–2025.
 

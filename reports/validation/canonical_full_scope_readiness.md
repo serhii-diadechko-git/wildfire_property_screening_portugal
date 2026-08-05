@@ -1,5 +1,7 @@
 # Canonical full-scope acquisition and readiness gate
 
+> **Status addendum, 2026-08-05:** this report remains the acquisition/design gate for the canonical `T=2015-2024` seven-feature panel. A separately validated backward training extension added `T=2010-2014` with CLC 2006, ICNF 2000-2004 history, and ERA5-Land 2010-2014. The frozen final comparison is complete; see `final_temporal_test_protocol.md`, `final_temporal_test_2022_2024.md`, and `model_final_decision.md`. This addendum supersedes only the original modelling-status wording, not the documented source facts.
+
 Updated 2026-08-05. This report is the authoritative gate for national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during this acquisition pass.
 
 Post-gate implementation note: the national build confirmed 1,506 mainland cells whose centroid-containing ERA5-Land cell is water-masked. The validated analysis in `reports/validation/era5_coastal_fallback_analysis.md` found a stable nearest valid land-cell mapping wholly inside the acquired extent (maximum 13.963 km). The canonical derived assignment is therefore containing valid cell, otherwise nearest valid ERA5-Land land cell. No raw acquisition, interpolation or downscaling was added.
