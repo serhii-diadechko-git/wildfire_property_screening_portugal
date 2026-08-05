@@ -13,19 +13,19 @@
 
 ## Phase 1 - Data-feasibility pilot
 
-- [ ] Download one recent ICNF burned-area dataset.
-- [ ] Inspect its CRS, fields, geometry validity, and feature count.
+- [x] Download and register the required ICNF annual burned-area archives.
+- [x] Inspect their CRS, fields, geometry validity, and feature counts.
 - [x] Acquire and validate the current official revised CLC 2006/2012/2018 packages and Portugal clips, and enforce `reference_year <= T`.
-- [ ] Download a Copernicus DEM sample.
-- [ ] Validate ERA5-Land JJAS temperature, day-weighted precipitation, and layer-1 soil-water inputs.
-- [ ] Build a 1 km pilot grid for one selected area.
-- [ ] Create the initial 2 km buffer around each pilot cell.
-- [ ] Prove that the required sources can produce one complete cell-year record.
-- [ ] Test the built-up share as a residential-relevance proxy.
-- [ ] Measure source coverage and mandatory-feature completeness.
-- [ ] Record licences, source URLs, versions, and download dates.
-- [ ] Decide whether the provisional 95% coverage target is realistic.
-- [ ] Make a go/no-go decision on national processing.
+- [x] Acquire and validate the mainland Copernicus DEM GLO-30 tiles.
+- [x] Validate ERA5-Land JJAS temperature, day-weighted precipitation, and layer-1 soil-water inputs.
+- [x] Reuse the canonical 1 km grid in a representative 10-cell pilot.
+- [x] Create mainland-masked 2 km outward context buffers for the pilot cells.
+- [x] Prove that the required sources can produce the canonical seven predictors and continuous target.
+- [x] Test the built-up share as a residential-relevance proxy.
+- [x] Measure source coverage and mandatory-feature completeness.
+- [x] Record licences, source URLs, versions, and download dates.
+- [x] Confirm national processing feasibility with documented ERA5-Land water-mask missingness.
+- [x] Approve national panel construction after the deterministic representative pilot.
 
 ## Phase 2 - Repository and reproducibility
 
@@ -38,19 +38,19 @@
 
 ## Phase 3 - National data preparation
 
-- [ ] Create the mainland boundary and 1 km analytical grid.
-- [ ] Fix the working CRS and CAOP version.
-- [ ] Prepare annual ICNF burned-area layers.
-- [ ] Prepare comparable land-cover layers.
-- [ ] Calculate `built_up_share` inside each 1 km cell.
-- [ ] Calculate `forest_shrub_share_2km` inside each 2 km buffer.
-- [ ] Derive `mean_slope_2km` from Copernicus DEM.
-- [ ] Calculate `fire_years_previous_10y_2km` without temporal leakage.
-- [ ] Aggregate JJAS mean temperature, day-weighted total precipitation, and mean layer-1 soil water from predictor year `T` only.
-- [ ] Calculate `burned_share_next_year` for each 1 km cell.
-- [ ] Create `cell_year_id` and the required technical identifiers.
+- [x] Reuse and validate the mainland boundary and 89,112-cell 1 km analytical grid.
+- [x] Fix the working CRS and CAOP version.
+- [x] Prepare annual ICNF burned-area layers with logged derived-only geometry repair.
+- [x] Prepare governed CLC 2006/2012/2018 land-cover components.
+- [x] Calculate `built_up_share` inside each 1 km cell.
+- [x] Calculate `forest_shrub_share_2km` inside each mainland-masked 2 km buffer.
+- [x] Derive `mean_slope_2km` from Copernicus DEM in a metric projected CRS.
+- [x] Calculate `fire_years_previous_10y_2km` without temporal leakage.
+- [x] Aggregate JJAS mean temperature, day-weighted total precipitation, and mean layer-1 soil water from predictor year `T` only.
+- [x] Calculate `burned_share_next_year` for each 1 km cell.
+- [x] Create deterministic `cell_year_id` and the required technical identifiers.
 - [ ] Validate the residential-relevance rule.
-- [ ] Produce the first MVP modelling table.
+- [x] Produce and validate the canonical 891,120-row analytical panel for panel EDA.
 - [ ] Report national and municipality-level coverage.
 
 ## Phase 4 - Exploratory analysis

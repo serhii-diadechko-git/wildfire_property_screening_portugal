@@ -613,7 +613,7 @@ CLC_2012_PORTUGAL_PREPARED = _prepared_clc_record(
     2012,
     CLC_2012_V2020_20U1,
     prepared_path="data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg",
-    prepared_sha256="D1192AB4C2E277677D8E7E7F00BF64A31D77776C4667E3C9D2A2BA767ACCB83F",
+    prepared_sha256="33D8AACF68FDA6E46B98A247F9344B469401CB0F5DA3B79121A67B013833BA53",
     prepared_size_bytes=146411520,
     layer_name="u2018_clc2012_v2020_20u1_pt",
     feature_count=54041,
