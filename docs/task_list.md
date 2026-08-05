@@ -66,16 +66,17 @@
 
 ## Phase 5 - Modelling and acceptance evaluation
 
-- [ ] Freeze model-acceptance rules before reviewing final test results.
-- [ ] Build the historical-fire regression baseline using `fire_years_previous_10y_2km`.
-- [ ] Train a Random Forest Regressor for continuous `burned_share_next_year`.
-- [ ] Assess a compound/Tweedie regression candidate for the exact-zero plus continuous-positive target without deriving a classification threshold.
+- [x] Freeze train/validation regression metrics and the provisional-selection rule before reviewing validation results.
+- [ ] Freeze final model-acceptance rules before reviewing final test results.
+- [x] Build the historical-fire regression baseline using `fire_years_previous_10y_2km` on training years only.
+- [x] Train a deterministic, intentionally limited Random Forest Regressor candidate for continuous `burned_share_next_year`.
+- [x] Assess a deterministic Tweedie regression candidate for the exact-zero plus continuous-positive target without deriving a classification threshold.
 - [ ] Use temporal train, validation, and test splits.
 - [ ] Add a geographic holdout or spatial cross-validation where practical.
-- [ ] Evaluate regression with MAE and RMSE by later year, a zero-prediction baseline, and error summaries on positive-target rows.
+- [x] Evaluate train/validation regression overall and by validation year with MAE/RMSE, positive-target MAE/RMSE, mean predicted versus observed burned share, and positive-cell capture@20%; keep the zero-prediction error as a reference only.
 - [ ] Only after target-distribution review and a documented threshold decision, optionally derive `burned_next_year`, train logistic regression, and evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, capture@20%, and prevalence.
-- [ ] Compare each model with the historical baseline.
-- [ ] Compare results by year and region.
+- [x] Compare each train/validation candidate with the historical baseline under the predeclared gate; no candidate passed, so the final test remains unopened.
+- [ ] Compare final evaluation results by year and region only after a candidate earns final-test access.
 - [ ] Record whether the model is accepted for predictive recommendation.
 
 ## Phase 6 - Residential screening and recommendations

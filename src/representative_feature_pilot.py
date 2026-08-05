@@ -58,6 +58,9 @@ OUTPUT_DIR = ROOT / "data/processed/feature_derivation_pilot"
 OUTPUT_PARQUET = OUTPUT_DIR / "representative_feature_pilot.parquet"
 OUTPUT_GPKG = OUTPUT_DIR / "representative_feature_pilot.gpkg"
 REPORT_PATH = ROOT / "reports/validation/representative_feature_derivation_pilot.md"
+ERA5_FALLBACK_MAPPING_PATH = (
+    ROOT / "data/interim/national_panel_2015_2024/era5_coastal_fallback_mapping.parquet"
+)
 
 PILOT_YEARS = (2015, 2016, 2019, 2023)
 PILOT_CELL_REASONS = {
@@ -129,7 +132,7 @@ def _read_grib_variable(path: Path, short_name: str) -> tuple[np.ndarray, np.nda
 
 
 def derive_era5_context(predictor_year: int, cells: gpd.GeoDataFrame) -> pd.DataFrame:
-    """Assign coarse containing-cell JJAS context without interpolation/downscaling."""
+    """Assign containing-cell context, then the accepted static nearest-land fallback."""
     paths = era5_source_paths(predictor_year)
     latitude, longitude, temperature_k, months = _read_grib_variable(
         paths["temperature_and_soil_water"], "2t"
@@ -166,6 +169,23 @@ def derive_era5_context(predictor_year: int, cells: gpd.GeoDataFrame) -> pd.Data
     result.loc[mask, list(grids)] = np.nan
     if not result.isna().eq(mask, axis=0).all().all():
         raise ValueError(f"ERA5-Land water mask is inconsistent for {predictor_year}")
+    if mask.any():
+        if not ERA5_FALLBACK_MAPPING_PATH.exists():
+            raise FileNotFoundError("Accepted ERA5 coastal fallback mapping is missing")
+        fallback = pd.read_parquet(
+            ERA5_FALLBACK_MAPPING_PATH,
+            columns=["cell_id", "fallback_flat_index"],
+        ).set_index("cell_id")
+        affected_ids = result.index[mask]
+        missing_mapping = affected_ids.difference(fallback.index)
+        if len(missing_mapping):
+            raise ValueError(f"No accepted ERA5 fallback for cells: {list(missing_mapping[:5])}")
+        for cell_id in affected_ids:
+            flat_index = int(fallback.loc[cell_id, "fallback_flat_index"])
+            for feature, values in grids.items():
+                result.loc[cell_id, feature] = float(np.asarray(values).ravel()[flat_index])
+    if result.isna().any().any():
+        raise ValueError(f"Accepted ERA5 coastal fallback left missing values for {predictor_year}")
     return result
 
 

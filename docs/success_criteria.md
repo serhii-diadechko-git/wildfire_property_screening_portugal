@@ -1,6 +1,6 @@
 # Success Criteria and Model Acceptance Rules
 
-> Canonical readiness gate: defer national panel/model work until ICNF 2023/2025, ERA5-Land 2022/2024, governed CLC packages/evidence, and DEM GLO-30 provenance/tiles are available.
+> The canonical national panel and model-readiness EDA are validated. Final-test years `T=2022-2024` remain sealed until a candidate passes the train/validation-only model-selection gate.
 
 ## Purpose
 
@@ -52,7 +52,7 @@ The 95% value must be confirmed during the feasibility pilot. It is not guarante
 - historical burned-area feature;
 - land-cover features;
 - mean slope;
-- temperature and precipitation.
+- temperature, precipitation, and layer-1 soil water.
 
 **Check:** report missing mandatory groups and mark incomplete cases as insufficient evidence.
 
@@ -84,15 +84,22 @@ The 95% value must be confirmed during the feasibility pilot. It is not guarante
 
 ### 1. Baseline comparison
 
-Compare the machine-learning model with a simple baseline that ranks cells using `fire_years_previous_10y_2km`.
+Compare the regression candidates with a training-fitted historical-fire baseline using `fire_years_previous_10y_2km`. A zero-prediction baseline is reported only as an error reference; it is not an acceptable predictive model.
 
 The comparison must use future-year test data. A complex model is not accepted because of training performance alone.
 
-### 2. Performance above random ranking
+During train/validation model selection, the primary regression evidence is reported overall and separately for each validation year:
 
-For an imbalanced classification problem, PR-AUC should be compared with positive-class prevalence.
+- MAE and RMSE over all rows;
+- MAE and RMSE restricted to rows where `burned_share_next_year > 0`;
+- mean `predicted_burned_share_next_year` versus mean observed `burned_share_next_year`;
+- capture@20%, defined as the share of positive-target cells contained in the highest-ranked 20% of regression predictions.
 
-**Minimum evaluation condition:** PR-AUC above positive-class prevalence on final test data.
+### 2. Conditional classification evaluation
+
+PR-AUC, probability calibration, precision, recall, F1-score, and ROC-AUC apply only if a separate classification target and model are introduced after a documented target-distribution and threshold decision. A regression output must not be called a probability.
+
+For any later imbalanced classification model, PR-AUC should be compared with positive-class prevalence.
 
 This condition alone does not prove that the model is useful.
 
@@ -108,19 +115,17 @@ capture@20% = affected cells in the highest-risk 20% / all affected cells
 
 A random 20% selection would be expected to capture about 20%. The 40% value is a useful target, not a guaranteed outcome.
 
-### 4. Generalisation and calibration
+### 4. Generalisation and conditional calibration
 
 Report:
 
-- precision;
-- recall;
-- F1-score;
-- ROC-AUC;
-- PR-AUC;
-- probability calibration;
+- regression MAE and RMSE overall and on positive-target rows;
+- mean predicted versus observed burned share;
 - capture@20%;
 - performance by test year;
 - performance by region or geographic holdout.
+
+Report precision, recall, F1-score, ROC-AUC, PR-AUC, and probability calibration only for a separately documented classification model.
 
 No single metric is sufficient on its own.
 
@@ -133,7 +138,7 @@ Predictive residential screening is allowed only when:
 - the model improves on the historical baseline;
 - it performs better than random ranking;
 - performance is reasonably stable across years and regions;
-- probability calibration and ranking quality are acceptable;
+- ranking quality is acceptable, and probability calibration is acceptable only if a later classification model is introduced;
 - missing-data and uncertainty rules are applied.
 
 ### Do not accept for predictive recommendation

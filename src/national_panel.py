@@ -70,6 +70,9 @@ ICNF_REPAIRED_DIR = BUILD_ROOT / "icnf_repaired"
 ICNF_BATCH_DIR = BUILD_ROOT / "icnf_components"
 ERA_BATCH_DIR = BUILD_ROOT / "era5"
 PANEL_BATCH_DIR = BUILD_ROOT / "panel_batches"
+CANONICAL_ERA_BATCH_DIR = BUILD_ROOT / "era5_coastal_fallback"
+CANONICAL_PANEL_BATCH_DIR = BUILD_ROOT / "panel_batches_coastal_fallback"
+ERA5_FALLBACK_MAPPING_PATH = BUILD_ROOT / "era5_coastal_fallback_mapping.parquet"
 BUILD_METRICS_PATH = BUILD_ROOT / "build_metrics.json"
 NATIONAL_PANEL_PATH = ROOT / "data/processed/national_panel_2015_2024.parquet"
 VALIDATION_METRICS_PATH = ROOT / "data/processed/national_panel_2015_2024_validation.json"
@@ -637,8 +640,25 @@ def load_era5_grids() -> dict[int, dict[str, object]]:
     return result
 
 
-def derive_era_batch(batch_id: str, grids: dict[int, dict[str, object]]) -> pd.DataFrame:
+def _load_era5_fallback_mapping() -> pd.DataFrame:
+    if not ERA5_FALLBACK_MAPPING_PATH.exists():
+        raise FileNotFoundError("Accepted ERA5 coastal fallback mapping is missing")
+    mapping = pd.read_parquet(
+        ERA5_FALLBACK_MAPPING_PATH,
+        columns=["cell_id", "fallback_flat_index"],
+    ).set_index("cell_id")
+    if len(mapping) != 1_506 or not mapping.index.is_unique:
+        raise ValueError("Accepted ERA5 coastal fallback mapping contract failed")
+    return mapping
+
+
+def derive_era_batch(
+    batch_id: str,
+    grids: dict[int, dict[str, object]],
+    fallback_mapping: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     grid = pd.read_parquet(_grid_batch_path(batch_id))
+    fallback_mapping = _load_era5_fallback_mapping() if fallback_mapping is None else fallback_mapping
     rows = []
     latitude_points = grid.centroid_latitude.to_numpy()
     longitude_points = grid.centroid_longitude.to_numpy()
@@ -656,6 +676,16 @@ def derive_era_batch(batch_id: str, grids: dict[int, dict[str, object]]) -> pd.D
             values[feature][mask] = np.nan
         if not all(np.array_equal(np.isnan(value), mask) for value in values.values()):
             raise ValueError(f"ERA5 water mask differs across fields for {year}/{batch_id}")
+        affected_positions = np.flatnonzero(mask)
+        for position in affected_positions:
+            cell_id = grid.cell_id.iloc[position]
+            if cell_id not in fallback_mapping.index:
+                raise ValueError(f"No accepted ERA5 fallback for {cell_id}/{year}")
+            flat_index = int(fallback_mapping.loc[cell_id, "fallback_flat_index"])
+            for feature in values:
+                values[feature][position] = float(np.asarray(source[feature]).ravel()[flat_index])
+        if any(np.isnan(value).any() for value in values.values()):
+            raise ValueError(f"Accepted ERA5 fallback left missing values for {year}/{batch_id}")
         rows.append(pd.DataFrame({
             "cell_id": grid.cell_id.to_numpy(),
             "observation_year": np.full(len(grid), year, dtype="int16"),
@@ -667,17 +697,18 @@ def derive_era_batch(batch_id: str, grids: dict[int, dict[str, object]]) -> pd.D
 def build_era_batches(progress: Callable[[str], None] = print) -> dict[str, object]:
     catalog = load_grid_catalog()
     grids = load_era5_grids()
+    fallback_mapping = _load_era5_fallback_mapping()
     created = reused = 0
     for number, batch in enumerate(catalog["batches"], start=1):
         batch_id = batch["batch_id"]
-        path = _component_batch_path(ERA_BATCH_DIR, "era5", batch_id)
+        path = _component_batch_path(CANONICAL_ERA_BATCH_DIR, "era5", batch_id)
         expected_rows = batch["row_count"] * len(OBSERVATION_YEARS)
         existing = _validate_existing_batch(path, expected_rows)
         if existing:
             reused += 1
             continue
         try:
-            frame = derive_era_batch(batch_id, grids)
+            frame = derive_era_batch(batch_id, grids, fallback_mapping)
             source_paths = {
                 year: {
                     "temperature_and_soil_water": grids[year]["temperature_soil_path"],
@@ -687,7 +718,10 @@ def build_era_batches(progress: Callable[[str], None] = print) -> dict[str, obje
             }
             _publish_parquet(
                 frame, path, component="era5", batch_id=batch_id,
-                metadata={"source_paths_by_year": source_paths, "assignment": "containing_0.1_degree_cell_no_interpolation"},
+                metadata={
+                    "source_paths_by_year": source_paths,
+                    "assignment": "containing_valid_cell_else_accepted_nearest_valid_land_cell_no_interpolation",
+                },
             )
         except Exception as error:
             raise BatchError(f"era5/{batch_id} failed: {error}") from error
@@ -751,7 +785,7 @@ def derive_panel_batch(batch_id: str) -> pd.DataFrame:
         ).set_index("cell_id")
         for year in (2006, 2012, 2018)
     }
-    era = pd.read_parquet(_component_batch_path(ERA_BATCH_DIR, "era5", batch_id)).set_index(
+    era = pd.read_parquet(_component_batch_path(CANONICAL_ERA_BATCH_DIR, "era5", batch_id)).set_index(
         ["cell_id", "observation_year"]
     )
     icnf = pd.read_parquet(_component_batch_path(ICNF_BATCH_DIR, "icnf", batch_id)).set_index("cell_id")
@@ -800,7 +834,7 @@ def build_panel_batches(progress: Callable[[str], None] = print) -> dict[str, ob
     created = reused = 0
     for number, batch in enumerate(catalog["batches"], start=1):
         batch_id = batch["batch_id"]
-        path = _component_batch_path(PANEL_BATCH_DIR, "panel", batch_id)
+        path = _component_batch_path(CANONICAL_PANEL_BATCH_DIR, "panel", batch_id)
         expected_rows = batch["row_count"] * len(OBSERVATION_YEARS)
         existing = _validate_existing_batch(path, expected_rows)
         if existing:
@@ -850,7 +884,7 @@ def assemble_national_panel(progress: Callable[[str], None] = print) -> dict[str
         for year in OBSERVATION_YEARS:
             pieces = []
             for batch in catalog["batches"]:
-                path = _component_batch_path(PANEL_BATCH_DIR, "panel", batch["batch_id"])
+                path = _component_batch_path(CANONICAL_PANEL_BATCH_DIR, "panel", batch["batch_id"])
                 piece = pd.read_parquet(path, filters=[("observation_year", "==", year)])
                 pieces.append(piece)
             year_frame = pd.concat(pieces, ignore_index=True).sort_values("cell_id", kind="mergesort")
@@ -994,6 +1028,7 @@ def verify_representative_batch_determinism(
     if unknown:
         raise ValueError(f"Unknown deterministic-rerun batches: {unknown}")
     era_grids = load_era5_grids()
+    fallback_mapping = _load_era5_fallback_mapping()
     checks: list[dict[str, object]] = []
     for batch_id in batch_ids:
         derived_slope, _ = derive_slope_batch(batch_id)
@@ -1019,10 +1054,10 @@ def verify_representative_batch_determinism(
                 "row_count": len(derived_clc),
             })
 
-        derived_era = derive_era_batch(batch_id, era_grids)
+        derived_era = derive_era_batch(batch_id, era_grids, fallback_mapping)
         _assert_exact_frame(
             "era5", batch_id,
-            pd.read_parquet(_component_batch_path(ERA_BATCH_DIR, "era5", batch_id)),
+            pd.read_parquet(_component_batch_path(CANONICAL_ERA_BATCH_DIR, "era5", batch_id)),
             derived_era,
         )
         checks.append({"batch_id": batch_id, "component": "era5", "row_count": len(derived_era)})
@@ -1038,7 +1073,7 @@ def verify_representative_batch_determinism(
         derived_panel = derive_panel_batch(batch_id)
         _assert_exact_frame(
             "panel", batch_id,
-            pd.read_parquet(_component_batch_path(PANEL_BATCH_DIR, "panel", batch_id)),
+            pd.read_parquet(_component_batch_path(CANONICAL_PANEL_BATCH_DIR, "panel", batch_id)),
             derived_panel,
         )
         checks.append({"batch_id": batch_id, "component": "panel", "row_count": len(derived_panel)})
@@ -1072,9 +1107,9 @@ def component_duration_evidence() -> dict[str, object]:
         "icnf_geometry_repair": ICNF_REPAIRED_DIR,
         "slope": SLOPE_BATCH_DIR,
         "clc": CLC_BATCH_DIR,
-        "era5": ERA_BATCH_DIR,
+        "era5": CANONICAL_ERA_BATCH_DIR,
         "icnf_components": ICNF_BATCH_DIR,
-        "panel_batches": PANEL_BATCH_DIR,
+        "panel_batches": CANONICAL_PANEL_BATCH_DIR,
     }
     return {
         "definition": (

@@ -65,7 +65,8 @@ These fields are produced after modelling. They are not input features.
 
 | Column | Type | Meaning |
 |---|---|---|
-| `predicted_wildfire_probability` | float, 0-1 | Predicted relative probability for the target year. |
+| `predicted_burned_share_next_year` | float, 0-1 | Initial regression output: predicted share of the cell's mainland-land area burned in `T+1`. It is a continuous burned-share estimate, not a probability. |
+| `predicted_wildfire_probability` | float, 0-1 | Conditional future output only if a separate classification model and `burned_next_year` threshold are later documented. Probability metrics and calibration do not apply to the initial regression output. |
 | `structural_exposure_score` | float or category | Exposure estimate based mainly on slower-changing features and historical fire activity. Final calculation is defined only after model validation. |
 | `annual_outlook_score` | float or category | Updated result using the latest available annual inputs. Final calculation is defined only after model validation. |
 | `score_stability` | float or category | Stability of the result across test years and reasonable model variants. |
@@ -89,6 +90,7 @@ Missing mandatory data must not be interpreted as low exposure. The result must 
 - Keep raw files unchanged.
 - Never convert `NoData` automatically to zero.
 - ERA5-Land containing-cell water-mask cases retain the 1 km analytical cell and use the validated static nearest-valid-land source-cell fallback. Never use zero, interpolation, a different product, or T+1 data.
+- After applying the accepted coastal fallback, missing values are forbidden in all three canonical ERA5-Land predictors.
 - Use only predictors available at predictor reference year `T`; never use observed outcome-year `T+1` information as a predictor.
 - Record dataset versions and class definitions.
 - Treat `built_up_share` only as a residential-relevance proxy until validated.

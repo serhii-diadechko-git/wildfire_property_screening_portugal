@@ -46,7 +46,7 @@ class FieldContract:
     unit: str
     minimum: float | None
     maximum: float | None
-    missing_rule: Literal["forbidden", "era5_land_mask_allowed"]
+    missing_rule: Literal["forbidden"]
     source_year_rule: str
 
 
@@ -68,15 +68,15 @@ FIELD_CONTRACTS = {
         "inclusive T-10 through T-1",
     ),
     "warm_season_mean_2m_temperature_c": FieldContract(
-        "float64", "degrees_Celsius", -20.0, 60.0, "era5_land_mask_allowed",
+        "float64", "degrees_Celsius", -20.0, 60.0, "forbidden",
         "JJAS of T only",
     ),
     "warm_season_total_precipitation_mm": FieldContract(
-        "float64", "millimetres_JJAS_total", 0.0, 3000.0, "era5_land_mask_allowed",
+        "float64", "millimetres_JJAS_total", 0.0, 3000.0, "forbidden",
         "day-weighted JJAS of T only",
     ),
     "warm_season_mean_soil_water_layer1": FieldContract(
-        "float64", "m3_per_m3", 0.0, 1.0, "era5_land_mask_allowed",
+        "float64", "m3_per_m3", 0.0, 1.0, "forbidden",
         "JJAS of T only",
     ),
     TARGET_COLUMN: FieldContract(
