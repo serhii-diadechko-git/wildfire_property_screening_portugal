@@ -453,8 +453,10 @@ def _relevant_dem_records(bounds_3763: tuple[float, float, float, float]):
     return records, (west, south, east, north)
 
 
-def _slope_surface(bounds_3763: tuple[float, float, float, float]) -> tuple[np.ndarray, object, list[str]]:
-    """Warp a bounded DEM window to a globally aligned metric 30 m raster."""
+def _terrain_surfaces(
+    bounds_3763: tuple[float, float, float, float],
+) -> tuple[np.ndarray, np.ndarray, object, list[str]]:
+    """Warp a bounded DEM window and derive aligned elevation and slope surfaces."""
     minx, miny, maxx, maxy = bounds_3763
     west = math.floor((minx - 60.0) / DEM_RESOLUTION_METRES) * DEM_RESOLUTION_METRES
     south = math.floor((miny - 60.0) / DEM_RESOLUTION_METRES) * DEM_RESOLUTION_METRES
@@ -488,7 +490,13 @@ def _slope_surface(bounds_3763: tuple[float, float, float, float]) -> tuple[np.n
             elevation, DEM_RESOLUTION_METRES, DEM_RESOLUTION_METRES
         )
         slope = np.degrees(np.arctan(np.hypot(gradient_x, gradient_y)))
-    return slope, target_transform, [record.tile_id for record in records]
+    return elevation, slope, target_transform, [record.tile_id for record in records]
+
+
+def _slope_surface(bounds_3763: tuple[float, float, float, float]) -> tuple[np.ndarray, object, list[str]]:
+    """Backward-compatible slope-only wrapper used by the canonical panel."""
+    _, slope, transform, tiles = _terrain_surfaces(bounds_3763)
+    return slope, transform, tiles
 
 
 def derive_slope_batch(batch_id: str) -> tuple[pd.DataFrame, dict[str, object]]:
