@@ -18,33 +18,30 @@ A property buyer needs a clear and consistent way to compare locations before sp
 
 **Decision-maker:** a prospective homebuyer choosing a location in mainland Portugal.
 
-**Decision:** which residential areas should be:
+**Decision support:** which broad areas warrant further local investigation when comparing residential locations, based on historical wildfire evidence. The screening distinguishes:
 
-- shortlisted for further property search;
-- reviewed with caution;
-- deprioritised because of higher wildfire exposure;
-- marked as insufficient evidence when the available data is incomplete or uncertain.
+- lower, moderate, or higher historical recurrence context;
+- agreement or disagreement with the official ICNF structural-hazard class;
+- insufficient official comparison evidence where the hazard layer has no valid class.
 
 ## Project goal
 
-Build a reproducible geospatial data-science and machine-learning workflow that:
+Build a reproducible geospatial data-science workflow that:
 
-1. estimates relative wildfire exposure across mainland Portugal;
-2. applies the results only to locations that meet a validated residential-eligibility rule;
-3. compares structural exposure with the latest annual conditions;
-4. identifies areas with consistently lower or higher exposure;
-5. produces understandable maps, rankings, and uncertainty flags;
-6. supports annual rescoring when new public data becomes available.
+1. summarizes ten years of observed ICNF burned-area recurrence around every mainland 1 km cell;
+2. creates transparent recurrence-only historical exposure bands;
+3. compares those bands descriptively with the official ICNF structural-hazard map;
+4. produces a QGIS-ready screening layer and machine-readable summaries;
+5. records limitations and unmatched official evidence explicitly;
+6. supports a reproducible update when a later complete burned-area year becomes available.
 
 ## Planned outputs
 
-- a national wildfire-exposure map;
-- a residential-location screening map;
-- ranked results by grid cell and administrative area;
-- recommendation categories with uncertainty information;
-- model evaluation against a historical-fire-frequency baseline;
-- a reproducible data-preparation and scoring pipeline;
-- a documented annual update procedure.
+- a national historical wildfire-exposure screening layer;
+- recurrence-band and official ICNF hazard comparison tables;
+- a reproducible data-preparation and screening pipeline;
+- the fixed train/validation evidence explaining why no predictive model was accepted;
+- a documented limitations and update procedure.
 
 ## Analytical and spatial output layers
 
@@ -52,8 +49,9 @@ Build a reproducible geospatial data-science and machine-learning workflow that:
 - `data/processed/pilot_2023_to_2024/pilot_2023_to_2024_icnf_caop.gpkg` remains the reusable EPSG:3763 canonical grid-geometry lookup.
 - `data/processed/spatial_qa/era5_land_coastal_fallback_qa.gpkg`, layer `era5_coastal_fallback_qa`, is a 1,506-feature QA/presentation layer documenting the systematic ERA5-Land coastal fallback.
 - `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
+- `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It uses 2016-2025 fire recurrence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
 
-Later model prediction/exposure and residential-screening/recommendation GeoPackages are planned outputs. They must not be created or documented as results until validated models and recommendation rules exist.
+No predictive, probability, or purchase-recommendation GeoPackage is authorized: the tested regression candidates did not pass the validation gate.
 
 ## Spatial design
 
@@ -80,7 +78,7 @@ CLC is broad land-cover context rather than annual parcel-level land cover. Its 
 
 The initial project uses four public source groups:
 
-- ICNF annual burned-area cartography;
+- ICNF annual burned-area cartography and the official structural wildfire-hazard raster;
 - Copernicus CLC broad land-cover context and CAOP administrative boundaries;
 - Copernicus DEM GLO-30 terrain data;
 - ERA5-Land temperature and precipitation data.
@@ -181,8 +179,8 @@ Run the notebooks in this order:
 2. [`01_data_collection.ipynb`](notebooks/01_data_collection.ipynb) — collect or import public raw data and record source metadata.
 3. [`02_data_preparation.ipynb`](notebooks/02_data_preparation.ipynb) — clean, validate, standardise, and integrate the geospatial data.
 4. [`03_eda.ipynb`](notebooks/03_eda.ipynb) — analyse coverage, missing values, distributions, and historical wildfire patterns.
-5. [`04_modelling.ipynb`](notebooks/04_modelling.ipynb) — create the approved MVP features, historical baseline, and machine-learning models.
-6. [`05_evaluation_recommendations.ipynb`](notebooks/05_evaluation_recommendations.ipynb) — evaluate the models and produce recommendations only when the evidence is strong enough.
+5. [`04_modelling.ipynb`](notebooks/04_modelling.ipynb) — record the completed fixed train/validation experiment and why no predictive model was selected; run no new modelling.
+6. [`05_evaluation_recommendations.ipynb`](notebooks/05_evaluation_recommendations.ipynb) — inspect the historical/descriptive screening and official ICNF comparison.
 7. [`06_final_charts.ipynb`](notebooks/06_final_charts.ipynb) — export final maps, figures, and tables for the report and README.
 
 ## Project structure
@@ -214,18 +212,18 @@ The project will be considered complete when it:
 
 - uses documented public data sources;
 - covers mainland Portugal and explains any exclusions;
-- assigns recommendations only when mandatory inputs are available;
-- produces clear maps, ranked tables, uncertainty flags, and limitations;
-- compares the machine-learning model with a transparent historical baseline;
-- reports honestly whether the model is strong enough to support predictive recommendations.
+- produces a complete historical recurrence layer while reporting unmatched official evidence;
+- produces clear maps/tables and limitations without purchase recommendations;
+- records the failed predictive model-selection gate honestly;
+- compares historical recurrence with official ICNF hazard without treating either as validation of the other.
 
-The initial technical targets include scoring or documenting an exclusion for at least **95% of eligible cells** and testing whether the highest-risk **20%** of predictions captures at least **40%** of affected cells. These are evaluation targets, not guaranteed results.
+The earlier predictive evaluation targets remain in the archived model-selection evidence, but no model passed the gate and they are not used to label this historical screening output.
 
 Detailed definitions are available in the [success criteria](docs/success_criteria.md).
 
 ## Current status and findings
 
-The canonical 891,120-row national panel is validated and model-readiness EDA is complete. The systematic ERA5-Land coastal mask was resolved with a validated nearest-valid-land fallback; all seven predictors and the continuous target are complete. Modelling has not started.
+The canonical panel and EDA are validated. The fixed train/validation regression experiment is complete, and no candidate passed the predeclared gate; predictive modelling is closed and final-test performance remains unopened. The final historical screening layer contains 89,112 mainland cells, uses observed 2016-2025 recurrence, and is compared descriptively with the official ICNF structural-hazard raster.
 
 ## BI dashboard
 

@@ -66,6 +66,8 @@
 
 ## Phase 5 - Modelling and acceptance evaluation
 
+**Gate decision:** closed. The tested Random Forest and Tweedie regressions did not pass the predeclared validation rule. No further tuning or final-test performance access is authorized for this capstone.
+
 - [x] Freeze train/validation regression metrics and the provisional-selection rule before reviewing validation results.
 - [ ] Freeze final model-acceptance rules before reviewing final test results.
 - [x] Build the historical-fire regression baseline using `fire_years_previous_10y_2km` on training years only.
@@ -81,14 +83,13 @@
 
 ## Phase 6 - Residential screening and recommendations
 
-- [ ] Produce scores only for cells with complete mandatory data.
-- [ ] Mark incomplete cases as insufficient evidence.
-- [ ] Calculate score stability and uncertainty flags.
-- [ ] Define recommendation categories before reviewing final locations.
-- [ ] Compare results with the official ICNF structural hazard map.
-- [ ] Flag major disagreements for caution.
-- [ ] Produce ranked summaries by grid cell and administrative area.
-- [ ] If the model is not accepted, publish descriptive and historical results instead of predictive shortlist categories.
+- [x] Freeze the output as historical/descriptive after the predictive gate failed.
+- [x] Build one 89,112-cell recurrence layer using observed 2016-2025 ICNF evidence only.
+- [x] Define transparent empirical recurrence bands from the 33rd/67th percentile thresholds: 0-1, 2-3, and 4-10 years.
+- [x] Acquire/register the single official ICNF structural-hazard raster required for external comparison.
+- [x] Summarize the predominant valid official class to each mainland cell and retain unmatched cells explicitly.
+- [x] Publish band, hazard-class, and cross-tabulation summaries without predictive or purchase claims.
+- [ ] Create selected final presentation charts from the validated historical screening layer.
 
 ## Phase 7 - Market and value analysis
 

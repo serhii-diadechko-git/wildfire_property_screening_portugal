@@ -1,0 +1,457 @@
+{
+  "created_utc": "2026-08-05T14:06:45.432866+00:00",
+  "purpose": "historical_descriptive_wildfire_exposure_screening_not_prediction",
+  "evidence_snapshot": {
+    "evidence_as_of_year": 2025,
+    "history_start_year": 2016,
+    "history_end_year": 2025,
+    "history_years": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "available_validated_icnf_years": [
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "thresholds": {
+    "method": "nearest integer empirical 33rd and 67th percentiles across all mainland cells",
+    "q33": 1.0,
+    "q67": 3.0,
+    "lower_max": 1,
+    "moderate_max": 3
+  },
+  "output_validation": {
+    "path": "data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg",
+    "layer": "historical_exposure_screening",
+    "crs": "EPSG:3763",
+    "feature_count": 89112,
+    "geometry_type": "Polygon",
+    "fields": [
+      "cell_id",
+      "evidence_as_of_year",
+      "history_start_year",
+      "history_end_year",
+      "fire_years_history_10y_2km",
+      "historical_exposure_band",
+      "historical_exposure_note",
+      "forest_shrub_share_2km",
+      "mean_slope_2km",
+      "built_up_share",
+      "official_icnf_hazard_code",
+      "official_icnf_hazard_class",
+      "icnf_valid_pixel_count",
+      "icnf_hazard_coverage_share",
+      "icnf_modal_class_share",
+      "icnf_modal_tie",
+      "icnf_source_version",
+      "evidence_status"
+    ],
+    "missing_cell_id": 0,
+    "empty_geometries": 0,
+    "invalid_geometries": 0,
+    "forbidden_fields": [],
+    "predictive_field_names": [],
+    "sha256": "7F8516A7839CEBF2E48B0AC23B8117AA30462D921747E6B38A91E9965C38EF7C"
+  },
+  "deterministic_rerun": {
+    "all_275_batches_recomputed_without_writes": true,
+    "analytical_values_exact": true,
+    "row_order_exact": true,
+    "thresholds_exact": {
+      "method": "nearest integer empirical 33rd and 67th percentiles across all mainland cells",
+      "q33": 1.0,
+      "q67": 3.0,
+      "lower_max": 1,
+      "moderate_max": 3
+    },
+    "byte_identical_gpkg_not_required": true
+  },
+  "hazard_source": {
+    "record": {
+      "key": "icnf_structural_hazard_2020_2030",
+      "dataset_name": "SRUP - Carta de Perigosidade de Incendio Rural",
+      "source_version": "Structural wildfire hazard map 2020-2030; metadata creation 2022-03-28",
+      "metadata_url": "https://geocatalogo.icnf.pt/metadados/perigosidade_estrutural_20_30.html",
+      "service_url": "https://si.icnf.pt/wms/perigosidade_estrutural_2020_2030",
+      "licence_or_terms_reference": "Official metadata states no use limitation, but SNIT consultation/visualisation is non-commercial, published incorporation must cite the source, and other use may require DGT authorisation; see the registered metadata URL.",
+      "access_date": "2026-08-05",
+      "acquisition_method": "Official WCS 1.0.0 GetCoverage at the native grid",
+      "raw_path": "data/raw/hazard/icnf_structural_2020_2030/icnf_structural_hazard_2020_2030_25m_epsg3763.tif",
+      "filename": "icnf_structural_hazard_2020_2030_25m_epsg3763.tif",
+      "size_bytes": 265298213,
+      "sha256": "3EB1BF7A9694727F48408464A230A40CE4162FEB5478D75B0D3E8D74B68A50A5",
+      "wcs_coverage_id": "BDG:perigosidade_estrutural_2020_2030",
+      "crs": "EPSG:3763",
+      "resolution_metres": 25.0,
+      "dimensions": [
+        11253,
+        23060
+      ],
+      "bounds": [
+        -119191.4075,
+        -300404.804,
+        162133.5925,
+        276095.196
+      ],
+      "nodata_value": 15,
+      "class_mapping": [
+        [
+          0,
+          "null"
+        ],
+        [
+          1,
+          "very_low"
+        ],
+        [
+          2,
+          "low"
+        ],
+        [
+          3,
+          "medium"
+        ],
+        [
+          4,
+          "high"
+        ],
+        [
+          5,
+          "very_high"
+        ]
+      ],
+      "coverage": "Mainland Portugal",
+      "evidence_files": [
+        [
+          "data/raw/hazard/icnf_structural_2020_2030/wcs_getcapabilities_1_0_0.xml",
+          "4A6504114AB326A90130EABD795C71CCC3FC278D76DDEBD6E074D059C46DDB4A"
+        ],
+        [
+          "data/raw/hazard/icnf_structural_2020_2030/wcs_describe_coverage_1_0_0.xml",
+          "0346CAFCB64A3C9340A9DE012D8ABB3E900CC738D295ADB4A82F06AF6301A470"
+        ],
+        [
+          "data/raw/hazard/icnf_structural_2020_2030/wms_style_perigosidade_incendio.sld",
+          "757E01BAACF751AC1F94E0882B2BB51B4895753218E06F20F6549FD9CD9D5D14"
+        ]
+      ]
+    },
+    "raster_validation": {
+      "driver": "GTiff",
+      "crs": "EPSG:3763",
+      "width": 11253,
+      "height": 23060,
+      "resolution_metres": [
+        25.0,
+        25.0
+      ],
+      "bounds": [
+        -119191.4075,
+        -300404.804,
+        162133.5925,
+        276095.196
+      ],
+      "nodata": 15.0,
+      "dtype": "uint8",
+      "sha256": "3EB1BF7A9694727F48408464A230A40CE4162FEB5478D75B0D3E8D74B68A50A5"
+    },
+    "spatial_method": "Predominant valid 25 m hazard class by pixel-centre area within each mainland-masked 1 km cell; exact modal ties select the higher official class."
+  },
+  "component_status": {
+    "core_batches": {
+      "created": 0,
+      "reused": 275
+    },
+    "hazard_batches": {
+      "created": 0,
+      "reused": 275
+    }
+  },
+  "band_summary": [
+    {
+      "historical_exposure_band": "lower",
+      "cell_count": 36645,
+      "share_of_cells": 0.4112240775653111
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "cell_count": 29919,
+      "share_of_cells": 0.33574602747104765
+    },
+    {
+      "historical_exposure_band": "higher",
+      "cell_count": 22548,
+      "share_of_cells": 0.25302989496364126
+    }
+  ],
+  "hazard_summary": [
+    {
+      "official_icnf_hazard_class": "null",
+      "cell_count": 0,
+      "share_of_cells": 0.0
+    },
+    {
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 27163,
+      "share_of_cells": 0.3048186551755095
+    },
+    {
+      "official_icnf_hazard_class": "low",
+      "cell_count": 17340,
+      "share_of_cells": 0.19458658766496095
+    },
+    {
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 15303,
+      "share_of_cells": 0.17172771343926743
+    },
+    {
+      "official_icnf_hazard_class": "high",
+      "cell_count": 14735,
+      "share_of_cells": 0.16535371218242212
+    },
+    {
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 14112,
+      "share_of_cells": 0.15836251009964988
+    },
+    {
+      "official_icnf_hazard_class": "unmatched",
+      "cell_count": 459,
+      "share_of_cells": 0.005150821438190143
+    }
+  ],
+  "cross_tabulation": [
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "high",
+      "cell_count": 4264,
+      "share_of_all_cells": 0.04784989675913457,
+      "share_within_historical_band": 0.18910768139081072
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "low",
+      "cell_count": 3298,
+      "share_of_all_cells": 0.03700960588921806,
+      "share_within_historical_band": 0.14626574419017208
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 4373,
+      "share_of_all_cells": 0.04907307657778975,
+      "share_within_historical_band": 0.19394181302111052
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "unmatched",
+      "cell_count": 14,
+      "share_of_all_cells": 0.00015710566478139868,
+      "share_within_historical_band": 0.0006208976405889658
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 6794,
+      "share_of_all_cells": 0.07624113475177305,
+      "share_within_historical_band": 0.30131275501153093
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 3805,
+      "share_of_all_cells": 0.04269907532094443,
+      "share_within_historical_band": 0.16875110874578678
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "high",
+      "cell_count": 5268,
+      "share_of_all_cells": 0.059116617290600595,
+      "share_within_historical_band": 0.1437576749897667
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "low",
+      "cell_count": 8611,
+      "share_of_all_cells": 0.09663120567375887,
+      "share_within_historical_band": 0.23498430890981034
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 5969,
+      "share_of_all_cells": 0.0669831223628692,
+      "share_within_historical_band": 0.162887160594897
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "unmatched",
+      "cell_count": 408,
+      "share_of_all_cells": 0.004578507945057905,
+      "share_within_historical_band": 0.011133851821530904
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 2375,
+      "share_of_all_cells": 0.02665185384684442,
+      "share_within_historical_band": 0.06481102469641152
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 14014,
+      "share_of_all_cells": 0.1572627704461801,
+      "share_within_historical_band": 0.38242597898758357
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "high",
+      "cell_count": 5203,
+      "share_of_all_cells": 0.05838719813268695,
+      "share_within_historical_band": 0.17390287108526353
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "low",
+      "cell_count": 5431,
+      "share_of_all_cells": 0.06094577610198402,
+      "share_within_historical_band": 0.18152344663925934
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 4961,
+      "share_of_all_cells": 0.05567151449860849,
+      "share_within_historical_band": 0.16581436545339082
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "unmatched",
+      "cell_count": 37,
+      "share_of_all_cells": 0.0004152078283508394,
+      "share_within_historical_band": 0.0012366723486747552
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 4943,
+      "share_of_all_cells": 0.05546952150103241,
+      "share_within_historical_band": 0.16521274106754905
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 9344,
+      "share_of_all_cells": 0.10485680940838496,
+      "share_within_historical_band": 0.3123099034058625
+    }
+  ],
+  "official_hazard_unmatched_cells": 459,
+  "modal_tie_cells": 59,
+  "same_broad_level_count": 38644,
+  "same_broad_level_share_of_matched": 0.4359017743336379,
+  "notable_largest_combinations": [
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 14014,
+      "share_of_all_cells": 0.1572627704461801,
+      "share_within_historical_band": 0.38242597898758357
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "very_low",
+      "cell_count": 9344,
+      "share_of_all_cells": 0.10485680940838496,
+      "share_within_historical_band": 0.3123099034058625
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "low",
+      "cell_count": 8611,
+      "share_of_all_cells": 0.09663120567375887,
+      "share_within_historical_band": 0.23498430890981034
+    },
+    {
+      "historical_exposure_band": "higher",
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 6794,
+      "share_of_all_cells": 0.07624113475177305,
+      "share_within_historical_band": 0.30131275501153093
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 5969,
+      "share_of_all_cells": 0.0669831223628692,
+      "share_within_historical_band": 0.162887160594897
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "low",
+      "cell_count": 5431,
+      "share_of_all_cells": 0.06094577610198402,
+      "share_within_historical_band": 0.18152344663925934
+    },
+    {
+      "historical_exposure_band": "lower",
+      "official_icnf_hazard_class": "high",
+      "cell_count": 5268,
+      "share_of_all_cells": 0.059116617290600595,
+      "share_within_historical_band": 0.1437576749897667
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "high",
+      "cell_count": 5203,
+      "share_of_all_cells": 0.05838719813268695,
+      "share_within_historical_band": 0.17390287108526353
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "medium",
+      "cell_count": 4961,
+      "share_of_all_cells": 0.05567151449860849,
+      "share_within_historical_band": 0.16581436545339082
+    },
+    {
+      "historical_exposure_band": "moderate",
+      "official_icnf_hazard_class": "very_high",
+      "cell_count": 4943,
+      "share_of_all_cells": 0.05546952150103241,
+      "share_within_historical_band": 0.16521274106754905
+    }
+  ],
+  "no_predictive_claim": true
+}

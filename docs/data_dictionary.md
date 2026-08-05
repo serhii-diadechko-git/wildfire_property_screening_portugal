@@ -61,7 +61,7 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 
 ## Model and decision outputs
 
-These fields are produced after modelling. They are not input features.
+These fields were conditional design concepts. No predictive output was accepted because the tested regression candidates failed the validation gate; none is present in the historical screening layer.
 
 | Column | Type | Meaning |
 |---|---|---|
@@ -72,6 +72,33 @@ These fields are produced after modelling. They are not input features.
 | `score_stability` | float or category | Stability of the result across test years and reasonable model variants. |
 | `uncertainty_flag` | category | Normal, caution, or insufficient evidence. |
 | `recommendation_category` | category | Stronger shortlist candidate, candidate with caution, higher-exposure area, or insufficient evidence. |
+
+## Historical exposure screening output
+
+These fields exist in `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`. They are descriptive evidence, not model features or predictions.
+
+| Column | Type | Meaning |
+|---|---|---|
+| `cell_id` | string | Stable canonical 1 km mainland cell identifier. |
+| `evidence_as_of_year` | integer | Latest complete observed burned-area year used: 2025. |
+| `history_start_year` | integer | First year in the recurrence window: 2016. |
+| `history_end_year` | integer | Last year in the recurrence window: 2025. |
+| `fire_years_history_10y_2km` | integer, 0-10 | Number of distinct years in 2016-2025 when the mainland-masked 2 km context intersected annual dissolved ICNF burned-area geometry. |
+| `historical_exposure_band` | string | Recurrence-only empirical band: `lower` for 0-1 years, `moderate` for 2-3, and `higher` for 4-10. |
+| `historical_exposure_note` | string | Human-readable recurrence range and caution that lower does not mean safe. |
+| `forest_shrub_share_2km` | float, 0-1 | CLC 2018 forest/shrub share in the mainland-masked 2 km context. |
+| `mean_slope_2km` | float, degrees | Static mean slope in the same context. |
+| `built_up_share` | float, 0-1 | CLC 2018 built/artificial share of cell mainland land; contextual only. |
+| `official_icnf_hazard_code` | integer | Predominant valid official 25 m class code; `-1` means unmatched, never low hazard. |
+| `official_icnf_hazard_class` | string | `very_low`, `low`, `medium`, `high`, `very_high`, or `unmatched`. |
+| `icnf_valid_pixel_count` | integer | Valid official 25 m hazard pixels contributing to the cell summary. |
+| `icnf_hazard_coverage_share` | float, 0-1 | Share of rasterized mainland-cell pixels with a valid official class. |
+| `icnf_modal_class_share` | float, 0-1 | Share of valid official pixels belonging to the assigned predominant class. |
+| `icnf_modal_tie` | boolean | Whether multiple official classes tied for the largest pixel count; exact ties select the higher class. |
+| `icnf_source_version` | string | Registered official SRUP-CPIR 2020-2030 source version. |
+| `evidence_status` | string | `complete_descriptive_evidence` or `official_hazard_unmatched`. |
+
+Lower historical exposure does not mean safe, zero recorded fire years does not mean zero wildfire risk, and this layer is not a property-level guarantee or purchase recommendation.
 
 ## Mandatory feature groups
 

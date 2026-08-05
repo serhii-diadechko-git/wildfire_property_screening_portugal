@@ -217,6 +217,33 @@ class CopDemCollectionRecord:
     coastal_data_rule: str
 
 
+@dataclass(frozen=True)
+class IcnfHazardRasterRecord:
+    """Immutable official ICNF/DGT structural-hazard raster provenance."""
+
+    key: str
+    dataset_name: str
+    source_version: str
+    metadata_url: str
+    service_url: str
+    licence_or_terms_reference: str
+    access_date: str
+    acquisition_method: str
+    raw_path: str
+    filename: str
+    size_bytes: int
+    sha256: str
+    wcs_coverage_id: str
+    crs: str
+    resolution_metres: float
+    dimensions: tuple[int, int]
+    bounds: tuple[float, float, float, float]
+    nodata_value: int
+    class_mapping: tuple[tuple[int, str], ...]
+    coverage: str
+    evidence_files: tuple[tuple[str, str], ...]
+
+
 CAOP_2025 = SourceRecord(
     key="caop_2025",
     dataset_edition_or_year="CAOP 2025 Mainland Portugal boundary",
@@ -910,5 +937,48 @@ COP_DEM_GLO30 = CopDemCollectionRecord(
         "The official distribution omits ocean-only tiles. Future slope processing must mask "
         "to CAOP mainland land and exclude ocean-side values before the 2 km aggregation; it "
         "must not interpret numeric coastal/ocean elevations as mainland terrain."
+    ),
+)
+
+
+ICNF_STRUCTURAL_HAZARD_2020_2030 = IcnfHazardRasterRecord(
+    key="icnf_structural_hazard_2020_2030",
+    dataset_name="SRUP - Carta de Perigosidade de Incendio Rural",
+    source_version="Structural wildfire hazard map 2020-2030; metadata creation 2022-03-28",
+    metadata_url="https://geocatalogo.icnf.pt/metadados/perigosidade_estrutural_20_30.html",
+    service_url="https://si.icnf.pt/wms/perigosidade_estrutural_2020_2030",
+    licence_or_terms_reference=(
+        "Official metadata states no use limitation, but SNIT consultation/visualisation is "
+        "non-commercial, published incorporation must cite the source, and other use may require "
+        "DGT authorisation; see the registered metadata URL."
+    ),
+    access_date="2026-08-05",
+    acquisition_method="Official WCS 1.0.0 GetCoverage at the native grid",
+    raw_path=(
+        "data/raw/hazard/icnf_structural_2020_2030/"
+        "icnf_structural_hazard_2020_2030_25m_epsg3763.tif"
+    ),
+    filename="icnf_structural_hazard_2020_2030_25m_epsg3763.tif",
+    size_bytes=265298213,
+    sha256="3EB1BF7A9694727F48408464A230A40CE4162FEB5478D75B0D3E8D74B68A50A5",
+    wcs_coverage_id="BDG:perigosidade_estrutural_2020_2030",
+    crs="EPSG:3763",
+    resolution_metres=25.0,
+    dimensions=(11253, 23060),
+    bounds=(-119191.4075, -300404.804, 162133.5925, 276095.196),
+    nodata_value=15,
+    class_mapping=(
+        (0, "null"),
+        (1, "very_low"),
+        (2, "low"),
+        (3, "medium"),
+        (4, "high"),
+        (5, "very_high"),
+    ),
+    coverage="Mainland Portugal",
+    evidence_files=(
+        ("data/raw/hazard/icnf_structural_2020_2030/wcs_getcapabilities_1_0_0.xml", "4A6504114AB326A90130EABD795C71CCC3FC278D76DDEBD6E074D059C46DDB4A"),
+        ("data/raw/hazard/icnf_structural_2020_2030/wcs_describe_coverage_1_0_0.xml", "0346CAFCB64A3C9340A9DE012D8ABB3E900CC738D295ADB4A82F06AF6301A470"),
+        ("data/raw/hazard/icnf_structural_2020_2030/wms_style_perigosidade_incendio.sld", "757E01BAACF751AC1F94E0882B2BB51B4895753218E06F20F6549FD9CD9D5D14"),
     ),
 )
