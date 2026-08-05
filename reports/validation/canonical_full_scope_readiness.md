@@ -2,9 +2,11 @@
 
 Updated 2026-08-05. This report is the authoritative gate for national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during this acquisition pass.
 
+Post-gate implementation note: the national build confirmed 1,506 mainland cells whose centroid-containing ERA5-Land cell is water-masked. The validated analysis in `reports/validation/era5_coastal_fallback_analysis.md` found a stable nearest valid land-cell mapping wholly inside the acquired extent (maximum 13.963 km). The canonical derived assignment is therefore containing valid cell, otherwise nearest valid ERA5-Land land cell. No raw acquisition, interpolation or downscaling was added.
+
 ## Canonical design
 
-One EPSG:3763 1 km x 1 km cell-year record uses predictors from T to estimate `burned_share_next_year` in T+1. Training is T=2015-2019; validation T=2020-2021; final temporal test T=2022-2024. The historical-fire window is T-10 through T-1 only. ICNF is never a same-year predictor. ERA5-Land uses T-only JJAS values from the containing 0.1-degree ERA5-Land cell, without interpolation/downscaling.
+One EPSG:3763 1 km x 1 km cell-year record uses predictors from T to estimate `burned_share_next_year` in T+1. Training is T=2015-2019; validation T=2020-2021; final temporal test T=2022-2024. The historical-fire window is T-10 through T-1 only. ICNF is never a same-year predictor. ERA5-Land uses T-only JJAS values from the containing valid 0.1-degree ERA5-Land cell, or the validated nearest valid land cell for a containing-cell water mask, without interpolation/downscaling.
 
 The 2 km context buffer applies to `forest_shrub_share_2km`, `mean_slope_2km`, and `fire_years_previous_10y_2km`; it does not create a second analytical resolution. The buffered geometry is the 1 km cell geometry expanded outward by 2,000 m in EPSG:3763.
 

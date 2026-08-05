@@ -46,6 +46,15 @@ Build a reproducible geospatial data-science and machine-learning workflow that:
 - a reproducible data-preparation and scoring pipeline;
 - a documented annual update procedure.
 
+## Analytical and spatial output layers
+
+- `data/processed/national_panel_2015_2024.parquet` is the canonical machine-learning table: one `cell_id` x `observation_year` row, with no repeated geometry.
+- `data/processed/pilot_2023_to_2024/pilot_2023_to_2024_icnf_caop.gpkg` remains the reusable EPSG:3763 canonical grid-geometry lookup.
+- `data/processed/spatial_qa/era5_land_coastal_fallback_qa.gpkg`, layer `era5_coastal_fallback_qa`, is a 1,506-feature QA/presentation layer documenting the systematic ERA5-Land coastal fallback.
+- `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
+
+Later model prediction/exposure and residential-screening/recommendation GeoPackages are planned outputs. They must not be created or documented as results until validated models and recommendation rules exist.
+
 ## Spatial design
 
 - **1 km × 1 km grid cell:** the analytical and prediction unit.
@@ -65,7 +74,7 @@ Each analytical record is one 1 km x 1 km grid cell for predictor reference year
 
 The approved predictor-reference panel is `T = 2015` through `2024`: training years `2015-2019`, validation years `2020-2021`, and final temporal test years `2022-2024`. This requires ICNF annual burned-area archives for `2005-2025` inclusive. ICNF supplies only strictly pre-`T` historical-fire context and observed `T+1` outcome labels; it is never a same-year predictor. No temporal gap is required because the historical-fire window is `T-10` through `T-1`.
 
-CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June–September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Climate values are assigned by the containing ERA5-Land cell without interpolation or downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
+CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June–September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Use the centroid-containing ERA5-Land cell when valid. For a mainland cell whose containing coarse cell is water-masked, use the deterministic nearest valid ERA5-Land land cell established by the coastal QA analysis. This preserves the product and `T`-only aggregation and is neither interpolation nor downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
 
 ## Data sources
 
@@ -216,9 +225,7 @@ Detailed definitions are available in the [success criteria](docs/success_criter
 
 ## Current status and findings
 
-The project is currently at the **repository setup and data-feasibility stage**.
-
-No analytical findings are reported yet. Findings will be added only after the real source data has been collected, validated, and analysed.
+The canonical 891,120-row national panel is validated and model-readiness EDA is complete. The systematic ERA5-Land coastal mask was resolved with a validated nearest-valid-land fallback; all seven predictors and the continuous target are complete. Modelling has not started.
 
 ## BI dashboard
 

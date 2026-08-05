@@ -66,21 +66,15 @@ class NationalPanelTests(unittest.TestCase):
             self.assertEqual(set(frame.climate_reference_year), {year})
             self.assertEqual(set(frame.land_cover_reference_year), {expected_clc[year]})
 
-    def test_climate_water_mask_is_joint_and_stable(self) -> None:
+    def test_climate_coastal_fallback_resolves_all_missingness(self) -> None:
         climate = (
             "warm_season_mean_2m_temperature_c",
             "warm_season_total_precipitation_mm",
             "warm_season_mean_soil_water_layer1",
         )
-        missing_ids = []
         for group in range(self.parquet.num_row_groups):
             frame = self.parquet.read_row_group(group, columns=["cell_id", *climate]).to_pandas()
-            masks = frame[list(climate)].isna()
-            self.assertTrue(masks.eq(masks.iloc[:, 0], axis=0).all().all())
-            cells = tuple(frame.loc[masks.iloc[:, 0], "cell_id"])
-            self.assertEqual(len(cells), 1_506)
-            missing_ids.append(cells)
-        self.assertEqual(len(set(missing_ids)), 1)
+            self.assertFalse(frame[list(climate)].isna().any().any())
 
     def test_representative_pilot_regression(self) -> None:
         pieces = []
@@ -110,6 +104,8 @@ class NationalPanelTests(unittest.TestCase):
         decision = "National panel validated — panel EDA may begin."
         self.assertEqual(metrics["panel_readiness_decision"], decision)
         self.assertIn(decision, report)
+        self.assertTrue(metrics["climate_coastal_fallback"]["adopted"])
+        self.assertEqual(metrics["climate_coastal_fallback"]["missing_rows_after"], 0)
         self.assertFalse(metrics["modelling_readiness"])
 
 

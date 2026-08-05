@@ -1,0 +1,269 @@
+{
+  "created_utc": "2026-08-05T11:50:44.060238+00:00",
+  "source_extent": {
+    "north": 42.2,
+    "west": -9.6,
+    "south": 36.8,
+    "east": -6.0,
+    "shape": [
+      55,
+      37
+    ],
+    "valid_land_source_cell_count": 1553,
+    "masked_source_cell_count": 482,
+    "mask_invariant_across_2015_2024": true
+  },
+  "affected_cell_count": 1506,
+  "distance_km": {
+    "minimum": 4.242881166597269,
+    "median": 7.146827659455861,
+    "mean": 7.522184237263651,
+    "p90": 10.189883814274133,
+    "p95": 11.331102411037545,
+    "p99": 12.889292375613309,
+    "maximum": 13.962482511091391
+  },
+  "distance_bands": {
+    "under_10_km": 1339,
+    "10_to_under_20_km": 167,
+    "20_to_under_30_km": 0,
+    "30_to_under_50_km": 0,
+    "50_km_or_more": 0
+  },
+  "selected_source_on_request_boundary_count": 0,
+  "all_selected_sources_valid_across_years_and_variables": true,
+  "largest_distance_cases": [
+    {
+      "cell_id": "PT3763_005800",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 38.4455328576492,
+      "cell_lon": -8.849039143202912,
+      "fallback_lat": 38.39999999999995,
+      "fallback_lon": -8.700000000000003,
+      "distance_km": 13.962482511091391
+    },
+    {
+      "cell_id": "PT3763_005801",
+      "land_class": "full_land_coastal",
+      "cell_lat": 38.45454075494575,
+      "cell_lon": -8.84912815710795,
+      "fallback_lat": 38.49999999999995,
+      "fallback_lon": -8.700000000000003,
+      "distance_km": 13.957660252596419
+    },
+    {
+      "cell_id": "PT3763_030817",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 37.07816885922797,
+      "cell_lon": -8.273683350644406,
+      "fallback_lat": 37.19999999999993,
+      "fallback_lon": -8.300000000000004,
+      "distance_km": 13.721571075688317
+    },
+    {
+      "cell_id": "PT3763_005802",
+      "land_class": "full_land_coastal",
+      "cell_lat": 38.4635486381806,
+      "cell_lon": -8.849217210779868,
+      "fallback_lat": 38.49999999999995,
+      "fallback_lon": -8.700000000000003,
+      "distance_km": 13.634697741123595
+    },
+    {
+      "cell_id": "PT3763_030258",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 37.07815499724906,
+      "cell_lon": -8.284929317401355,
+      "fallback_lat": 37.19999999999993,
+      "fallback_lon": -8.300000000000004,
+      "distance_km": 13.588557193204212
+    },
+    {
+      "cell_id": "PT3763_029142",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 37.078124074408564,
+      "cell_lon": -8.307421226350256,
+      "fallback_lat": 37.19999999999993,
+      "fallback_lon": -8.300000000000004,
+      "distance_km": 13.54192136325539
+    },
+    {
+      "cell_id": "PT3763_029700",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 37.07814006897511,
+      "cell_lon": -8.296175276167277,
+      "fallback_lat": 37.19999999999993,
+      "fallback_lon": -8.300000000000004,
+      "distance_km": 13.528350246826712
+    },
+    {
+      "cell_id": "PT3763_005803",
+      "land_class": "full_land_coastal",
+      "cell_lat": 38.47255650735265,
+      "cell_lon": -8.84930630423785,
+      "fallback_lat": 38.49999999999995,
+      "fallback_lon": -8.700000000000003,
+      "distance_km": 13.378852165140621
+    },
+    {
+      "cell_id": "PT3763_031937",
+      "land_class": "partial_land_coastal",
+      "cell_lat": 37.08720406318487,
+      "cell_lon": -8.251205372336122,
+      "fallback_lat": 37.19999999999993,
+      "fallback_lon": -8.300000000000004,
+      "distance_km": 13.247545491940777
+    },
+    {
+      "cell_id": "PT3763_005804",
+      "land_class": "full_land_coastal",
+      "cell_lat": 38.48156436246082,
+      "cell_lon": -8.849395437501096,
+      "fallback_lat": 38.49999999999995,
+      "fallback_lon": -8.700000000000003,
+      "distance_km": 13.194028498588747
+    }
+  ],
+  "local_climate_consistency": {
+    "sample_cell_count": 9,
+    "years_compared": [
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "comparison": "fallback value versus median of five nearest valid ERA5-Land cells",
+    "maximum_absolute_difference_across_sample": {
+      "warm_season_mean_2m_temperature_c": 1.130859375,
+      "warm_season_total_precipitation_mm": 15.614673495292664,
+      "warm_season_mean_soil_water_layer1": 0.01996612548828125
+    },
+    "cells": [
+      {
+        "cell_id": "PT3763_010161",
+        "cell_centroid_latitude": 41.59821580382154,
+        "cell_centroid_longitude": -8.750835881648287,
+        "distance_km": 4.242881166597269,
+        "fallback_latitude": 41.599999999999994,
+        "fallback_longitude": -8.700000000000003,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.0,
+          "warm_season_total_precipitation_mm": 15.614673495292664,
+          "warm_season_mean_soil_water_layer1": 0.003780364990234375
+        }
+      },
+      {
+        "cell_id": "PT3763_000033",
+        "cell_centroid_latitude": 38.827505043934565,
+        "cell_centroid_longitude": -9.46317075508125,
+        "distance_km": 6.279968321388036,
+        "fallback_latitude": 38.799999999999955,
+        "fallback_longitude": -9.4,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.29248046875,
+          "warm_season_total_precipitation_mm": 5.326956510543823,
+          "warm_season_mean_soil_water_layer1": 0.012393951416015625
+        }
+      },
+      {
+        "cell_id": "PT3763_003887",
+        "cell_centroid_latitude": 37.048420521626376,
+        "cell_centroid_longitude": -8.94811774808231,
+        "distance_km": 7.147162048762318,
+        "fallback_latitude": 37.09999999999993,
+        "fallback_longitude": -8.900000000000002,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 1.130859375,
+          "warm_season_total_precipitation_mm": 7.255942065967247,
+          "warm_season_mean_soil_water_layer1": 0.01996612548828125
+        }
+      },
+      {
+        "cell_id": "PT3763_027482",
+        "cell_centroid_latitude": 37.13213331908346,
+        "cell_centroid_longitude": -8.341306937597428,
+        "distance_km": 8.377943302573904,
+        "fallback_latitude": 37.19999999999993,
+        "fallback_longitude": -8.300000000000004,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.1728515625,
+          "warm_season_total_precipitation_mm": 1.4077350497245789,
+          "warm_season_mean_soil_water_layer1": 0.0
+        }
+      },
+      {
+        "cell_id": "PT3763_030258",
+        "cell_centroid_latitude": 37.07815499724906,
+        "cell_centroid_longitude": -8.284929317401355,
+        "distance_km": 13.588557193204212,
+        "fallback_latitude": 37.19999999999993,
+        "fallback_longitude": -8.300000000000004,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.095703125,
+          "warm_season_total_precipitation_mm": 7.503606379032135,
+          "warm_season_mean_soil_water_layer1": 0.00444793701171875
+        }
+      },
+      {
+        "cell_id": "PT3763_005802",
+        "cell_centroid_latitude": 38.4635486381806,
+        "cell_centroid_longitude": -8.849217210779868,
+        "distance_km": 13.634697741123595,
+        "fallback_latitude": 38.49999999999995,
+        "fallback_longitude": -8.700000000000003,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.68701171875,
+          "warm_season_total_precipitation_mm": 4.640750699763885,
+          "warm_season_mean_soil_water_layer1": 0.01940155029296875
+        }
+      },
+      {
+        "cell_id": "PT3763_030817",
+        "cell_centroid_latitude": 37.07816885922797,
+        "cell_centroid_longitude": -8.273683350644406,
+        "distance_km": 13.721571075688317,
+        "fallback_latitude": 37.19999999999993,
+        "fallback_longitude": -8.300000000000004,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.095703125,
+          "warm_season_total_precipitation_mm": 7.503606379032135,
+          "warm_season_mean_soil_water_layer1": 0.00444793701171875
+        }
+      },
+      {
+        "cell_id": "PT3763_005801",
+        "cell_centroid_latitude": 38.45454075494575,
+        "cell_centroid_longitude": -8.84912815710795,
+        "distance_km": 13.957660252596419,
+        "fallback_latitude": 38.49999999999995,
+        "fallback_longitude": -8.700000000000003,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.68701171875,
+          "warm_season_total_precipitation_mm": 4.640750699763885,
+          "warm_season_mean_soil_water_layer1": 0.01940155029296875
+        }
+      },
+      {
+        "cell_id": "PT3763_005800",
+        "cell_centroid_latitude": 38.4455328576492,
+        "cell_centroid_longitude": -8.849039143202912,
+        "distance_km": 13.962482511091391,
+        "fallback_latitude": 38.39999999999995,
+        "fallback_longitude": -8.700000000000003,
+        "maximum_absolute_difference_from_five_nearest_land_cell_median": {
+          "warm_season_mean_2m_temperature_c": 0.0,
+          "warm_season_total_precipitation_mm": 3.1837822134548333,
+          "warm_season_mean_soil_water_layer1": 0.01202392578125
+        }
+      }
+    ]
+  },
+  "new_acquisition_required": false,
+  "mapping_rule": "Use the centroid-containing ERA5-Land cell when valid; otherwise assign the geographically nearest valid ERA5-Land land-cell centre in EPSG:3763."
+}

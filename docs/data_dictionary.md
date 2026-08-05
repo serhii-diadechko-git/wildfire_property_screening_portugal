@@ -22,7 +22,7 @@ The approved predictor-reference panel is `T = 2015-2024`: training years `2015-
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
-CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only are assigned by containing ERA5-Land cell, without interpolation or downscaling.
+CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
 
 ## Technical identifiers
 
@@ -88,7 +88,7 @@ Missing mandatory data must not be interpreted as low exposure. The result must 
 - Use one projected CRS for all area and distance calculations.
 - Keep raw files unchanged.
 - Never convert `NoData` automatically to zero.
-- ERA5-Land water-mask cells remain missing consistently across all three climate fields; the 1 km analytical cell is retained.
+- ERA5-Land containing-cell water-mask cases retain the 1 km analytical cell and use the validated static nearest-valid-land source-cell fallback. Never use zero, interpolation, a different product, or T+1 data.
 - Use only predictors available at predictor reference year `T`; never use observed outcome-year `T+1` information as a predictor.
 - Record dataset versions and class definitions.
 - Treat `built_up_share` only as a residential-relevance proxy until validated.

@@ -55,23 +55,24 @@
 
 ## Phase 4 - Exploratory analysis
 
-- [ ] Report temporal and geographic coverage.
-- [ ] Analyse missing values and geometry problems.
+- [x] Report temporal and national-grid coverage.
+- [x] Analyse missing values and resolve systematic ERA5-Land coastal masking.
 - [ ] Map historical burned areas and recurrence.
-- [ ] Analyse the `burned_share_next_year` distribution.
+- [x] Analyse the `burned_share_next_year` distribution and temporal zero inflation.
 - [ ] Define and document the `burned_next_year` threshold.
-- [ ] Analyse class imbalance and positive-class prevalence.
-- [ ] Compare outcomes across the agreed MVP features.
-- [ ] Document possible spatial and temporal leakage.
+- [x] Analyse zero/positive prevalence while keeping the classification threshold deferred.
+- [x] Compare predictor and target distributions, correlations, extremes, and temporal splits.
+- [x] Document spatial and temporal leakage controls for the panel.
 
 ## Phase 5 - Modelling and acceptance evaluation
 
 - [ ] Freeze model-acceptance rules before reviewing final test results.
 - [ ] Build the historical-fire regression baseline using `fire_years_previous_10y_2km`.
 - [ ] Train a Random Forest Regressor for continuous `burned_share_next_year`.
+- [ ] Assess a compound/Tweedie regression candidate for the exact-zero plus continuous-positive target without deriving a classification threshold.
 - [ ] Use temporal train, validation, and test splits.
 - [ ] Add a geographic holdout or spatial cross-validation where practical.
-- [ ] Evaluate regression with MAE and RMSE by later year.
+- [ ] Evaluate regression with MAE and RMSE by later year, a zero-prediction baseline, and error summaries on positive-target rows.
 - [ ] Only after target-distribution review and a documented threshold decision, optionally derive `burned_next_year`, train logistic regression, and evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, capture@20%, and prevalence.
 - [ ] Compare each model with the historical baseline.
 - [ ] Compare results by year and region.

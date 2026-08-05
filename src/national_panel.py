@@ -949,12 +949,14 @@ def compare_representative_pilot(panel_rows: pd.DataFrame) -> dict[str, object]:
         mismatch_missing = np.isnan(left) ^ np.isnan(right)
         absolute = np.abs(left - right)
         absolute[both_missing] = 0.0
-        mismatch_count = int((mismatch_missing | (absolute > tolerance)).sum())
+        fallback_filled = np.isnan(right) & np.isfinite(left) if column in PREDICTOR_COLUMNS[-3:] else np.zeros(len(left), dtype=bool)
+        mismatch_count = int(((mismatch_missing & ~fallback_filled) | (absolute > tolerance)).sum())
         maximum = None if np.isnan(absolute).all() else float(np.nanmax(absolute))
         differences[column] = {
             "tolerance": tolerance,
             "maximum_absolute_difference": maximum,
             "rows_outside_tolerance": mismatch_count,
+            "previously_masked_rows_filled_by_validated_fallback": int(fallback_filled.sum()),
         }
         passed &= mismatch_count == 0
     return {
@@ -1084,6 +1086,13 @@ def component_duration_evidence() -> dict[str, object]:
 
 
 def _climate_mask_spatial_summary(cell_ids: tuple[str, ...]) -> dict[str, object]:
+    if not cell_ids:
+        return {
+            "partial_land_coastal_cell_count": 0,
+            "full_land_cell_count": 0,
+            "centroid_bounds_wgs84": None,
+            "interpretation": "No climate values remain missing after the validated coastal fallback.",
+        }
     selected = set(cell_ids)
     pieces = []
     for batch in load_grid_catalog()["batches"]:
@@ -1165,6 +1174,11 @@ def validate_national_panel() -> dict[str, object]:
         for year in ICNF_YEARS
     }
     stable_climate_cells = next(iter(climate_missing_cells.values()))
+    fallback_analysis_path = ROOT / "reports/validation/era5_coastal_fallback_analysis.json"
+    fallback_analysis = (
+        json.loads(fallback_analysis_path.read_text(encoding="utf-8"))
+        if fallback_analysis_path.exists() else None
+    )
     metrics = {
         "validated_utc": datetime.now(timezone.utc).isoformat(),
         "panel_path": str(NATIONAL_PANEL_PATH.relative_to(ROOT)).replace("\\", "/"),
@@ -1186,6 +1200,14 @@ def validate_national_panel() -> dict[str, object]:
             "stable_cell_set_across_years": True,
             "cell_ids": stable_climate_cells,
             "spatial_pattern": _climate_mask_spatial_summary(stable_climate_cells),
+        },
+        "climate_coastal_fallback": {
+            "adopted": fallback_analysis is not None and len(stable_climate_cells) == 0,
+            "analysis_path": "reports/validation/era5_coastal_fallback_analysis.json",
+            "affected_cell_count_before": None if fallback_analysis is None else fallback_analysis["affected_cell_count"],
+            "distance_km": None if fallback_analysis is None else fallback_analysis["distance_km"],
+            "new_acquisition_required": None if fallback_analysis is None else fallback_analysis["new_acquisition_required"],
+            "missing_rows_after": sum(len(value) for value in climate_missing_cells.values()),
         },
         "temporal_contract": {
             "outcome_year_is_t_plus_1": True,
@@ -1232,6 +1254,28 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         f"| {component} | {seconds:.2f} |"
         for component, seconds in metrics["component_duration_evidence"]["seconds"].items()
     ]
+    fallback = metrics.get("climate_coastal_fallback", {})
+    if fallback.get("adopted"):
+        climate_text = (
+            f"The validated nearest-valid-land fallback resolved all "
+            f"{fallback['affected_cell_count_before']:,} systematic coastal cells without new acquisition. "
+            f"Climate missingness is now zero; maximum fallback distance was "
+            f"{fallback['distance_km']['maximum']:.3f} km. No interpolation, downscaling, zero substitution, "
+            "cell exclusion, or T+1 information was used."
+        )
+        pilot_text = (
+            "All non-climate pilot values and all originally valid climate values match the representative pilot; "
+            "only the pilot's previously masked coastal climate rows now contain the validated fallback."
+        )
+    else:
+        climate_text = (
+            "ERA5-Land water-mask records were retained with all three climate fields missing; no zero substitution, "
+            "imputation, exclusion, or nearest-cell substitution was applied. "
+            f"Affected cells: {metrics['climate_water_mask']['affected_cell_count']:,}; affected rows: "
+            f"{metrics['climate_water_mask']['affected_row_count']:,} "
+            f"({metrics['climate_water_mask']['panel_row_proportion']:.4%} of the panel)."
+        )
+        pilot_text = "All representative pilot analytical values match within their documented tolerances."
     VALIDATION_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     VALIDATION_REPORT_PATH.write_text(
         "# National 2015-2024 cell-year panel validation\n\n"
@@ -1251,16 +1295,10 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n" + "\n".join(rows) + "\n\n"
         "## Feature ranges and missingness\n\n"
         "| Field | Minimum | Maximum | Missing rows |\n|---|---:|---:|---:|\n" + "\n".join(range_rows) + "\n\n"
-        "ERA5-Land water-mask records were retained with all three climate fields missing; "
-        "no zero substitution, imputation, exclusion, or nearest-cell substitution was applied. "
-        f"Affected cells: {metrics['climate_water_mask']['affected_cell_count']:,}; affected rows: "
-        f"{metrics['climate_water_mask']['affected_row_count']:,} "
-        f"({metrics['climate_water_mask']['panel_row_proportion']:.4%} of the panel). "
-        f"Of those cells, {metrics['climate_water_mask']['spatial_pattern']['partial_land_coastal_cell_count']:,} "
-        "are partial-land coastal cells and the remainder are full 1 km land cells whose containing coarse ERA5-Land cell is water-masked.\n\n"
+        + climate_text + "\n\n"
         "## Pilot regression and leakage\n\n"
-        f"All {metrics['pilot_regression']['row_count']} representative rows passed the pilot regression. "
-        "CLC and ICNF areas permit only floating-roundoff tolerance; climate and historical counts require exact equality; "
+        f"All {metrics['pilot_regression']['row_count']} representative rows passed the pilot regression. " + pilot_text + " "
+        "CLC and ICNF areas permit only floating-roundoff tolerance; originally valid climate and historical counts require exact equality; "
         "slope permits 0.25 degrees solely for fixed national raster alignment. Corrected precipitation was used for 2022 and 2023. "
         "No outcome-year information entered predictors. Annual repaired ICNF polygons were locally unioned before intersection, preventing double counting.\n\n"
         f"Three representative national batches (`{'`, `'.join(metrics['representative_batch_determinism']['batch_ids'])}`) "

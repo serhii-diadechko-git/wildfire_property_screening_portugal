@@ -1,0 +1,815 @@
+{
+  "created_utc": "2026-08-05T12:05:00.515474+00:00",
+  "panel_path": "data/processed/national_panel_2015_2024.parquet",
+  "row_count": 891120,
+  "split_row_counts": {
+    "train": 445560,
+    "final_test": 267336,
+    "validation": 178224
+  },
+  "missingness": {
+    "built_up_share": 0,
+    "forest_shrub_share_2km": 0,
+    "mean_slope_2km": 0,
+    "fire_years_previous_10y_2km": 0,
+    "warm_season_mean_2m_temperature_c": 0,
+    "warm_season_total_precipitation_mm": 0,
+    "warm_season_mean_soil_water_layer1": 0,
+    "burned_share_next_year": 0
+  },
+  "target": {
+    "overall_zero_proportion": 0.9486926564323548,
+    "by_year": {
+      "2015": {
+        "row_count": 89112,
+        "zero_proportion": 0.9352163569440703,
+        "positive_count": 5773,
+        "mean": 0.017537292867483647,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.007239562617094573,
+        "p99": 0.7295075194276734,
+        "maximum": 1.0,
+        "positive_median": 0.09491417763825602,
+        "positive_p90": 0.878668255069284
+      },
+      "2016": {
+        "row_count": 89112,
+        "zero_proportion": 0.8639689379657061,
+        "positive_count": 12122,
+        "mean": 0.06286467923397215,
+        "median": 0.0,
+        "p90": 0.05461403688803071,
+        "p95": 0.6963027095644864,
+        "p99": 1.0,
+        "maximum": 1.0,
+        "positive_median": 0.37897632534706216,
+        "positive_p90": 1.0
+      },
+      "2017": {
+        "row_count": 89112,
+        "zero_proportion": 0.9837620073615225,
+        "positive_count": 1447,
+        "mean": 0.0044829711695147404,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.038781872540467624,
+        "maximum": 1.0,
+        "positive_median": 0.0917052809542364,
+        "positive_p90": 0.9572254575030305
+      },
+      "2018": {
+        "row_count": 89112,
+        "zero_proportion": 0.9662896130711913,
+        "positive_count": 3004,
+        "mean": 0.00450926121856215,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.10723136845512603,
+        "maximum": 1.0,
+        "positive_median": 0.02720211788620637,
+        "positive_p90": 0.4452747914073353
+      },
+      "2019": {
+        "row_count": 89112,
+        "zero_proportion": 0.9630352814435766,
+        "positive_count": 3294,
+        "mean": 0.00743708475446482,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.21203360072553445,
+        "maximum": 1.0,
+        "positive_median": 0.0386037914020049,
+        "positive_p90": 0.800994232237686
+      },
+      "2020": {
+        "row_count": 89112,
+        "zero_proportion": 0.9784653020917498,
+        "positive_count": 1919,
+        "mean": 0.0030743529971572247,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.056824276004419715,
+        "maximum": 1.0,
+        "positive_median": 0.049114275377306185,
+        "positive_p90": 0.41190848383909345
+      },
+      "2021": {
+        "row_count": 89112,
+        "zero_proportion": 0.9515441242481372,
+        "positive_count": 4318,
+        "mean": 0.012177584273810254,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.5340788449006223,
+        "maximum": 1.0,
+        "positive_median": 0.07554408548154713,
+        "positive_p90": 0.8802635399907164
+      },
+      "2022": {
+        "row_count": 89112,
+        "zero_proportion": 0.9681187718825748,
+        "positive_count": 2841,
+        "mean": 0.0038293980639461786,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.06015489831808031,
+        "maximum": 1.0,
+        "positive_median": 0.019840145782099177,
+        "positive_p90": 0.4117806311496914
+      },
+      "2023": {
+        "row_count": 89112,
+        "zero_proportion": 0.9522847652392494,
+        "positive_count": 4252,
+        "mean": 0.015607417317379904,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.7685059453039881,
+        "maximum": 1.0,
+        "positive_median": 0.1296710641687179,
+        "positive_p90": 0.9622135552682499
+      },
+      "2024": {
+        "row_count": 89112,
+        "zero_proportion": 0.9242414040757698,
+        "positive_count": 6751,
+        "mean": 0.03053283351257084,
+        "median": 0.0,
+        "p90": 0.0,
+        "p95": 0.04549357795449386,
+        "p99": 0.9680401073442609,
+        "maximum": 1.0,
+        "positive_median": 0.23747271742801387,
+        "positive_p90": 0.9883965425554905
+      }
+    }
+  },
+  "split_distributions": {
+    "train": {
+      "built_up_share": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.2801716628183685,
+        "p99": 0.7105748342232785,
+        "maximum": 1.0,
+        "mean": 0.03782490603065449,
+        "standard_deviation": 0.12894136787001492,
+        "zero_count": 374732
+      },
+      "forest_shrub_share_2km": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.015329216198798266,
+        "p25": 0.20447869545054193,
+        "median": 0.46446133865435674,
+        "p75": 0.6965003005551447,
+        "p95": 0.9177930932903129,
+        "p99": 0.9817408650434899,
+        "maximum": 1.0,
+        "mean": 0.4577270672578388,
+        "standard_deviation": 0.28774132007222497,
+        "zero_count": 11907
+      },
+      "mean_slope_2km": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0001116339917643927,
+        "p01": 1.252490520477295,
+        "p05": 2.251534938812256,
+        "p25": 4.348722696304321,
+        "median": 7.218687534332275,
+        "p75": 11.339669466018677,
+        "p95": 17.62468719482422,
+        "p99": 21.30916404724121,
+        "maximum": 26.64048957824707,
+        "mean": 8.259879527694155,
+        "standard_deviation": 4.862138601736085,
+        "zero_count": 0
+      },
+      "fire_years_previous_10y_2km": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 2.0,
+        "p75": 4.0,
+        "p95": 7.0,
+        "p99": 9.0,
+        "maximum": 10.0,
+        "mean": 2.331661280186731,
+        "standard_deviation": 2.4102162911118876,
+        "zero_count": 124819
+      },
+      "warm_season_mean_2m_temperature_c": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 16.234399414062523,
+        "p01": 17.879907226562523,
+        "p05": 18.897973632812523,
+        "p25": 20.302270507812523,
+        "median": 21.742822265625023,
+        "p75": 23.536645507812523,
+        "p95": 25.206384277343773,
+        "p99": 26.184899902343773,
+        "maximum": 26.703942871093773,
+        "mean": 21.928408935393467,
+        "standard_deviation": 2.0342197958576165,
+        "zero_count": 0
+      },
+      "warm_season_total_precipitation_mm": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 2.7258887270136256,
+        "p01": 3.8832246640367885,
+        "p05": 8.168971035274808,
+        "p25": 24.94307902179571,
+        "median": 42.720896235550754,
+        "p75": 87.52466883743182,
+        "p95": 179.57580799702555,
+        "p99": 248.56308597372845,
+        "maximum": 316.05055677937344,
+        "mean": 62.23482395591511,
+        "standard_deviation": 54.05647188502623,
+        "zero_count": 0
+      },
+      "warm_season_mean_soil_water_layer1": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.040985107421875,
+        "p01": 0.0481109619140625,
+        "p05": 0.05600738525390625,
+        "p25": 0.10398483276367188,
+        "median": 0.13855361938476562,
+        "p75": 0.16641616821289062,
+        "p95": 0.2072296142578125,
+        "p99": 0.2545661926269531,
+        "maximum": 0.3411407470703125,
+        "mean": 0.13560887276885517,
+        "standard_deviation": 0.046671499618296704,
+        "zero_count": 0
+      },
+      "burned_share_next_year": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.0034875687688721057,
+        "p99": 0.8867047369857827,
+        "maximum": 1.0,
+        "mean": 0.019366257848799497,
+        "standard_deviation": 0.11969736370513143,
+        "zero_count": 419920
+      }
+    },
+    "validation": {
+      "built_up_share": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.2843774472294491,
+        "p99": 0.7151894876250898,
+        "maximum": 1.0,
+        "mean": 0.0383948836804152,
+        "standard_deviation": 0.1299343627226595,
+        "zero_count": 149504
+      },
+      "forest_shrub_share_2km": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.014749126695488057,
+        "p25": 0.1944615581232247,
+        "median": 0.45538752516165276,
+        "p75": 0.6915193925019045,
+        "p95": 0.9136502497852499,
+        "p99": 0.9793565373308768,
+        "maximum": 1.0,
+        "mean": 0.45099322636990535,
+        "standard_deviation": 0.2882085350295659,
+        "zero_count": 4762
+      },
+      "mean_slope_2km": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.0001116339917643927,
+        "p01": 1.252490520477295,
+        "p05": 2.2515391945838927,
+        "p25": 4.348722696304321,
+        "median": 7.218687534332275,
+        "p75": 11.339669466018677,
+        "p95": 17.624648571014404,
+        "p99": 21.30916404724121,
+        "maximum": 26.64048957824707,
+        "mean": 8.259879527694155,
+        "standard_deviation": 4.862146786091374,
+        "zero_count": 0
+      },
+      "fire_years_previous_10y_2km": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 1.0,
+        "median": 2.0,
+        "p75": 4.0,
+        "p95": 8.0,
+        "p99": 9.0,
+        "maximum": 10.0,
+        "mean": 2.5487476434150285,
+        "standard_deviation": 2.4110189215635396,
+        "zero_count": 39619
+      },
+      "warm_season_mean_2m_temperature_c": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 16.325341796875023,
+        "p01": 17.689111328125023,
+        "p05": 18.600244140625023,
+        "p25": 19.987451171875023,
+        "median": 21.359216308593773,
+        "p75": 23.182458496093773,
+        "p95": 24.733239746093773,
+        "p99": 25.517907714843773,
+        "maximum": 26.046228027343773,
+        "mean": 21.54606169709101,
+        "standard_deviation": 1.9707632612014037,
+        "zero_count": 0
+      },
+      "warm_season_total_precipitation_mm": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 12.095245630007412,
+        "p01": 16.29063776181283,
+        "p05": 22.99396982834878,
+        "p25": 49.183386559889186,
+        "median": 99.20492956007365,
+        "p75": 137.3283093853388,
+        "p95": 193.0228820128832,
+        "p99": 249.28627666668035,
+        "maximum": 279.27776929573156,
+        "mean": 98.90543277004505,
+        "standard_deviation": 54.618359996968294,
+        "zero_count": 0
+      },
+      "warm_season_mean_soil_water_layer1": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.05017852783203125,
+        "p01": 0.056365966796875,
+        "p05": 0.06563186645507812,
+        "p25": 0.1163330078125,
+        "median": 0.15021133422851562,
+        "p75": 0.17534637451171875,
+        "p95": 0.21221160888671875,
+        "p99": 0.2627677917480469,
+        "maximum": 0.3411407470703125,
+        "mean": 0.14559366643316432,
+        "standard_deviation": 0.04589680353256566,
+        "zero_count": 0
+      },
+      "burned_share_next_year": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.0,
+        "p99": 0.2345717585624367,
+        "maximum": 1.0,
+        "mean": 0.007625968635483739,
+        "standard_deviation": 0.06922630045031215,
+        "zero_count": 171987
+      }
+    },
+    "final_test": {
+      "built_up_share": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.28438714753453365,
+        "p99": 0.7151894876250898,
+        "maximum": 1.0,
+        "mean": 0.0383948836804152,
+        "standard_deviation": 0.12993424121366942,
+        "zero_count": 224256
+      },
+      "forest_shrub_share_2km": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.014748334820259487,
+        "p25": 0.1944615581232247,
+        "median": 0.45538752516165276,
+        "p75": 0.6915193925019045,
+        "p95": 0.9136505471316877,
+        "p99": 0.9793565373308768,
+        "maximum": 1.0,
+        "mean": 0.4509932263699053,
+        "standard_deviation": 0.28820826550942286,
+        "zero_count": 7143
+      },
+      "mean_slope_2km": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.0001116339917643927,
+        "p01": 1.252490520477295,
+        "p05": 2.251534938812256,
+        "p25": 4.348722696304321,
+        "median": 7.218687534332275,
+        "p75": 11.339669466018677,
+        "p95": 17.62468719482422,
+        "p99": 21.30916404724121,
+        "maximum": 26.64048957824707,
+        "mean": 8.259879527694155,
+        "standard_deviation": 4.862142239222222,
+        "zero_count": 0
+      },
+      "fire_years_previous_10y_2km": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 1.0,
+        "median": 2.0,
+        "p75": 3.0,
+        "p95": 7.0,
+        "p99": 9.0,
+        "maximum": 10.0,
+        "mean": 2.325893257922614,
+        "standard_deviation": 2.2175051747470524,
+        "zero_count": 57250
+      },
+      "warm_season_mean_2m_temperature_c": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 17.017968750000023,
+        "p01": 18.102868652343773,
+        "p05": 19.170312500000023,
+        "p25": 20.505334472656273,
+        "median": 21.944238281250023,
+        "p75": 23.720117187500023,
+        "p95": 25.322229003906273,
+        "p99": 25.961755371093773,
+        "maximum": 26.608361816406273,
+        "mean": 22.108449689716334,
+        "standard_deviation": 1.954401709372281,
+        "zero_count": 0
+      },
+      "warm_season_total_precipitation_mm": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 10.053388318738143,
+        "p01": 16.334235212525527,
+        "p05": 21.964408494568488,
+        "p25": 53.082107933732914,
+        "median": 88.14048699423438,
+        "p75": 142.8589874831232,
+        "p95": 258.4225275204517,
+        "p99": 338.98122352547944,
+        "maximum": 380.676542641595,
+        "mean": 108.14772009143499,
+        "standard_deviation": 74.42599661510963,
+        "zero_count": 0
+      },
+      "warm_season_mean_soil_water_layer1": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.043758392333984375,
+        "p01": 0.0527191162109375,
+        "p05": 0.06365585327148438,
+        "p25": 0.11476898193359375,
+        "median": 0.15049362182617188,
+        "p75": 0.183624267578125,
+        "p95": 0.22521591186523438,
+        "p99": 0.2723808288574219,
+        "maximum": 0.3423614501953125,
+        "mean": 0.14910261897205732,
+        "standard_deviation": 0.050388382296963984,
+        "zero_count": 0
+      },
+      "burned_share_next_year": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.0,
+        "p01": 0.0,
+        "p05": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "p95": 0.0004577523804432003,
+        "p99": 0.8220361371810359,
+        "maximum": 1.0,
+        "mean": 0.01665654963129897,
+        "standard_deviation": 0.11106458862956466,
+        "zero_count": 253492
+      }
+    }
+  },
+  "yearly_predictor_means": {
+    "2015": {
+      "built_up_share": 0.036632037962644325,
+      "forest_shrub_share_2km": 0.4640805748345016,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.2643639464942993,
+      "warm_season_mean_2m_temperature_c": 21.662715160021612,
+      "warm_season_total_precipitation_mm": 84.3428610171359,
+      "warm_season_mean_soil_water_layer1": 0.1321752604981044
+    },
+    "2016": {
+      "built_up_share": 0.03803253617007097,
+      "forest_shrub_share_2km": 0.4578538450282624,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.1360759493670884,
+      "warm_season_mean_2m_temperature_c": 22.780487395338895,
+      "warm_season_total_precipitation_mm": 46.2722048447141,
+      "warm_season_mean_soil_water_layer1": 0.13872347944824537
+    },
+    "2017": {
+      "built_up_share": 0.03803253617007097,
+      "forest_shrub_share_2km": 0.4578538450282624,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.233402908699165,
+      "warm_season_mean_2m_temperature_c": 22.14568788018346,
+      "warm_season_total_precipitation_mm": 32.92012034497125,
+      "warm_season_mean_soil_water_layer1": 0.120076849233934
+    },
+    "2018": {
+      "built_up_share": 0.03803253617007097,
+      "forest_shrub_share_2km": 0.4578538450282624,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.5112779423646647,
+      "warm_season_mean_2m_temperature_c": 21.978761199038875,
+      "warm_season_total_precipitation_mm": 80.01878601434066,
+      "warm_season_mean_soil_water_layer1": 0.15444605007389095
+    },
+    "2019": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.513185654008439,
+      "warm_season_mean_2m_temperature_c": 21.074393042384536,
+      "warm_season_total_precipitation_mm": 67.62014755841365,
+      "warm_season_mean_soil_water_layer1": 0.13262272459010116
+    },
+    "2020": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.55886973696023,
+      "warm_season_mean_2m_temperature_c": 22.060761890365168,
+      "warm_season_total_precipitation_mm": 69.29009646124081,
+      "warm_season_mean_soil_water_layer1": 0.137614978987542
+    },
+    "2021": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.5386255498698267,
+      "warm_season_mean_2m_temperature_c": 21.03136150381685,
+      "warm_season_total_precipitation_mm": 128.5207690788493,
+      "warm_season_mean_soil_water_layer1": 0.15357235387878665
+    },
+    "2022": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.376627165813807,
+      "warm_season_mean_2m_temperature_c": 22.391527867713197,
+      "warm_season_total_precipitation_mm": 94.92117771805732,
+      "warm_season_mean_soil_water_layer1": 0.14064696652958386
+    },
+    "2023": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.3251413950983033,
+      "warm_season_mean_2m_temperature_c": 22.176275276960126,
+      "warm_season_total_precipitation_mm": 141.5204240046886,
+      "warm_season_mean_soil_water_layer1": 0.16722665413972002
+    },
+    "2024": {
+      "built_up_share": 0.03839488368041521,
+      "forest_shrub_share_2km": 0.45099322636990535,
+      "mean_slope_2km": 8.259879527694155,
+      "fire_years_previous_10y_2km": 2.275911212855732,
+      "warm_season_mean_2m_temperature_c": 21.757545924475682,
+      "warm_season_total_precipitation_mm": 88.00155855155906,
+      "warm_season_mean_soil_water_layer1": 0.13943423624686807
+    }
+  },
+  "split_standardized_mean_difference_from_train": {
+    "validation": {
+      "built_up_share": 0.004420440539573778,
+      "forest_shrub_share_2km": -0.023402411882461654,
+      "mean_slope_2km": 0.0,
+      "fire_years_previous_10y_2km": 0.09006924566431772,
+      "warm_season_mean_2m_temperature_c": -0.18795768239059063,
+      "warm_season_total_precipitation_mm": 0.6783759193926933,
+      "warm_season_mean_soil_water_layer1": 0.21393770815101043
+    },
+    "final_test": {
+      "built_up_share": 0.004420440539573778,
+      "forest_shrub_share_2km": -0.023402411882461848,
+      "mean_slope_2km": 0.0,
+      "fire_years_previous_10y_2km": -0.0023931554547148423,
+      "warm_season_mean_2m_temperature_c": 0.08850604771888133,
+      "warm_season_total_precipitation_mm": 0.8493505871632341,
+      "warm_season_mean_soil_water_layer1": 0.28912176196524386
+    }
+  },
+  "correlations": {
+    "built_up_share": {
+      "built_up_share": 1.0,
+      "forest_shrub_share_2km": -0.17852235894787508,
+      "mean_slope_2km": -0.11628905510179707,
+      "fire_years_previous_10y_2km": 0.07210628552998437,
+      "warm_season_mean_2m_temperature_c": -0.15702864681027132,
+      "warm_season_total_precipitation_mm": 0.05715066887587153,
+      "warm_season_mean_soil_water_layer1": -0.010234100759501059,
+      "burned_share_next_year": -0.032029063058384676
+    },
+    "forest_shrub_share_2km": {
+      "built_up_share": -0.17852235894787508,
+      "forest_shrub_share_2km": 1.0,
+      "mean_slope_2km": 0.5688304995478776,
+      "fire_years_previous_10y_2km": 0.14026337158964802,
+      "warm_season_mean_2m_temperature_c": -0.31288292773550447,
+      "warm_season_total_precipitation_mm": 0.21698429456576446,
+      "warm_season_mean_soil_water_layer1": -0.12245927756314685,
+      "burned_share_next_year": 0.12543076203888948
+    },
+    "mean_slope_2km": {
+      "built_up_share": -0.11628905510179707,
+      "forest_shrub_share_2km": 0.5688304995478776,
+      "mean_slope_2km": 1.0,
+      "fire_years_previous_10y_2km": 0.2969789524713093,
+      "warm_season_mean_2m_temperature_c": -0.4146802911064668,
+      "warm_season_total_precipitation_mm": 0.4091427202083713,
+      "warm_season_mean_soil_water_layer1": 0.2895584485596223,
+      "burned_share_next_year": 0.12395552527761046
+    },
+    "fire_years_previous_10y_2km": {
+      "built_up_share": 0.07210628552998437,
+      "forest_shrub_share_2km": 0.14026337158964802,
+      "mean_slope_2km": 0.2969789524713093,
+      "fire_years_previous_10y_2km": 1.0,
+      "warm_season_mean_2m_temperature_c": -0.470303659585062,
+      "warm_season_total_precipitation_mm": 0.5315460429084166,
+      "warm_season_mean_soil_water_layer1": 0.36981875057250047,
+      "burned_share_next_year": 0.06874470096974634
+    },
+    "warm_season_mean_2m_temperature_c": {
+      "built_up_share": -0.15702864681027132,
+      "forest_shrub_share_2km": -0.31288292773550447,
+      "mean_slope_2km": -0.4146802911064668,
+      "fire_years_previous_10y_2km": -0.470303659585062,
+      "warm_season_mean_2m_temperature_c": 1.0,
+      "warm_season_total_precipitation_mm": -0.631905069932751,
+      "warm_season_mean_soil_water_layer1": -0.2015993187041663,
+      "burned_share_next_year": -0.07892397580636515
+    },
+    "warm_season_total_precipitation_mm": {
+      "built_up_share": 0.05715066887587153,
+      "forest_shrub_share_2km": 0.21698429456576446,
+      "mean_slope_2km": 0.4091427202083713,
+      "fire_years_previous_10y_2km": 0.5315460429084166,
+      "warm_season_mean_2m_temperature_c": -0.631905069932751,
+      "warm_season_total_precipitation_mm": 1.0,
+      "warm_season_mean_soil_water_layer1": 0.5627982662303287,
+      "burned_share_next_year": 0.08446026412067514
+    },
+    "warm_season_mean_soil_water_layer1": {
+      "built_up_share": -0.010234100759501059,
+      "forest_shrub_share_2km": -0.12245927756314685,
+      "mean_slope_2km": 0.2895584485596223,
+      "fire_years_previous_10y_2km": 0.36981875057250047,
+      "warm_season_mean_2m_temperature_c": -0.2015993187041663,
+      "warm_season_total_precipitation_mm": 0.5627982662303287,
+      "warm_season_mean_soil_water_layer1": 1.0,
+      "burned_share_next_year": 0.05315989718494774
+    },
+    "burned_share_next_year": {
+      "built_up_share": -0.032029063058384676,
+      "forest_shrub_share_2km": 0.12543076203888948,
+      "mean_slope_2km": 0.12395552527761046,
+      "fire_years_previous_10y_2km": 0.06874470096974634,
+      "warm_season_mean_2m_temperature_c": -0.07892397580636515,
+      "warm_season_total_precipitation_mm": 0.08446026412067514,
+      "warm_season_mean_soil_water_layer1": 0.05315989718494774,
+      "burned_share_next_year": 1.0
+    }
+  },
+  "high_redundancy_pairs_abs_ge_0_8": [],
+  "outlier_screen": {
+    "built_up_share": {
+      "train_3iqr_lower": 0.0,
+      "train_3iqr_upper": 0.0,
+      "counts_by_split": {
+        "train": 70828,
+        "validation": 28720,
+        "final_test": 43080
+      }
+    },
+    "forest_shrub_share_2km": {
+      "train_3iqr_lower": -1.2715861198632663,
+      "train_3iqr_upper": 2.172565115868953,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    },
+    "mean_slope_2km": {
+      "train_3iqr_lower": -16.624117612838745,
+      "train_3iqr_upper": 32.31250977516174,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    },
+    "fire_years_previous_10y_2km": {
+      "train_3iqr_lower": -12.0,
+      "train_3iqr_upper": 16.0,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    },
+    "warm_season_mean_2m_temperature_c": {
+      "train_3iqr_lower": 10.599145507812523,
+      "train_3iqr_upper": 33.23977050781252,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    },
+    "warm_season_total_precipitation_mm": {
+      "train_3iqr_lower": -162.8016904251126,
+      "train_3iqr_upper": 275.26943828434014,
+      "counts_by_split": {
+        "train": 2716,
+        "validation": 187,
+        "final_test": 9332
+      }
+    },
+    "warm_season_mean_soil_water_layer1": {
+      "train_3iqr_lower": -0.08330917358398438,
+      "train_3iqr_upper": 0.3537101745605469,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    }
+  },
+  "model_design_decision": {
+    "continuous_target_retained": true,
+    "binary_target_still_deferred": true,
+    "zero_inflation_requires_evaluation_safeguards": true,
+    "design": "Proceed with the continuous regression target. Retain the historical-fire and Random Forest regression baselines, but pre-register a zero-prediction baseline, report MAE/RMSE by year plus errors on positive-target rows, and assess a compound/Tweedie regression candidate that accommodates exact zeros without defining a classification threshold.",
+    "gate": "Model-design gate passed \u2014 modelling may begin"
+  },
+  "final_test_use": "Descriptive drift review only; no model performance or model selection was performed."
+}

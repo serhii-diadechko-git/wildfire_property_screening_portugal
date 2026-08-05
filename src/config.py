@@ -99,7 +99,7 @@ class Era5LandFeatureConfig:
         "warm_season_total_precipitation_mm",
         "warm_season_mean_soil_water_layer1",
     )
-    assignment_method: str = "containing_era5_land_cell"
+    assignment_method: str = "containing_valid_era5_land_cell_else_nearest_valid_land_cell"
 
 
 @dataclass(frozen=True)
