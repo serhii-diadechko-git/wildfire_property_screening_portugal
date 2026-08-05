@@ -86,19 +86,24 @@ FIELD_CONTRACTS = {
 }
 
 
-def source_years(predictor_year: int) -> dict[str, int | tuple[int, ...]]:
-    """Return explicit source years and reject years outside the canonical panel."""
-    if not TEMPORAL.predictor_start_year <= predictor_year <= TEMPORAL.predictor_end_year:
-        raise ValueError("Predictor year is outside the canonical 2015-2024 scope")
-    history = TEMPORAL.historical_years(predictor_year)
+def source_years(
+    predictor_year: int,
+    *,
+    temporal_design=TEMPORAL,
+    clc_governance=CLC,
+) -> dict[str, int | tuple[int, ...]]:
+    """Return explicit source years for a declared leakage-safe temporal design."""
+    if not temporal_design.predictor_start_year <= predictor_year <= temporal_design.predictor_end_year:
+        raise ValueError("Predictor year is outside the declared temporal design")
+    history = temporal_design.historical_years(predictor_year)
     if history[-1] >= predictor_year:
         raise ValueError("Historical fire context must end before T")
     return {
         "predictor_year": predictor_year,
         "history_years": history,
         "climate_year": predictor_year,
-        "land_cover_reference_year": CLC.reference_year(predictor_year),
-        "outcome_year": TEMPORAL.outcome_year(predictor_year),
+        "land_cover_reference_year": clc_governance.reference_year(predictor_year),
+        "outcome_year": temporal_design.outcome_year(predictor_year),
     }
 
 
@@ -107,6 +112,7 @@ def validate_feature_table(
     *,
     expected_years: tuple[int, ...],
     expected_cell_ids: tuple[str, ...],
+    source_year_resolver=source_years,
 ) -> dict[str, object]:
     """Validate schema, ranges, missingness, uniqueness, and temporal alignment."""
     missing_columns = [column for column in TABLE_COLUMNS if column not in table.columns]
@@ -124,7 +130,7 @@ def validate_feature_table(
 
     temporal_errors: list[str] = []
     for row in table.itertuples(index=False):
-        years = source_years(int(row.observation_year))
+        years = source_year_resolver(int(row.observation_year))
         expected_history = years["history_years"]
         checks = (
             row.outcome_year == years["outcome_year"],

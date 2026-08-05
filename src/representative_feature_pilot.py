@@ -45,7 +45,7 @@ from src.source_registry import (
     CLC_PREPARED_PORTUGAL_LAYERS,
     COP_DEM_GLO30,
     COP_DEM_GLO30_TILES,
-    ERA5_LAND_FULL_SCOPE_ARCHIVES,
+    ERA5_LAND_AVAILABLE_ARCHIVES,
     ERA5_LAND_PRECIPITATION_CORRECTIONS,
 )
 
@@ -86,9 +86,9 @@ _CLC_RAW_BY_REFERENCE_YEAR = {
 
 def era5_source_paths(predictor_year: int) -> dict[str, Path]:
     """Select the annual GRIBs, including mandatory corrected precipitation."""
-    if predictor_year not in ERA5_LAND_FULL_SCOPE_ARCHIVES:
+    if predictor_year not in ERA5_LAND_AVAILABLE_ARCHIVES:
         raise ValueError(f"No registered ERA5-Land file for {predictor_year}")
-    annual = ERA5_LAND_FULL_SCOPE_ARCHIVES[predictor_year]
+    annual = ERA5_LAND_AVAILABLE_ARCHIVES[predictor_year]
     precipitation = ERA5_LAND_PRECIPITATION_CORRECTIONS.get(predictor_year, annual)
     if predictor_year in (2022, 2023) and precipitation is annual:
         raise ValueError(f"Corrected precipitation source is mandatory for {predictor_year}")

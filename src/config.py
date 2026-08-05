@@ -65,6 +65,30 @@ class ClcGovernanceConfig:
 
 
 @dataclass(frozen=True)
+class ExtendedTrainingClcConfig:
+    """Separate governed CLC assignment for the proposed backward extension.
+
+    This deliberately does not alter the canonical 2015-2024 configuration or
+    its validated panel artefacts.
+    """
+
+    assignment_by_predictor_year: tuple[tuple[int, int], ...] = tuple(
+        [(year, 2006) for year in range(2010, 2016)]
+        + [(year, 2012) for year in range(2016, 2019)]
+        + [(year, 2018) for year in range(2019, 2022)]
+    )
+
+    def reference_year(self, predictor_year: int) -> int:
+        assignments = dict(self.assignment_by_predictor_year)
+        if predictor_year not in assignments:
+            raise ValueError("Predictor year is outside the approved extended-training scope")
+        reference_year = assignments[predictor_year]
+        if reference_year > predictor_year:
+            raise ValueError("CLC reference year must not be after predictor year")
+        return reference_year
+
+
+@dataclass(frozen=True)
 class TemporalDesign:
     """The approved retrospective cell-year design."""
 
@@ -76,6 +100,24 @@ class TemporalDesign:
     historical_fire_window_years: int = 10
     required_icnf_start_year: int = 2005
     required_icnf_end_year: int = 2025
+
+    def historical_years(self, predictor_year: int) -> tuple[int, ...]:
+        return tuple(range(predictor_year - self.historical_fire_window_years, predictor_year))
+
+    def outcome_year(self, predictor_year: int) -> int:
+        return predictor_year + 1
+
+
+@dataclass(frozen=True)
+class ExtendedTrainingDesign:
+    """Backward-only training extension; canonical final-test rows stay unopened."""
+
+    predictor_start_year: int = 2010
+    predictor_end_year: int = 2021
+    training_years: tuple[int, int] = (2010, 2019)
+    validation_years: tuple[int, int] = (2020, 2021)
+    reserved_final_test_years: tuple[int, int] = (2022, 2024)
+    historical_fire_window_years: int = 10
 
     def historical_years(self, predictor_year: int) -> tuple[int, ...]:
         return tuple(range(predictor_year - self.historical_fire_window_years, predictor_year))
@@ -116,6 +158,8 @@ class PilotConfig:
 TEMPORAL = TemporalDesign()
 ERA5_LAND = Era5LandFeatureConfig()
 CLC = ClcGovernanceConfig()
+EXTENDED_TRAINING = ExtendedTrainingDesign()
+EXTENDED_TRAINING_CLC = ExtendedTrainingClcConfig()
 
 
 @dataclass(frozen=True)

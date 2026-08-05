@@ -298,6 +298,7 @@ def _icnf_record(
     *,
     official_source_url: str = _ICNF_URL,
     acquisition_method: str = "manual browser download",
+    access_date: str = "2026-08-04",
     geometry_types: tuple[str, ...] = (),
     required_fields: tuple[str, ...] = ("Ano", "AreaHaSIG"),
 ) -> SourceRecord:
@@ -308,7 +309,7 @@ def _icnf_record(
         dataset_edition_or_year=f"ICNF annual burned areas, {year}",
         official_source_url=official_source_url,
         licence_or_terms_reference=_ICNF_TERMS,
-        access_date="2026-08-04",
+        access_date=access_date,
         acquisition_method=acquisition_method,
         raw_path=f"data/raw/wildfire/icnf_burned_areas/{filename}",
         filename=filename,
@@ -324,6 +325,49 @@ def _icnf_record(
             year_values=(year,),
         ),
     )
+
+
+ICNF_2000_2008_COMBINED = SourceRecord(
+    key="icnf_2000_2008_combined",
+    dataset_edition_or_year="ICNF annual burned areas, combined 2000-2008 layer",
+    official_source_url=_ICNF_URL,
+    licence_or_terms_reference=_ICNF_TERMS,
+    access_date="unverified original access date; local archive registered 2026-08-05",
+    acquisition_method="pre-existing local archive; original acquisition method unverified",
+    raw_path="data/raw/wildfire/icnf_burned_areas/ardida_2000_2008.zip",
+    filename="ardida_2000_2008.zip",
+    expected_sha256="4EF3CA2085A8AC6B88AE3F5D4194E3EDFDB32039C1F7355DF924B27F66DB066E",
+    required_members=(
+        "ardida_2000_2008.shp", "ardida_2000_2008.shx", "ardida_2000_2008.dbf", "ardida_2000_2008.prj",
+    ),
+    validation_facts=IcnfValidationFacts(
+        feature_count=10981,
+        non_empty_geometry_count=10981,
+        invalid_geometry_count=201,
+        field_names=("Ano", "AreaHaSIG"),
+        required_fields=("Ano", "AreaHaSIG"),
+        geometry_types=("Polygon", "MultiPolygon"),
+        year_values=tuple(range(2000, 2009)),
+    ),
+)
+ICNF_2009 = _icnf_record(
+    2009, "BE2C1D9E10BA0E51B081A1416C11D07C8D02492EE52BA50481A664333A3E4807",
+    1441, 22, ("Ano", "AreaHaSIG"), geometry_types=("Polygon", "MultiPolygon"),
+    access_date="unverified original access date; local archive registered 2026-08-05",
+    acquisition_method="pre-existing local archive; original acquisition method unverified",
+)
+ICNF_2010 = _icnf_record(
+    2010, "34394C6343AF7E40C0C6F4CD5AC2B67C75901DDBBEE7799B0607C0DAA6043AD3",
+    2513, 40, ("Ano", "AreaHaSIG"), geometry_types=("Polygon", "MultiPolygon"),
+    access_date="unverified original access date; local archive registered 2026-08-05",
+    acquisition_method="pre-existing local archive; original acquisition method unverified",
+)
+ICNF_2011 = _icnf_record(
+    2011, "8A0139F469523A5D5F65BCBD8F440FAC0780210C59C652FCCE1C94BE6B8670D7",
+    3686, 33, ("Ano", "AreaHaSIG"), geometry_types=("Polygon", "MultiPolygon"),
+    access_date="unverified original access date; local archive registered 2026-08-05",
+    acquisition_method="pre-existing local archive; original acquisition method unverified",
+)
 
 
 ICNF_2013 = _icnf_record(2013, "0B611EDABEE80665E9FB8EBCBAE4B2792A51EDAC7635ADCCCAA7821BC120A9C2", 3150, 111, ("Ano", "AreaHaSIG"))
@@ -370,7 +414,10 @@ PILOT_ICNF_ARCHIVES = {2013: ICNF_2013, 2014: ICNF_2014, 2015: ICNF_2015, 2016: 
 
 REGISTERED_SOURCES = {
     record.key: record
-    for record in (CAOP_2025, ICNF_2012, *PILOT_ICNF_HISTORY, ICNF_2023, ICNF_2024, ICNF_2025)
+    for record in (
+        CAOP_2025, ICNF_2000_2008_COMBINED, ICNF_2009, ICNF_2010, ICNF_2011,
+        ICNF_2012, *PILOT_ICNF_HISTORY, ICNF_2023, ICNF_2024, ICNF_2025,
+    )
 }
 PANEL_ICNF_ARCHIVES = {
     2012: ICNF_2012,
@@ -378,6 +425,13 @@ PANEL_ICNF_ARCHIVES = {
     2023: ICNF_2023,
     2024: ICNF_2024,
     2025: ICNF_2025,
+}
+EXTENDED_TRAINING_ICNF_ARCHIVES = {
+    **{year: ICNF_2000_2008_COMBINED for year in range(2000, 2009)},
+    2009: ICNF_2009,
+    2010: ICNF_2010,
+    2011: ICNF_2011,
+    **PANEL_ICNF_ARCHIVES,
 }
 
 CLC_2018_MAINLAND_INTERIM = InterimDerivativeRecord(
@@ -739,6 +793,58 @@ ERA5_LAND_TRAINING_ARCHIVES = {
 }
 
 
+_ERA5_EXTENDED_TRAINING_SHA256 = {
+    2010: "ECF7FCDE8B7A0C7D06FAFB3DFC9BEFED05E8F0E30E8DAAD8FB1AAA35C94361D4",
+    2011: "FC09B5199839F721217F3E04BD5FA77D5B91531B9DEC5326DCA2DC4D9C1D64AD",
+    2012: "CDDBB50BE12019939018646837FC41DBBA0C5CE35B48C1CB29B8719C27B4B5A2",
+    2013: "238F5009C71C7F8F6826D71DEE5C270A5C485067C006958AC5CF8F16D4BFC9B6",
+    2014: "8EB9DC0A0D4BAC16B6EC94EE501DE9CE10F1AC6F696F3254606AB997E50FAFEE",
+}
+
+
+def _era5_extended_training_record(year: int, checksum: str) -> Era5LandRawRecord:
+    """Register a newly retrieved backward-extension ERA5-Land raw file."""
+    filename = f"era5_land_monthly_jjas_{year}_mainland_portugal.grib"
+    return Era5LandRawRecord(
+        key=f"era5_land_{year}_jjas_mainland_portugal",
+        dataset_id="reanalysis-era5-land-monthly-means",
+        official_source_url="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
+        licence_or_terms_reference="Copernicus Climate Data Store CC-BY licence and dataset terms.",
+        retrieval_date="2026-08-05",
+        acquisition_method="CDS API retrieval",
+        raw_path=f"data/raw/climate/era5_land/{filename}",
+        filename=filename,
+        sha256=checksum,
+        product_type="monthly_averaged_reanalysis",
+        year=year,
+        months=("06", "07", "08", "09"),
+        time="00:00",
+        variables=("2m_temperature", "total_precipitation", "volumetric_soil_water_layer_1"),
+        area_north_west_south_east=(42.2, -9.6, 36.8, -6.0),
+        data_format="grib",
+        validation_facts=Era5LandValidationFacts(
+            grid_shape=(4, 55, 37),
+            months=("06", "07", "08", "09"),
+            grib_short_names=("2t", "tp", "swvl1"),
+            missing_value_counts=(("2t", 1928), ("tp", 1928), ("swvl1", 1928)),
+            units=(("2t", "K"), ("tp", "m"), ("swvl1", "m**3 m**-3")),
+            step_types=(("2t", "avgid"), ("tp", "avgad"), ("swvl1", "avgua")),
+            step_ranges=(("2t", "1-24"), ("tp", "0-24"), ("swvl1", "0")),
+            precipitation_status="validated",
+            validation_note=(
+                "Monthly mean of daily means; total precipitation is a per-day metre value and "
+                "must use the established day-weighted JJAS conversion to millimetres."
+            ),
+        ),
+    )
+
+
+ERA5_LAND_EXTENDED_TRAINING_ARCHIVES = {
+    year: _era5_extended_training_record(year, checksum)
+    for year, checksum in _ERA5_EXTENDED_TRAINING_SHA256.items()
+}
+
+
 def _era5_full_scope_record(
     year: int,
     checksum: str,
@@ -868,6 +974,10 @@ ERA5_LAND_FULL_SCOPE_ARCHIVES = {
     2022: ERA5_LAND_2022_JJAS,
     2023: ERA5_LAND_2023_JJAS_PILOT,
     2024: ERA5_LAND_2024_JJAS,
+}
+ERA5_LAND_AVAILABLE_ARCHIVES = {
+    **ERA5_LAND_EXTENDED_TRAINING_ARCHIVES,
+    **ERA5_LAND_FULL_SCOPE_ARCHIVES,
 }
 
 

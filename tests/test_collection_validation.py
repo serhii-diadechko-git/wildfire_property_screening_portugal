@@ -12,6 +12,10 @@ from src.collection_validation import (
 from src.config import PILOT_2023_TO_2024
 from src.source_registry import (
     CAOP_2025,
+    ICNF_2000_2008_COMBINED,
+    ICNF_2009,
+    ICNF_2010,
+    ICNF_2011,
     ICNF_2023,
     ICNF_2024,
     ICNF_2025,
@@ -24,6 +28,21 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 class CollectionValidationTests(unittest.TestCase):
+    def test_early_icnf_archives_match_registered_facts(self) -> None:
+        combined = validate_icnf_archive(
+            ICNF_2000_2008_COMBINED, PROJECT_ROOT, expected_year=tuple(range(2000, 2009))
+        )
+        self.assertEqual(combined["year_values"], tuple(range(2000, 2009)))
+        self.assertEqual(combined["feature_count"], 10981)
+        for year, record, count, invalid in (
+            (2009, ICNF_2009, 1441, 22),
+            (2010, ICNF_2010, 2513, 40),
+            (2011, ICNF_2011, 3686, 33),
+        ):
+            with self.subTest(year=year):
+                result = validate_icnf_archive(record, PROJECT_ROOT, expected_year=year)
+                self.assertEqual(result["feature_count"], count)
+                self.assertEqual(result["invalid_geometry_count"], invalid)
     def test_pilot_era5_request_is_t_only_and_jjas(self) -> None:
         result = validate_era5_land_pilot_request()
         self.assertEqual(result["predictor_year"], 2023)

@@ -67,7 +67,7 @@ def validate_icnf_archive(
     record: SourceRecord,
     project_root: Path,
     *,
-    expected_year: int,
+    expected_year: int | tuple[int, ...],
     expected_feature_count: int | None = None,
 ) -> dict[str, object]:
     """Inspect and validate an ICNF Shapefile directly through GDAL `/vsizip`.
@@ -92,8 +92,10 @@ def validate_icnf_archive(
     missing_fields = [field for field in required_fields if field not in frame.columns]
     if missing_fields:
         raise ValueError(f"ICNF: missing required fields {missing_fields}")
-    if not frame["Ano"].eq(expected_year).all():
-        raise ValueError(f"ICNF: all Ano values must equal {expected_year}")
+    expected_year_values = (expected_year,) if isinstance(expected_year, int) else tuple(expected_year)
+    observed_year_values = tuple(sorted(int(value) for value in frame["Ano"].unique()))
+    if observed_year_values != expected_year_values:
+        raise ValueError(f"ICNF: expected Ano values {expected_year_values}, found {observed_year_values}")
     null_geometry_count = int(frame.geometry.isna().sum())
     non_empty_geometry_count = int((~frame.geometry.isna() & ~frame.geometry.is_empty).sum())
     invalid_geometry_count = int((~frame.geometry.is_valid).sum())
@@ -111,7 +113,8 @@ def validate_icnf_archive(
         "crs": "EPSG:3763",
         "feature_count": len(frame),
         "year_field": "Ano",
-        "year": expected_year,
+        "year": expected_year if isinstance(expected_year, int) else None,
+        "year_values": observed_year_values,
         "field_names": field_names,
         "required_fields_present": True,
         "non_empty_geometry_count": non_empty_geometry_count,
