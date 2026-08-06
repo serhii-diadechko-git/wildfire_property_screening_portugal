@@ -24,6 +24,8 @@ Run each notebook from a fresh kernel in the order below. Routine notebook revie
 
 The final temporal evaluation is complete. The retained nine-feature hurdle is refit through observed outcome 2025 for an annual operational cycle. The validated `2026` estimate uses an unlabelled T=2025 matrix; see `reports/validation/operational_forecast_readiness.md` and `reports/validation/operational_forecast_2026_validation.md`. Any forecast layer is a continuous comparative estimate, not a probability, property-level safety assessment, or purchase recommendation. The historical wildfire-exposure screening layer remains supporting context for broad location comparison.
 
+The notebook sequence is a review path, not the annual scoring engine. For the plain-language lifecycle—from historical train/validation/final evaluation through the target-free 2026 score and the later ICNF-based evaluation/refit—read [`docs/operational_forecast_cycle.md`](../docs/operational_forecast_cycle.md). The current scoring scripts are `scripts/prepare_operational_forecast.py` and `scripts/score_operational_forecast.py`.
+
 The validated result represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using observed ICNF evidence from 2016–2025.
 
 ## Presentation outputs

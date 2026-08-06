@@ -2,6 +2,8 @@
 
 > Completed model sequence: build/validate the panel, freeze the extended T=2010-2019 training specification, validate on T=2020-2021, then run one frozen final evaluation at T=2022-2024. The nine-feature specification is now refit through observed outcome 2025 for the annual operational cycle. The 2023→2024 work remains a feasibility pilot only.
 
+> Annual operational logic and the current 2026 score are documented in [operational_forecast_cycle.md](operational_forecast_cycle.md). A newly scored year has no target until ICNF publishes that completed year's annual outcome; it is then evaluated before the next fixed-specification refit.
+
 ## Phase 0 - Freeze the MVP
 
 - [ ] Confirm the project title and decision statement.

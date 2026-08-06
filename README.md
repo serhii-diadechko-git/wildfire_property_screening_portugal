@@ -80,12 +80,14 @@ CLC is broad land-cover context rather than annual parcel-level land cover. Its 
 
 ## Annual operational forecast cycle
 
-For an estimate of calendar year `Y`, the model uses all nine predictor values from the completed prior year `Y-1`. It may be refit only through labelled predictor year `Y-2`, whose observed ICNF outcome is `Y-1`. The scoring matrix intentionally has no target for `Y`.
+For an estimate of calendar year `Y`, the model uses all nine predictor values from the completed prior year `Y-1`. It may be refit only through labelled predictor year `Y-2`, whose observed ICNF outcome is `Y-1`. The scoring matrix intentionally has no target for `Y`: its error can be measured only when the annual ICNF outcome becomes available later.
 
 - Current artefact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`, refit through observed outcome 2025.
 - Current published score: `Y=2026`, using validated ERA5-Land JJAS `T=2025`, ICNF history 2015-2024, governed CLC 2018, and static terrain.
 - Current status: scored and validated; see `reports/validation/operational_forecast_readiness.md` and `reports/validation/operational_forecast_2026_validation.md`.
 - Run `scripts/prepare_operational_forecast.py` to rebuild the fixed model and validate readiness, then `scripts/score_operational_forecast.py` to derive the separate Parquet table and QGIS-ready GeoPackage. Both enforce the `forecast_year`, model version, source cutoff, and no-target rules.
+
+Read the step-by-step [annual operational forecast cycle](docs/operational_forecast_cycle.md) for the distinction between historical train/validation/final evaluation, a current target-free score, and the later evaluate/refit cycle. It also explains the scripts and notebook roles.
 
 ## Data sources
 
