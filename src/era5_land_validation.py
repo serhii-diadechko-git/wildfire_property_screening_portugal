@@ -133,6 +133,83 @@ def validate_extended_training_era5_grib(path: Path, year: int) -> dict[str, obj
     }
 
 
+def validate_unregistered_annual_era5_grib(path: Path, year: int) -> dict[str, object]:
+    """Validate a new annual JJAS retrieval before adding it to the registry.
+
+    It deliberately has no registry/checksum dependency: the immutable file is
+    validated first, then its observed checksum and GRIB facts are recorded in
+    ``source_registry.py``.  The accepted post-March-2024 precipitation
+    encoding is the same one validated for the local 2024 annual file.
+    """
+    if not path.is_file():
+        raise FileNotFoundError(f"Missing ERA5-Land GRIB: {path}")
+    expected_months = ("06", "07", "08", "09")
+    expected_short_names = tuple(GRIB_SHORT_NAMES[name] for name in ERA5_LAND.variables)
+    expected_area = ERA5_LAND_CDS.mainland_portugal_area
+    variable_results: dict[str, dict[str, object]] = {}
+    reference_shape: tuple[int, int, int] | None = None
+    reference_extent: tuple[float, float, float, float] | None = None
+    for short_name in expected_short_names:
+        dataset = xr.open_dataset(
+            path,
+            engine="cfgrib",
+            backend_kwargs={"indexpath": "", "filter_by_keys": {"shortName": short_name}},
+        )
+        try:
+            variable = next(iter(dataset.data_vars))
+            expected_variable = "t2m" if short_name == "2t" else short_name
+            if variable != expected_variable:
+                raise ValueError(f"{year}: expected {expected_variable}, found {variable}")
+            shape = (int(dataset.sizes["time"]), int(dataset.sizes["latitude"]), int(dataset.sizes["longitude"]))
+            months = tuple(str(value.astype("datetime64[M]"))[-2:] for value in dataset.time.values)
+            extent = (
+                float(dataset.latitude.max()), float(dataset.longitude.min()),
+                float(dataset.latitude.min()), float(dataset.longitude.max()),
+            )
+            missing_count = int(dataset[variable].isnull().sum().item())
+            if shape != (4, 55, 37) or months != expected_months:
+                raise ValueError(f"{year}: unexpected temporal/grid layout {shape}, {months}")
+            if reference_shape is None:
+                reference_shape, reference_extent = shape, extent
+            elif shape != reference_shape or extent != reference_extent:
+                raise ValueError(f"{year}: variables do not share a grid")
+            variable_results[short_name] = {"shape": shape, "missing_value_count": missing_count}
+        finally:
+            dataset.close()
+    if reference_extent is None or any(abs(actual - expected) > 1e-9 for actual, expected in zip(reference_extent, expected_area)):
+        raise ValueError(f"{year}: unexpected mainland request extent {reference_extent}")
+    metadata = _grib_message_contract(path)
+    if tuple(metadata) != expected_short_names:
+        raise ValueError(f"{year}: expected exactly {expected_short_names}, found {tuple(metadata)}")
+    expected_metadata = {
+        "2t": {"unit": "K", "step_type": "avgid", "step_range": "1-24"},
+        "tp": {"unit": "m", "step_type": "avgas", "step_range": "23-24"},
+        "swvl1": {"unit": "m**3 m**-3", "step_type": "avgua", "step_range": "0"},
+    }
+    for short_name, expected in expected_metadata.items():
+        observed = metadata[short_name]
+        if any(observed[key] != value for key, value in expected.items()):
+            raise ValueError(f"{year}: unexpected {short_name} GRIB semantics {observed}")
+        if observed["stream"] != "moda" or observed["expver"] != "0001":
+            raise ValueError(f"{year}: unexpected {short_name} stream/experiment {observed}")
+    observed_missing = tuple(variable_results[name]["missing_value_count"] for name in expected_short_names)
+    if observed_missing != (1928, 1928, 1928):
+        raise ValueError(f"{year}: unexpected ERA5-Land water-mask counts {observed_missing}")
+    return {
+        "raw_path": path.as_posix(),
+        "filename": path.name,
+        "size_bytes": path.stat().st_size,
+        "sha256": calculate_sha256(path),
+        "year": year,
+        "grid_shape_time_latitude_longitude": reference_shape,
+        "area_north_west_south_east": reference_extent,
+        "variables": variable_results,
+        "grib_metadata": metadata,
+        "water_mask_counts": dict(zip(expected_short_names, observed_missing, strict=True)),
+        "precipitation_status": "validated-post-fix",
+    }
+
+
 def validate_era5_land_grib_record(
     record: Era5LandRawRecord,
     project_root: Path,

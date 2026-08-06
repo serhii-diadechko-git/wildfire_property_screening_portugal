@@ -18,7 +18,7 @@ A property purchase is a long-term and expensive decision. Wildfire exposure dif
 
 ## Project goal
 
-Use public geospatial data and machine-learning methods to analyse comparative next-year burned-share patterns across mainland Portugal, alongside a transparent historical screening output. The model evidence informs methodology; it does not produce a residential purchase shortlist.
+Use public geospatial data and machine-learning methods to estimate comparative next-calendar-year burned-share exposure across mainland Portugal, alongside a transparent historical screening output. Historical records are the training/testing evidence; the reusable model is scored only after the prior year's required inputs are complete.
 
 ## Intended use
 
@@ -50,11 +50,11 @@ Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. 
 
 The canonical national panel covers `T=2015-2024`. A validated backward extension supplies development years `T=2010-2021`: fitting uses `T=2010-2019`, validation uses `T=2020-2021`, and the frozen final temporal test used `T=2022-2024`. ICNF coverage for this evaluation is `2000-2025`, covering pre-`T` history and observed `T+1` outcomes.
 
-There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. CLC provides broad, retrospective land-cover context; it is not annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`, always keeping the land-cover reference year no later than `T`. The current official revised package is used for each reference layer, without claiming that its later revision was operationally available at `T`. ERA5-Land supplies coarse regional climate context, not 1 km weather: use only June-September (`JJAS`) values from `T`. Use the centroid-containing ERA5-Land cell when valid; if it is water-masked for a mainland analytical cell, use the validated deterministic nearest valid ERA5-Land land cell. This preserves the product and temporal aggregation and is not interpolation/downscaling. This is retrospective covariate reconstruction, not an exact real-time historical forecast.
+There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. CLC provides broad, retrospective land-cover context; it is not annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2025`, always keeping the land-cover reference year no later than `T`. The current official revised package is used for each reference layer, without claiming that its later revision was operationally available at `T`. ERA5-Land supplies coarse regional climate context, not 1 km weather: use only June-September (`JJAS`) values from `T`. Use the centroid-containing ERA5-Land cell when valid; if it is water-masked for a mainland analytical cell, use the validated deterministic nearest valid ERA5-Land land cell. This preserves the product and temporal aggregation and is not interpolation/downscaling. This is retrospective covariate reconstruction, not an exact real-time historical forecast.
 
 ## Final model finding and responsible-use boundary
 
-The frozen nine-feature hurdle model achieved lower held-out all-row MAE and stronger top-20% burned-share-mass capture than the historical recurrence baseline. However, it materially underpredicted the unusually high observed mean burned share in T=2024. It is therefore retained as a reproducible continuous comparative research artifact, not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The historical 2016-2025 recurrence screening remains the public-facing capstone output. See `reports/validation/model_final_decision.md`.
+The frozen nine-feature hurdle model achieved lower held-out all-row MAE and stronger top-20% burned-share-mass capture than the historical recurrence baseline. However, it materially underpredicted the high observed outcome associated with predictor year T=2024 (outcome year 2025). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a validated `2026` estimate using T=2025 inputs. The historical 2016-2025 recurrence screening remains supporting context. See `reports/validation/model_final_decision.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
 
 ## Scope
 
@@ -67,9 +67,9 @@ The frozen nine-feature hurdle model achieved lower held-out all-row MAE and str
 - built-up share as an initial residential-relevance proxy;
 - surrounding forest and shrubland;
 - mean terrain slope;
-- warm-season temperature and precipitation;
+- warm-season temperature, precipitation, and layer-1 soil water;
 - temporal and geographic model validation;
-- annual rescoring when new data becomes available.
+- annual scoring after the prior year's required inputs are complete, and annual refitting only after the newest ICNF outcome is available.
 
 ### Out of scope
 
@@ -110,7 +110,7 @@ Residential areas with less surrounding forest and shrubland, fewer previous fir
 
 ## Recommendation frame
 
-The completed capstone uses the historical screening output for broad location comparison. Its retained model is not a buyer recommendation. Any future buyer-facing model output would require a separate calibration and responsible-use gate.
+The completed evidence supports a future annual comparative exposure layer for broad location comparison once its source gate is complete. Its retained model is not a buyer recommendation. Each published forecast must carry its forecast year, input cutoff, model version, and calibration limitation.
 
 The historical screening is most useful when an area has:
 

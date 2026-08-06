@@ -618,7 +618,7 @@ CLC_2018_V2020_20U1 = ClcRawRecord(
 CLC_GOVERNED_RELEASES = {
     "2015": CLC_2006_V2020_20U1,
     "2016-2018": CLC_2012_V2020_20U1,
-    "2019-2024": CLC_2018_V2020_20U1,
+    "2019-2025": CLC_2018_V2020_20U1,
 }
 
 _CLC_PORTUGAL_CODES = (
@@ -853,6 +853,7 @@ def _era5_full_scope_record(
     precipitation_step_range: str,
     precipitation_status: str,
     validation_note: str,
+    retrieval_date: str = "2026-08-04",
 ) -> Era5LandRawRecord:
     """Create one raw full-scope ERA5-Land record with explicit GRIB semantics."""
     filename = f"era5_land_monthly_jjas_{year}_mainland_portugal.grib"
@@ -861,7 +862,7 @@ def _era5_full_scope_record(
         dataset_id="reanalysis-era5-land-monthly-means",
         official_source_url="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
         licence_or_terms_reference="Copernicus Climate Data Store CC-BY licence and dataset terms.",
-        retrieval_date="2026-08-04",
+        retrieval_date=retrieval_date,
         acquisition_method="CDS API retrieval",
         raw_path=f"data/raw/climate/era5_land/{filename}",
         filename=filename,
@@ -910,6 +911,20 @@ ERA5_LAND_2024_JJAS = _era5_full_scope_record(
         "JJAS 2024 is after the official March 2024 fix. Its precipitation GRIB encoding "
         "differs from the older files (avgas, step 23-24) and is intentionally allow-listed."
     ),
+)
+
+ERA5_LAND_2025_JJAS = _era5_full_scope_record(
+    2025,
+    "6BF4F99C3919F0A2D473E754A1E2A3BE355D16F8E6B782590FF96B64F010568C",
+    precipitation_step_type="avgas",
+    precipitation_step_range="23-24",
+    precipitation_status="validated-post-fix",
+    validation_note=(
+        "Validated annual operational-scoring input. The post-March-2024 ERA5-Land "
+        "monthly precipitation encoding is avgas with step range 23-24; the derived "
+        "JJAS total remains the documented day-weighted m/day-to-mm aggregation."
+    ),
+    retrieval_date="2026-08-06",
 )
 
 
@@ -974,6 +989,7 @@ ERA5_LAND_FULL_SCOPE_ARCHIVES = {
     2022: ERA5_LAND_2022_JJAS,
     2023: ERA5_LAND_2023_JJAS_PILOT,
     2024: ERA5_LAND_2024_JJAS,
+    2025: ERA5_LAND_2025_JJAS,
 }
 ERA5_LAND_AVAILABLE_ARCHIVES = {
     **ERA5_LAND_EXTENDED_TRAINING_ARCHIVES,

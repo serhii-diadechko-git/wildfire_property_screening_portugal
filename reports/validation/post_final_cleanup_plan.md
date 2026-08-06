@@ -1,14 +1,16 @@
 # Post-final cleanup plan
 
 This plan follows the completed final temporal evaluation. It does not authorise
-deletion, raw-data modification, model retuning, or a new model map.
+deletion, raw-data modification, model retuning, or a model map before the
+annual source-input preflight passes.
 
 ## Keep and preserve
 
 - Immutable raw archives under `data/raw/`, their checksums, and source-registry
   records.
 - The canonical seven-feature panel, the backward training extension, final-test
-  metrics, and fixed nine-feature model artifact.
+  metrics, and the versioned nine-feature operational model/panel through
+  observed outcome 2025.
 - Historical reports as traceable records. Mark them superseded where necessary;
   do not rewrite them to erase their original decision context.
 - The historical recurrence screening GeoPackage and QGIS project. They remain
@@ -41,8 +43,9 @@ deletion, raw-data modification, model retuning, or a new model map.
    presentation narrative. Do not present the model as a probability or a
    location recommendation.
 3. Update the presentation-validation report after the deck is regenerated.
-4. Do not create a model-result QGIS layer unless a separate research-EDA scope,
-   styling, and limitations statement are approved.
+4. When annual source validation passes, create one separate forecast GeoPackage
+   and QGIS layer from the versioned score table. Preserve the historical layer
+   separately; never relabel it as a forecast or duplicate the full panel geometry.
 
 ## Remaining scientific work before any stronger claim
 

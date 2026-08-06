@@ -4,7 +4,7 @@
 
 This capstone project helps a prospective homebuyer compare residential areas in mainland Portugal from a **wildfire-exposure perspective**.
 
-The project combines public geospatial data on historical burned areas, land cover, terrain, and climate. The result is a reproducible screening process that identifies residential areas with comparatively lower or higher historical wildfire exposure and can be updated when new annual data becomes available.
+The project combines public geospatial data on historical burned areas, land cover, terrain, and climate. It uses historical records to train and test a reproducible annual, next-calendar-year comparative exposure model, and preserves a separate historical screening layer for context.
 
 > The project supports **area shortlisting only**. It does not determine whether a specific house is safe or whether it is the best property to buy.
 
@@ -18,7 +18,7 @@ A property buyer needs a clear and consistent way to compare locations before sp
 
 **Decision-maker:** a prospective homebuyer choosing a location in mainland Portugal.
 
-**Decision support:** which broad areas warrant further local investigation when comparing residential locations, based on historical wildfire evidence. The screening distinguishes:
+**Decision support:** which broad areas warrant further local investigation when comparing residential locations. When the annual source-input gate is complete, the model provides a relative estimate for the stated next calendar year; the historical layer provides supporting evidence. The screening distinguishes:
 
 - lower, moderate, or higher historical recurrence context;
 - agreement or disagreement with the official ICNF structural-hazard class;
@@ -43,7 +43,8 @@ Build a reproducible geospatial data-science workflow that:
 - six validated presentation maps, charts, and summary visuals;
 - a reproducible data-preparation and screening pipeline;
 - a frozen final-temporal evaluation of the historical baseline and nine-feature hurdle model;
-- a reusable fixed-specification continuous burned-share model trained on T=2010-2021, with documented limitations;
+- a reusable fixed-specification nine-feature continuous burned-share model trained on T=2010-2024, with outcomes through 2025;
+- an explicit annual rebuild/scoring contract and source preflight;
 - a documented limitations and update procedure.
 
 ## Analytical and spatial output layers
@@ -54,7 +55,7 @@ Build a reproducible geospatial data-science workflow that:
 - `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
 - `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using 2016-2025 evidence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
 
-No model-based purchase-recommendation GeoPackage is authorized. The retained model is a continuous comparative burned-share research artifact, not a probability, safety score, forecast guarantee, or buyer recommendation.
+The 2026 model-based GeoPackage now exists at `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg`, layer `estimated_comparative_exposure_2026`. It contains one EPSG:3763 geometry per canonical cell, the continuous comparative estimate, percentile, model checksum, input year, and score status. It is not a probability, safety score, forecast guarantee, or buy/do-not-buy recommendation.
 
 ## Spatial design
 
@@ -75,7 +76,16 @@ Each analytical record is one 1 km x 1 km grid cell for predictor reference year
 
 The canonical national seven-feature panel covers `T=2015-2024`. A separately validated backward extension provides `T=2010-2021` for model development: fitting uses `T=2010-2019`, validation uses `T=2020-2021`, and the final temporal test uses `T=2022-2024`. This requires ICNF annual burned-area archives for `2000-2025` inclusive. ICNF supplies only strictly pre-`T` historical-fire context and observed `T+1` outcome labels; it is never a same-year predictor. No temporal gap is required because the historical-fire window is `T-10` through `T-1`.
 
-CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June-September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Use the centroid-containing ERA5-Land cell when valid. For a mainland cell whose containing coarse cell is water-masked, use the deterministic nearest valid ERA5-Land land cell established by the coastal QA analysis. This preserves the product and `T`-only aggregation and is neither interpolation nor downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
+CLC is broad land-cover context rather than annual parcel-level land cover. Its retrospective assignment is CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2025`. Every assigned reference year is no later than `T`, and the current official revised `V2020_20u1` package is used for each historical reference layer. Package-version metadata documents reproducibility; it is not evidence that the revised package was operationally available at `T`. ERA5-Land is coarse regional climate context, not 1 km weather: June-September (`JJAS`) values from `T` only provide mean 2 m temperature, total precipitation, and mean layer-1 soil water. Use the centroid-containing ERA5-Land cell when valid. For a mainland cell whose containing coarse cell is water-masked, use the deterministic nearest valid ERA5-Land land cell established by the coastal QA analysis. This preserves the product and `T`-only aggregation and is neither interpolation nor downscaling. This is retrospective covariate reconstruction, not an exact historical operational forecast.
+
+## Annual operational forecast cycle
+
+For an estimate of calendar year `Y`, the model uses all nine predictor values from the completed prior year `Y-1`. It may be refit only through labelled predictor year `Y-2`, whose observed ICNF outcome is `Y-1`. The scoring matrix intentionally has no target for `Y`.
+
+- Current artefact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`, refit through observed outcome 2025.
+- Current published score: `Y=2026`, using validated ERA5-Land JJAS `T=2025`, ICNF history 2015-2024, governed CLC 2018, and static terrain.
+- Current status: scored and validated; see `reports/validation/operational_forecast_readiness.md` and `reports/validation/operational_forecast_2026_validation.md`.
+- Run `scripts/prepare_operational_forecast.py` to rebuild the fixed model and validate readiness, then `scripts/score_operational_forecast.py` to derive the separate Parquet table and QGIS-ready GeoPackage. Both enforce the `forecast_year`, model version, source cutoff, and no-target rules.
 
 ## Data sources
 
@@ -243,7 +253,7 @@ Detailed definitions are available in the [success criteria](docs/success_criter
 
 ## Current status and findings
 
-The canonical panel, backward training extension, and EDA are validated. The frozen nine-feature hurdle has lower final-test MAE and substantially higher top-20% burned-share-mass capture than the historical baseline, but underpredicts the high-burned 2024 outcome. It is retained only as a comparative continuous research model; the final buyer-facing output remains the historical screening layer. See `reports/validation/model_final_decision.md`.
+The canonical panel, backward training extension, and EDA are validated. The frozen nine-feature hurdle has lower final-test MAE and substantially higher top-20% burned-share-mass capture than the historical baseline, but underpredicts the high-burned outcome associated with `T=2024`. It was refit through observed outcome 2025 and used to publish the validated 2026 comparative estimate. The historical screening layer remains supporting context. See `reports/validation/model_final_decision.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
 
 ## BI dashboard
 

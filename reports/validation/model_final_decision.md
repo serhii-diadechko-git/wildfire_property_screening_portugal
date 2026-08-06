@@ -6,10 +6,12 @@ The frozen nine-feature hurdle regressor is retained as the project's
 reproducible **continuous comparative burned-share model**. The historical
 recurrence baseline remains the required transparent comparator.
 
-The model is **not accepted for buyer-facing prediction, safety classification,
-or purchase recommendation**. In particular, it substantially underpredicted
-the high observed mean burned share for predictor year T=2024. A continuous
-estimated burned share is not a probability and must not be presented as one.
+The model is **not accepted for a safety classification or purchase
+recommendation**. In particular, it substantially underpredicted the high
+observed mean burned share for predictor year T=2024 (outcome year 2025). A
+continuous estimated burned share is not a probability and must not be
+presented as one. It may be published only as a cautious, year-specific
+comparative estimate after its annual scoring inputs pass validation.
 
 ## Held-out evidence
 
@@ -19,20 +21,21 @@ higher tie-aware top-20% burned-share-mass capture (0.6003 vs 0.4017). Its RMSE
 was effectively tied but marginally higher (0.11070 vs 0.11059), and its
 positive-row MAE was also marginally higher (0.31318 vs 0.31036).
 
-The high-burned 2024 outcome illustrates the main limitation: the hurdle's mean
-prediction was 0.00622 while observed mean burned share was 0.03053. This
+The high-burned outcome associated with predictor year T=2024 illustrates the
+main limitation: the hurdle's mean prediction was 0.00622 while observed mean
+burned share was 0.03053. This
 temporal non-stationarity means the model may support methodological comparison
 and further research, but it is not calibrated enough for a residential
 decision claim.
 
 ## Reusable artefact
 
-After the final evaluation, the unchanged nine-feature specification was
-refitted on development years T=2010-2021 only. The held-out final-test years
-were excluded. The saved artifact is
-`data/processed/final_fixed_spec_model_2010_2021/nine_feature_hurdle.joblib`;
-its feature order and training years are recorded in the adjacent
-`model_metadata.json`.
+After the final evaluation was recorded, the unchanged nine-feature
+specification was refitted on all labelled predictor years T=2010-2024, whose
+observed outcomes span 2011-2025. The saved annual-scoring artifact is
+`data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`; its feature
+order, training cutoff, and checksum are in the adjacent `model_metadata.json`.
+The previous T=2010-2021 refit remains an archived reproducibility artifact.
 
 The final-test evidence is in `final_temporal_test_2022_2024.md` and the
 machine-readable metrics are in
@@ -41,7 +44,8 @@ machine-readable metrics are in
 ## Output policy
 
 Keep the validated historical recurrence screening GeoPackage and QGIS project
-as the buyer-facing capstone output. Do not generate a model-based recommendation
-layer or label locations as safe, low-risk, predicted-safe, or suitable to buy.
-Any future model map must be clearly named a research/EDA layer and accompanied
-by the calibration and temporal-stability limitation above.
+as supporting evidence. When T-only inputs are complete, publish a separate,
+clearly named annual comparative-estimate layer with its forecast year, model
+checksum, and source cutoff. Do not label locations as safe, low-risk,
+predicted-safe, or suitable to buy; accompany every model layer with the
+calibration and temporal-stability limitation above.

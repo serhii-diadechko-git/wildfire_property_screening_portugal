@@ -1,6 +1,6 @@
 # Source Plan
 
-> Canonical land-cover governance: use Copernicus CLC, not COS/COSc. The reference year must be no later than predictor year `T`. Use the current official revised package for each historical reference layer: CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2024`. Record reference year, current package version, package release/update date, URL, licence, checksum, CRS, and coverage. This is retrospective covariate reconstruction, not proof that the revised package was operationally available at `T`. Copernicus DEM GLO-30 supplies static 2 km slope context with version/licence/tile/CRS/checksum provenance.
+> Canonical land-cover governance: use Copernicus CLC, not COS/COSc. The reference year must be no later than predictor year `T`. Use the current official revised package for each historical reference layer: CLC 2006 for `T=2010-2015`, CLC 2012 for `T=2016-2018`, and CLC 2018 for `T=2019-2025`. Record reference year, current package version, package release/update date, URL, licence, checksum, CRS, and coverage. This is retrospective covariate reconstruction, not proof that the revised package was operationally available at `T`. Copernicus DEM GLO-30 supplies static 2 km slope context with version/licence/tile/CRS/checksum provenance.
 
 Collection date for this initial plan: **31 July 2026**.
 
@@ -26,6 +26,16 @@ The expanded model-development and final-test design requires ICNF annual burned
 | Observed outcome label | `2011-2025` | For each `T` from `2010` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
 
 The canonical national seven-feature panel is `T=2015-2024`. The model-development extension uses fitting years `2010-2019`, validation years `2020-2021`, and a completed frozen final temporal test at `T=2022-2024`. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad retrospective land-cover context, not annual parcel-level land cover; its governed reference year is always no later than `T`, while its current revised package version is provenance rather than historical availability evidence. ERA5-Land uses only JJAS observations/reanalysis values from `T`; use the containing valid source cell or, for a water-masked containing cell, the validated deterministic nearest valid land cell, without interpolation.
+
+## Annual operational scoring cycle
+
+For forecast year `Y`, refit the frozen nine-feature model only through labelled predictor year `Y-2` (observed outcome `Y-1`), then derive an unlabelled `T=Y-1` matrix and score `Y`. Do not obtain, derive, or use ICNF `Y` as a predictor or target at scoring time.
+
+| Current stage | Required source years | Local status |
+|---|---|---|
+| Refit for 2026 estimate | Labelled rows `T=2010-2024`, observed ICNF outcomes 2011-2025 | Complete; model artifact is versioned under `data/processed/final_model_2010_2024/`. |
+| Derive/score 2026 estimate | ICNF history 2015-2024; CLC 2018; static DEM; ERA5-Land JJAS 2025 | Complete: validated raw GRIB, unlabelled nine-feature matrix, score table, and QGIS-ready GeoPackage. |
+| Next annual cycle for 2027 | New ICNF 2026 outcome for refit; ICNF history 2016-2025; CLC/DEM; ERA5-Land JJAS 2026 | Wait for the two annual sources and validate them before refitting/scoring. |
 
 ## Validation and comparison source
 

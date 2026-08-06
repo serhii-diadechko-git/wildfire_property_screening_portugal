@@ -1,6 +1,6 @@
 # Success Criteria and Model Acceptance Rules
 
-> The canonical national panel, backward training extension, and model-readiness EDA are validated. The one frozen final temporal test `T=2022-2024` is complete. Its evidence supports a comparative continuous model artifact, but not a calibrated buyer-facing prediction or recommendation.
+> The canonical national panel, backward training extension, and model-readiness EDA are validated. The one frozen final temporal test `T=2022-2024` is complete. The frozen nine-feature specification is refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation.
 
 ## Purpose
 
@@ -33,7 +33,7 @@ This document separates:
 
 **Planning target:** return one of the following for at least 95% of eligible cells:
 
-- predictive score;
+- comparative annual score;
 - insufficient-evidence status;
 - documented exclusion reason.
 
@@ -47,7 +47,7 @@ The 95% value must be confirmed during the feasibility pilot. It is not guarante
 
 ### 5. Mandatory data completeness
 
-**Target:** assign predictive recommendations only when all mandatory groups are present:
+**Target:** assign a comparative annual score only when all mandatory groups are present:
 
 - historical burned-area feature;
 - land-cover features;
@@ -75,10 +75,10 @@ The 95% value must be confirmed during the feasibility pilot. It is not guarante
 
 ### 8. Update procedure
 
-**Target:** document annual rescoring and retraining as separate processes.
+**Target:** document annual scoring and refitting as separate processes.
 
-- **Rescoring:** apply an accepted model to new annual features.
-- **Retraining:** add new observed outcomes, refit models, and repeat validation.
+- **Scoring:** apply the versioned frozen-specification model to an unlabelled `T=Y-1` feature matrix to estimate year `Y`.
+- **Refitting:** after ICNF outcome `Y-1` is validated, refit the unchanged selected specification through labelled predictor year `Y-2`; do not tune from an unknown future target.
 
 ## B. Model evaluation targets
 
@@ -141,7 +141,7 @@ The continuous model may be retained for methodological comparison only when:
 - ranking quality is acceptable, and probability calibration is acceptable only if a later classification model is introduced;
 - no probability, safety, or purchase claim is made.
 
-The frozen nine-feature hurdle meets the comparative-evidence condition: it has lower final-test MAE and higher burned-share-mass capture than the historical recurrence baseline. It remains weakly calibrated in the high-burned 2024 year, so it does not meet the project standard for a buyer-facing recommendation.
+The frozen nine-feature hurdle meets the comparative-evidence condition: it has lower final-test MAE and higher burned-share-mass capture than the historical recurrence baseline. It remains weakly calibrated in the high-burned outcome associated with T=2024, so a published annual score must remain a cautious comparative estimate rather than a buyer-facing recommendation.
 
 ### Do not accept for buyer-facing predictive recommendation
 
@@ -154,4 +154,4 @@ Do not publish predictive shortlist categories when:
 - mandatory data is incomplete;
 - results could create false confidence.
 
-In this case, the capstone should present descriptive and historical exposure screening, model findings, and the reason predictive recommendations are not justified.
+In this case, the capstone should present descriptive and historical exposure screening, model findings, and the annual-score limitations. It must not create a safe-area, buy/do-not-buy, or property-specific recommendation category.

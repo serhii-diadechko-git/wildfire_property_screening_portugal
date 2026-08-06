@@ -22,7 +22,7 @@ Run each notebook from a fresh kernel in the order below. Routine notebook revie
 6. `05_evaluation_recommendations.ipynb` — inspects the historical/descriptive exposure screening and official ICNF comparison created by `scripts/build_historical_exposure_screening.py`.
 7. `06_final_charts.ipynb` — verifies the six presentation-ready visuals, their stable paths, and their real source artefacts; it does not create duplicate figure versions.
 
-The final temporal evaluation is complete. The retained nine-feature hurdle is a continuous comparative research model with a documented high-burn-year calibration limitation; it is not a probability, property-level safety assessment, or purchase recommendation. The final buyer-facing deliverable remains the historical wildfire-exposure screening layer for broad location comparison.
+The final temporal evaluation is complete. The retained nine-feature hurdle is refit through observed outcome 2025 for an annual operational cycle. The validated `2026` estimate uses an unlabelled T=2025 matrix; see `reports/validation/operational_forecast_readiness.md` and `reports/validation/operational_forecast_2026_validation.md`. Any forecast layer is a continuous comparative estimate, not a probability, property-level safety assessment, or purchase recommendation. The historical wildfire-exposure screening layer remains supporting context for broad location comparison.
 
 The validated result represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using observed ICNF evidence from 2016–2025.
 

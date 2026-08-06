@@ -29,6 +29,7 @@ class ClcGovernanceConfig:
         (2022, 2018),
         (2023, 2018),
         (2024, 2018),
+        (2025, 2018),
     )
     prepared_path_by_reference_year: tuple[tuple[int, str], ...] = (
         (2006, "data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg"),
@@ -145,6 +146,34 @@ class Era5LandFeatureConfig:
 
 
 @dataclass(frozen=True)
+class OperationalForecastConfig:
+    """Annual, next-calendar-year scoring contract.
+
+    A score for calendar year ``Y`` uses predictors from the completed prior
+    year ``Y-1``.  The model may be refit only through predictor year ``Y-2``
+    because that is the latest row with an observed ``T+1`` ICNF label.  This
+    keeps the prediction target unavailable at scoring time by design.
+    """
+
+    first_labeled_predictor_year: int = 2010
+    current_forecast_year: int = 2026
+    feature_count: int = 9
+
+    def predictor_year(self, forecast_year: int) -> int:
+        return forecast_year - 1
+
+    def latest_labeled_predictor_year(self, forecast_year: int) -> int:
+        return forecast_year - 2
+
+    def latest_observed_outcome_year(self, forecast_year: int) -> int:
+        return forecast_year - 1
+
+    def history_years(self, forecast_year: int) -> tuple[int, ...]:
+        predictor_year = self.predictor_year(forecast_year)
+        return tuple(range(predictor_year - 10, predictor_year))
+
+
+@dataclass(frozen=True)
 class PilotConfig:
     """The reproducible 2023 predictor to 2024 outcome pilot request."""
 
@@ -160,6 +189,7 @@ ERA5_LAND = Era5LandFeatureConfig()
 CLC = ClcGovernanceConfig()
 EXTENDED_TRAINING = ExtendedTrainingDesign()
 EXTENDED_TRAINING_CLC = ExtendedTrainingClcConfig()
+OPERATIONAL_FORECAST = OperationalForecastConfig()
 
 
 @dataclass(frozen=True)

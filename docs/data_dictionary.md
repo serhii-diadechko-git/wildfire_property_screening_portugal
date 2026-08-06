@@ -22,7 +22,9 @@ The canonical national seven-feature panel is `T=2015-2024`. The validated model
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
-CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2024`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
+CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2025`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
+
+For an operational score for forecast year `Y`, build one unlabelled row per cell using `T=Y-1`, refit only through labelled predictor year `Y-2`, and leave `burned_share_next_year` absent. For example, a 2026 estimate uses T=2025 predictor values and a model trained through observed outcome 2025. The source cutoff and model checksum are mandatory output metadata.
 
 ## Technical identifiers
 
@@ -61,11 +63,15 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 
 ## Model and decision outputs
 
-The retained final model is a continuous comparative research artifact, not a probability, safety score, or buyer-facing recommendation. None of these model-output fields is present in the historical screening layer.
+The retained final model is a continuous comparative estimate, not a probability, safety score, or buyer-facing recommendation. None of these model-output fields is present in the historical screening layer. A forecast GeoPackage is created only after its source preflight passes.
 
 | Column | Type | Meaning |
 |---|---|---|
 | `predicted_burned_share_next_year` | float, 0-1 | Fixed nine-feature hurdle output: estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
+| `forecast_year` | integer | Calendar year estimated by an operational scoring output; equal to `observation_year + 1`. |
+| `prediction_input_year` | integer | Completed predictor year used for all dynamic inputs; equal to `forecast_year - 1`. |
+| `model_sha256` | string | Checksum of the exact serialized nine-feature model used for scoring. |
+| `score_status` | string | `scored_comparative_estimate`, `blocked_missing_input`, or `insufficient_evidence`; never interpret an absent score as low exposure. |
 | `predicted_wildfire_probability` | float, 0-1 | Conditional future output only if a separate classification model and `burned_next_year` threshold are later documented. Probability metrics and calibration do not apply to the initial regression output. |
 | `structural_exposure_score` | float or category | Exposure estimate based mainly on slower-changing features and historical fire activity. Final calculation is defined only after model validation. |
 | `annual_outlook_score` | float or category | Updated result using the latest available annual inputs. Final calculation is defined only after model validation. |
@@ -75,7 +81,7 @@ The retained final model is a continuous comparative research artifact, not a pr
 
 ## Fixed final-model additions
 
-These two fields are used only in `data/processed/extended_model_selection_2010_2021/nine_feature_train_validation_matrix.parquet` and the fixed nine-feature model. They are not part of the canonical seven-feature national panel.
+These two fields are the final-model additions. They are present in the versioned labelled nine-feature model panel and every future scoring matrix, but not in the original canonical seven-feature national panel.
 
 | Column | Type | Unit | Description | Source / derivation |
 |---|---|---|---|---|

@@ -14,6 +14,7 @@ from src.source_registry import (
     ERA5_LAND_2022_JJAS,
     ERA5_LAND_2023_CORRECTED_PRECIPITATION,
     ERA5_LAND_2024_JJAS,
+    ERA5_LAND_2025_JJAS,
 )
 
 
@@ -53,6 +54,14 @@ class Era5LandValidationTests(unittest.TestCase):
         self.assertEqual(result_2024["precipitation_status"], "validated-post-fix")
         self.assertEqual(result_2022["grib_metadata"]["tp"]["step_type"], "avgad")
         self.assertEqual(result_2024["grib_metadata"]["tp"]["step_type"], "avgas")
+
+    def test_operational_2025_grib_matches_the_post_fix_contract(self) -> None:
+        result = validate_era5_land_grib_record(ERA5_LAND_2025_JJAS, Path(__file__).resolve().parents[1])
+        self.assertEqual(result["year"], 2025)
+        self.assertEqual(result["grid_shape_time_latitude_longitude"], (4, 55, 37))
+        self.assertEqual(result["precipitation_status"], "validated-post-fix")
+        self.assertEqual(result["grib_metadata"]["tp"]["step_type"], "avgas")
+        self.assertEqual(result["grib_metadata"]["tp"]["step_range"], "23-24")
 
     def test_corrected_precipitation_files_match_official_workaround_contract(self) -> None:
         project_root = Path(__file__).resolve().parents[1]

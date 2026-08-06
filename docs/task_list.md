@@ -1,6 +1,6 @@
 # Task List - Data Collection and Analysis
 
-> Completed model sequence: build/validate the panel, freeze the extended T=2010-2019 training specification, validate on T=2020-2021, then run one frozen final evaluation at T=2022-2024. The 2023→2024 work remains a feasibility pilot only.
+> Completed model sequence: build/validate the panel, freeze the extended T=2010-2019 training specification, validate on T=2020-2021, then run one frozen final evaluation at T=2022-2024. The nine-feature specification is now refit through observed outcome 2025 for the annual operational cycle. The 2023→2024 work remains a feasibility pilot only.
 
 ## Phase 0 - Freeze the MVP
 
@@ -66,7 +66,7 @@
 
 ## Phase 5 - Modelling and acceptance evaluation
 
-**Gate decision:** completed. The frozen nine-feature hurdle and historical recurrence baseline were evaluated once on T=2022-2024. The hurdle is retained as a comparative continuous research model, but not as a buyer-facing prediction or recommendation because it underpredicts the high-burned 2024 outcome.
+**Gate decision:** completed. The frozen nine-feature hurdle and historical recurrence baseline were evaluated once on T=2022-2024. The specification is fixed and was refit through observed outcome 2025. Any annual score is a comparative estimate, not a buyer-facing safety or purchase recommendation, because it underpredicts the high-burned outcome associated with T=2024.
 
 - [x] Freeze train/validation regression metrics and the provisional-selection rule before reviewing validation results.
 - [x] Freeze final model-acceptance rules before reviewing final test results.
@@ -79,7 +79,7 @@
 - [ ] Only after target-distribution review and a documented threshold decision, optionally derive `burned_next_year`, train logistic regression, and evaluate precision, recall, F1, ROC-AUC, PR-AUC, calibration, capture@20%, and prevalence.
 - [x] Compare the frozen extended-training candidates with the historical baseline on validation years; no feature or hyperparameter changes followed.
 - [x] Compare final evaluation results by year under the frozen T=2022-2024 protocol.
-- [x] Record the final decision: retain the hurdle for comparative research only; do not accept it for buyer-facing predictive recommendation.
+- [x] Record the final decision: retain the hurdle for cautious annual comparative scoring; do not use it for safety or purchase recommendations.
 
 ## Phase 6 - Residential screening and recommendations
 
@@ -90,6 +90,15 @@
 - [x] Summarize the predominant valid official class to each mainland cell and retain unmatched cells explicitly.
 - [x] Publish band, hazard-class, and cross-tabulation summaries without predictive or purchase claims.
 - [ ] Create selected final presentation charts from the validated historical screening layer.
+
+## Phase 6A - Annual operational forecast
+
+- [x] Assemble a versioned nine-feature labelled panel through T=2024 / observed outcome 2025 without recalculating targets.
+- [x] Refit the frozen nine-feature specification after the final-test decision was recorded.
+- [x] Add an annual preflight that forbids unknown future outcomes and refuses scoring without all T-only inputs.
+- [x] Register and validate ERA5-Land JJAS 2025, then derive the unlabelled T=2025 score matrix for forecast year 2026.
+- [x] Publish the validated 2026 estimated-comparative-exposure Parquet and QGIS-ready GeoPackage with no future target.
+- [ ] After ICNF 2026 and ERA5-Land JJAS 2026 are validated, refit through observed outcome 2026 and repeat the fixed annual cycle for 2027.
 
 ## Phase 7 - Market and value analysis
 

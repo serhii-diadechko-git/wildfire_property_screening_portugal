@@ -28,7 +28,7 @@ class ClcGovernanceTests(unittest.TestCase):
         self.assertTrue(all(reference_year <= year for year, reference_year in observed.items()))
 
     def test_governed_registry_uses_current_revised_packages(self) -> None:
-        self.assertEqual(set(CLC_GOVERNED_RELEASES), {"2015", "2016-2018", "2019-2024"})
+        self.assertEqual(set(CLC_GOVERNED_RELEASES), {"2015", "2016-2018", "2019-2025"})
         self.assertTrue(
             all(record.release_id == "V2020_20u1" for record in CLC_GOVERNED_RELEASES.values())
         )

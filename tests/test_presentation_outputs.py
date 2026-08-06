@@ -14,6 +14,7 @@ from src.final_visuals import ALL_PRESENTATION_FIGURE_PATHS, validate_final_visu
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT_PATH = ROOT / "qgis" / "wildfire_exposure_screening_portugal.qgz"
+OPERATIONAL_PROJECT_PATH = ROOT / "qgis" / "wildfire_exposure_screening_portugal_2026.qgz"
 SCREENING_METRICS_PATH = ROOT / "reports" / "validation" / "historical_exposure_screening_and_icnf_comparison.json"
 CROSSTAB_PATH = ROOT / "reports" / "tables" / "historical_exposure_band_by_icnf_hazard_class.csv"
 NOTEBOOK_PATHS = [
@@ -57,6 +58,22 @@ class PresentationOutputTests(unittest.TestCase):
             "Cell ID",
         ):
             self.assertIn(text, project_xml)
+
+    def test_operational_qgis_project_adds_the_separate_2026_layer_by_relative_path(self) -> None:
+        self.assertTrue(OPERATIONAL_PROJECT_PATH.exists())
+        with zipfile.ZipFile(OPERATIONAL_PROJECT_PATH) as archive:
+            project_member = next(name for name in archive.namelist() if name.endswith(".qgs"))
+            project_xml = archive.read(project_member).decode("utf-8")
+        for text in (
+            "00 Annual comparative estimate",
+            "2026 estimated comparative wildfire exposure",
+            "../data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg",
+            "predicted_burned_share_next_year",
+            "Comparative 1 km screening estimate only",
+        ):
+            self.assertIn(text, project_xml)
+        self.assertNotIn("C:/Personal/", project_xml)
+        self.assertNotIn("C:\\Personal\\", project_xml)
 
     def test_consolidated_notebooks_link_real_presentation_outputs(self) -> None:
         combined = "\n".join(path.read_text(encoding="utf-8") for path in NOTEBOOK_PATHS)
