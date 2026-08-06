@@ -1,58 +1,83 @@
-# Notebook responsibilities and execution order
+# Notebook guide
 
-Notebooks are thin orchestration and inspection layers. Reusable calculations live in `src/`, executable runners live in `scripts/`, and validated results live in `reports/validation/`.
+The notebooks are reusable data-science review chapters. They load real project
+artefacts, run compact validations, show tables/plots, and explain the choices
+behind the result. Reusable calculations live in `src/`; the controlled full
+pipeline lives in `scripts/`; validation evidence lives in `reports/validation/`.
 
-## Standalone reviewer setup
+Notebooks are intentionally not a second implementation of national geospatial
+processing. This avoids hidden notebook state, accidental partial rebuilds, and
+inconsistent outputs while still giving a reviewer an understandable,
+executable analysis narrative.
 
-From the repository root, create the pinned environment described in the root
-[`README.md`](../README.md). On Windows select `.venv\Scripts\python.exe` as
-the Jupyter kernel; on Linux/macOS use `.venv/bin/python`.
+## Setup
 
-Before opening notebooks, run `python scripts/run_project.py --mode preflight`.
-It confirms that locally acquired raw data is present without downloading or
-changing it.
-
-Launch the notebook interface with `python -m jupyter lab`, then select the
-environment's Python kernel.
-
-Run each notebook from a fresh kernel in the order below. Routine notebook review reads the validated project artefacts; it does not rebuild the national panel, screening GeoPackage, QGIS project, or final figures.
-
-1. `00_environment_test.ipynb` — environment, import, CRS and output-path checks only.
-2. `01_data_collection.ipynb` — immutable source inventory and provenance only; no new collection.
-3. `02_data_preparation.ipynb` — preparation and validation evidence for canonical inputs.
-4. `03_eda.ipynb` — descriptive EDA and spatial/temporal evidence.
-5. `04_modelling.ipynb` — inspects the frozen train/validation and final-temporal model evidence; it does not tune or retrain models.
-6. `05_evaluation_recommendations.ipynb` — inspects the historical/descriptive exposure screening and official ICNF comparison created by `scripts/build_historical_exposure_screening.py`.
-7. `06_final_charts.ipynb` — verifies the six presentation-ready visuals, their stable paths, and their real source artefacts; it does not create duplicate figure versions.
-
-The final temporal evaluation is complete. The retained nine-feature hurdle is refit through observed outcome 2025 for an annual operational cycle. The validated `2026` estimate uses an unlabelled T=2025 matrix; see `reports/validation/operational_forecast_readiness.md` and `reports/validation/operational_forecast_2026_validation.md`. Any forecast layer is a continuous comparative estimate, not a probability, property-level safety assessment, or purchase recommendation. The historical wildfire-exposure screening layer remains supporting context for broad location comparison.
-
-The notebook sequence is a review path, not the annual scoring engine. For the plain-language lifecycle—from historical train/validation/final evaluation through the target-free 2026 score and the later ICNF-based evaluation/refit—read [`docs/operational_forecast_cycle.md`](../docs/operational_forecast_cycle.md). The current scoring scripts are `scripts/prepare_operational_forecast.py` and `scripts/score_operational_forecast.py`.
-
-The validated result represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using observed ICNF evidence from 2016–2025.
-
-## Presentation outputs
-
-- Interactive project: `qgis/wildfire_exposure_screening_portugal.qgz`
-- QGIS instructions and layer meanings: `qgis/README.md`
-- Screening data: `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`
-- Final maps and charts: `reports/figures/`
-- Summary and comparison tables: `reports/tables/`
-- Validation evidence: `reports/validation/`
-
-Open the `.qgz` project in QGIS after cloning or moving the whole repository so its relative layer paths remain intact. The project is a presentation of the validated spatial data, not a separate analytical workflow.
-
-## Regeneration versus verification
-
-Full processing scripts should be run only when regeneration is required. For normal review, execute notebooks 05 and 06 and use these read-only checks:
+Create the pinned environment described in the root [README](../README.md),
+then run:
 
 ```text
-python scripts/build_historical_exposure_screening.py --validate-existing
-python -m unittest tests.test_presentation_outputs -v
+python scripts/run_project.py --mode preflight
+python -m jupyter lab
 ```
 
-`scripts/run_qgis_presentation_project.bat` is an optional Windows helper. On
-other platforms, open the QGIS project directly or invoke the QGIS build script
-from a PyQGIS-enabled environment.
+Select the environment's Python kernel: `.venv\Scripts\python.exe` on Windows
+or `.venv/bin/python` on Linux/macOS.
 
-The chart-building functions in `src/final_visuals.py` and QGIS build scripts remain the reproducible sources for deliberate regeneration. The consolidated notebooks verify the already validated deliverables by default.
+## Execution order
+
+1. `00_environment_test.ipynb` — environment, import, CRS, and output-path checks.
+2. `01_data_collection.ipynb` — immutable source inventory, provenance, and representative archive checks; no download.
+3. `02_data_preparation.ipynb` — canonical grid, CLC, and panel-contract evidence.
+4. `03_eda.ipynb` — live summaries of validated panel completeness, zero inflation, temporal target behaviour, and correlations.
+5. `04_modelling.ipynb` — nine-feature contract, held-out metrics, and annual scoring logic; no tuning or retraining.
+6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison; no prediction or recommendation category.
+7. `06_final_charts.ipynb` — verifies the six presentation visuals, stable paths, and real source artefacts without duplicate images.
+
+Run each notebook from a fresh kernel. They read and check validated artefacts;
+they do not rebuild the national panel, screening GeoPackage, QGIS projects, or
+presentation figures.
+
+## Controlled regeneration
+
+To deliberately rebuild derived data, model artefacts, reports, and figures,
+run this terminal command from the project root:
+
+```text
+python scripts/run_project.py --mode reproduce --confirm-rebuild
+```
+
+The notebook sequence is a review path, not the annual scoring engine. The
+annual lifecycle is documented in
+[docs/operational_forecast_cycle.md](../docs/operational_forecast_cycle.md).
+
+## QGIS and final outputs
+
+- QGIS projects and layer instructions: [`qgis/README.md`](../qgis/README.md)
+- Historical screening layer: `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`
+- Annual 2026 comparative layer: `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg`
+- Final figures: `reports/figures/`
+- Final tables: `reports/tables/`
+- Validation evidence: `reports/validation/`
+
+The historical result represents **1 km mainland grid cells with fire
+recurrence measured in a 2 km context**. It is historical evidence, not a
+next-year prediction or purchase recommendation.
+
+## Clean local rebuild
+
+To return to a raw-input-only local state, first inspect:
+
+```text
+python scripts/clean_project_outputs.py --dry-run
+```
+
+Only after reviewing the list, run:
+
+```text
+python scripts/clean_project_outputs.py --confirm-delete-derived
+```
+
+This command preserves `data/raw/`, source code, notebooks, QGIS projects, and
+tracked validation documents. It removes only reproducible derived data,
+generated figures/tables, BI exports, and local run logs. Then run the full
+reproduction command above.

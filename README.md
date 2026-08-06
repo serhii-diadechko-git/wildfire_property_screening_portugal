@@ -84,6 +84,26 @@ The full rebuild can take substantial time and memory. It never modifies
 `data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
 otherwise open the tracked QGIS projects directly.
 
+### Start from a clean derived-output state
+
+Use this only when you deliberately want to remove locally generated artefacts
+and reproduce them again from the untouched raw inputs:
+
+```text
+# List exactly what would be removed; deletes nothing.
+python scripts/clean_project_outputs.py --dry-run
+
+# Remove only derived data, generated figures/tables, BI exports, and local run logs.
+python scripts/clean_project_outputs.py --confirm-delete-derived
+
+# Then rebuild the project.
+python scripts/run_project.py --mode reproduce --confirm-rebuild
+```
+
+The cleanup command never removes `data/raw/`, credentials, source code,
+notebooks, QGIS projects, or tracked validation documentation. It is
+intentionally dry-run first and requires an explicit confirmation flag.
+
 ## Review path
 
 Open notebooks in this order after the environment and raw inputs are ready:
@@ -96,8 +116,11 @@ Open notebooks in this order after the environment and raw inputs are ready:
 6. `notebooks/05_evaluation_recommendations.ipynb`
 7. `notebooks/06_final_charts.ipynb`
 
-Notebooks inspect and explain the reusable pipeline. Production calculations
-live in `src/` and `scripts/`; see [notebooks/README.md](notebooks/README.md).
+Notebooks are reusable data-science review chapters: they run real artifact
+checks, create compact explanatory tables/plots, and link results to their
+source files. Production calculations live in `src/` and `scripts/`; the
+notebooks do not duplicate the national pipeline. See
+[notebooks/README.md](notebooks/README.md).
 Launch the installed notebook interface with `python -m jupyter lab`.
 
 For spatial inspection, open these portable projects in QGIS after cloning the

@@ -19,6 +19,10 @@ data or model results.
       published maps and adapted CLC outputs.
 - [ ] Run `python scripts/run_project.py --mode preflight` with the local
       source inputs, then `python scripts/run_project.py --mode validate`.
+- [ ] If a clean local rebuild is needed, review
+      `python scripts/clean_project_outputs.py --dry-run` before using its
+      explicit `--confirm-delete-derived` flag. Confirm that `data/raw/` is
+      absent from the deletion list.
 - [ ] Run `git diff --check` and the public-path scan in
       `tests/test_public_reproducibility.py`.
 
