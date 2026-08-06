@@ -123,6 +123,23 @@ notebooks do not duplicate the national pipeline. See
 [notebooks/README.md](notebooks/README.md).
 Launch the installed notebook interface with `python -m jupyter lab`.
 
+### What the notebooks are for
+
+Run the notebooks from a fresh kernel, in numeric order, after `preflight`
+and—when reviewing derived/model outputs—after a successful reproduction run.
+They are a transparent learning and review path, not an alternative production
+pipeline:
+
+- `00` checks the portable Python, GIS, and machine-learning environment using synthetic in-memory examples.
+- `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
+- `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
+- `04` is the model evidence notebook: saved model metadata, feature order, MAE/RMSE/capture tables, final-test plots, residuals, and binned observed-versus-estimated comparisons. It never fits or changes a model.
+- `05` and `06` inspect the validated historical spatial screening, QGIS outputs, tables, and presentation visuals.
+
+Use the scripts for deliberate regeneration, the notebooks for explanation and
+inspection. If a required artifact is absent, the notebook raises an actionable
+error instead of attempting a hidden rebuild.
+
 For spatial inspection, open these portable projects in QGIS after cloning the
 whole repository:
 

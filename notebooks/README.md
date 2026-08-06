@@ -25,17 +25,23 @@ or `.venv/bin/python` on Linux/macOS.
 
 ## Execution order
 
-1. `00_environment_test.ipynb` — environment, import, CRS, and output-path checks.
-2. `01_data_collection.ipynb` — immutable source inventory, provenance, and representative archive checks; no download.
-3. `02_data_preparation.ipynb` — canonical grid, CLC, and panel-contract evidence.
-4. `03_eda.ipynb` — live summaries of validated panel completeness, zero inflation, temporal target behaviour, and correlations.
-5. `04_modelling.ipynb` — nine-feature contract, held-out metrics, and annual scoring logic; no tuning or retraining.
-6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison; no prediction or recommendation category.
-7. `06_final_charts.ipynb` — verifies the six presentation visuals, stable paths, and real source artefacts without duplicate images.
+1. `00_environment_test.ipynb` — portable environment, pinned-package, EPSG:3763, and in-memory ML/GIS smoke checks; writes no project output.
+2. `01_data_collection.ipynb` — immutable source inventory, provenance ledger, and representative archive checks; no download.
+3. `02_data_preparation.ipynb` — canonical grid, seven-predictor contract, CLC assignment, and panel-validation evidence.
+4. `03_eda.ipynb` — validated panel completeness, zero inflation, target behaviour, predictor correlations, temporal drift, and extreme-value screening.
+5. `04_modelling.ipynb` — saved nine-feature hurdle metadata, model components, MAE/RMSE/capture tables, final-test prediction/residual plots, and annual scoring logic; no tuning or retraining.
+6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison, including verified spatial-output previews; no prediction or recommendation category.
+7. `06_final_charts.ipynb` — verifies and displays the six presentation visuals from their real source artefacts without duplicate images.
 
 Run each notebook from a fresh kernel. They read and check validated artefacts;
 they do not rebuild the national panel, screening GeoPackage, QGIS projects, or
 presentation figures.
+
+Notebook `04` reports regression diagnostics for the already completed frozen
+final temporal test. It distinguishes all-row MAE/RMSE, positive-target error,
+and capture@20% as a ranking diagnostic. The binned comparison is descriptive
+regression evidence, not probability calibration. It intentionally does not
+claim direct feature importance from correlated spatial predictors.
 
 ## Controlled regeneration
 

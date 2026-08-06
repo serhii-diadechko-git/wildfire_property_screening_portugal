@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 from typing import Iterable
 
 
@@ -44,3 +45,18 @@ def read_json_artifact(root: Path, relative_path: str | Path) -> dict[str, objec
 def relative_display_path(root: Path, path: Path) -> str:
     """Show a portable repository-relative path in notebook output."""
     return path.resolve().relative_to(root.resolve()).as_posix()
+
+
+def pinned_requirements(root: Path) -> dict[str, str]:
+    """Read exact package pins for a transparent environment notebook check."""
+
+    pins: dict[str, str] = {}
+    for raw_line in (root / "requirements.txt").read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.fullmatch(r"([A-Za-z0-9_.-]+)==([^\s]+)", line)
+        if not match:
+            raise ValueError(f"Expected an exact package pin in requirements.txt, found: {line}")
+        pins[match.group(1)] = match.group(2)
+    return pins
