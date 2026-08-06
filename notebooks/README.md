@@ -1,27 +1,31 @@
 # Notebook guide
 
-The notebooks are reusable data-science review chapters. They load real project
-artefacts, run compact validations, show tables/plots, and explain the choices
-behind the result. Reusable calculations live in `src/`; the controlled full
-pipeline lives in `scripts/`; validation evidence lives in `reports/validation/`.
+The notebooks are reusable data-science walkthroughs. They load real project
+artefacts, run compact validations, show tables/plots/maps, and explain the
+choices behind the result. Reusable calculations live in `src/`; scripts and
+notebooks call those same calculations; validation evidence lives in
+`reports/validation/`.
 
-Notebooks are intentionally not a second implementation of national geospatial
-processing. This avoids hidden notebook state, accidental partial rebuilds, and
-inconsistent outputs while still giving a reviewer an understandable,
-executable analysis narrative.
+Notebooks intentionally do not copy national geospatial or model logic into
+cell bodies. Instead, they expose carefully named Boolean switches that call
+the tested reusable functions. This gives a reviewer a step-by-step workflow
+without hidden notebook state or a competing implementation.
 
 ## Setup
 
 Create the pinned environment described in the root [README](../README.md),
-then run:
+then run the preflight check:
 
 ```text
 python scripts/run_project.py --mode preflight
-python -m jupyter lab
 ```
 
-Select the environment's Python kernel: `.venv\Scripts\python.exe` on Windows
-or `.venv/bin/python` on Linux/macOS.
+In VS Code, install the Microsoft **Python** and **Jupyter** extensions, open
+the repository folder, choose **Python: Select Interpreter**, and select the
+project environment: `.venv\Scripts\python.exe` on Windows or
+`.venv/bin/python` on Linux/macOS. Open an `.ipynb` file, choose **Select
+Kernel**, and select that same environment. The project requires a notebook
+kernel (`ipykernel`), not the separate JupyterLab application.
 
 ## Execution order
 
@@ -34,14 +38,34 @@ or `.venv/bin/python` on Linux/macOS.
 7. `06_final_charts.ipynb` — verifies and displays the six presentation visuals from their real source artefacts without duplicate images.
 
 Run each notebook from a fresh kernel. They read and check validated artefacts;
-they do not rebuild the national panel, screening GeoPackage, QGIS projects, or
-presentation figures.
+they render real tables/plots from them. By default, costly/rewrite-capable
+stages are disabled. Turn on a switch only when deliberately regenerating the
+corresponding derived output after raw-input preflight has passed.
 
 Notebook `04` reports regression diagnostics for the already completed frozen
 final temporal test. It distinguishes all-row MAE/RMSE, positive-target error,
 and capture@20% as a ranking diagnostic. The binned comparison is descriptive
 regression evidence, not probability calibration. It intentionally does not
 claim direct feature importance from correlated spatial predictors.
+
+## Controlled rebuild switches
+
+| Notebook | Default behavior | Explicit opt-in behavior |
+|---|---|---|
+| `00` | Runs environment and raw-input preflight. | No rebuild switch. |
+| `01` | Reads provenance and runs representative archive validation. | No download or raw-data write. |
+| `02` | Inspects grid, CLC, feature contract, and panel validation. | `REBUILD_NATIONAL_PANEL` / `REBUILD_EXTENDED_TRAINING_PANEL` call the bounded reusable builders. |
+| `03` | Reads saved EDA evidence and plots it. | `REGENERATE_EDA` regenerates EDA reports/figures. |
+| `04` | Displays saved final-test model artifacts and durable diagnostics. | `REBUILD_MODEL_DIAGNOSTICS` rebuilds figures/tables; `RUN_FROZEN_MODEL_STAGES` calls the frozen refit and final test. |
+| `05` | Inspects the published historical screening. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
+| `06` | Verifies/displays final visuals. | `REGENERATE_FINAL_VISUALS` rebuilds code-generated charts/tables. |
+
+For a complete automated rebuild, use the root command rather than enabling
+several switches manually:
+
+```text
+python scripts/run_project.py --mode reproduce --confirm-rebuild
+```
 
 ## Controlled regeneration
 

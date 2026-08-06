@@ -111,6 +111,7 @@ def default_reproduction_stages(*, include_qgis: bool) -> tuple[RunStage, ...]:
         RunStage("training panel", (python, "scripts/build_extended_training_panel.py", "--stage", "all"), "Build/reuse the labelled 2010-2021 development panel."),
         RunStage("model refit", (python, "scripts/refit_extended_training_models.py"), "Refit the frozen nine-feature candidate and validate only 2020-2021."),
         RunStage("final temporal evaluation", (python, "scripts/run_extended_final_temporal_test.py"), "Run the frozen 2022-2024 temporal comparison."),
+        RunStage("model diagnostics", (python, "scripts/build_model_diagnostics.py"), "Build durable final-test regression tables and diagnostic figures."),
         RunStage("operational preparation", (python, "scripts/prepare_operational_forecast.py"), "Build/reuse labelled nine-feature artifacts and validate the forecast cutoff."),
         RunStage("operational score", (python, "scripts/score_operational_forecast.py"), "Create/reuse the target-free 2026 comparative estimate."),
         RunStage("historical screening", (python, "scripts/build_historical_exposure_screening.py", "--validate-existing"), "Validate the separate observed-history screening layer."),

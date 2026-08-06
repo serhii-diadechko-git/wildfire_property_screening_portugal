@@ -46,8 +46,14 @@ class PublicReproducibilityTests(unittest.TestCase):
     def test_public_docs_expose_data_and_one_command_workflow(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         data_readme = (ROOT / "data/README.md").read_text(encoding="utf-8")
+        notebook_readme = (ROOT / "notebooks" / "README.md").read_text(encoding="utf-8")
         self.assertIn("scripts/run_project.py --mode preflight", readme)
         self.assertIn("--mode reproduce --confirm-rebuild", readme)
+        self.assertIn("VS Code", readme)
+        self.assertIn("VS Code", notebook_readme)
+        self.assertNotIn("python -m jupyter lab", readme.lower())
+        self.assertNotIn("python -m jupyter lab", notebook_readme.lower())
+        self.assertNotIn("jupyterlab", (ROOT / "requirements.txt").read_text(encoding="utf-8").lower())
         self.assertIn("source_manifest.json", data_readme)
         self.assertIn("data/raw/", data_readme)
 
@@ -56,6 +62,7 @@ class PublicReproducibilityTests(unittest.TestCase):
         self.assertGreaterEqual(len(stages), 10)
         self.assertEqual(stages[0].name, "environment")
         self.assertEqual(stages[-1].name, "full test suite")
+        self.assertIn("model diagnostics", [stage.name for stage in stages])
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))

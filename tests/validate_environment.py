@@ -27,7 +27,6 @@ IMPORT_NAMES = {
     "ipykernel": "ipykernel",
     "nbformat": "nbformat",
     "nbclient": "nbclient",
-    "jupyterlab": "jupyterlab",
     "cdsapi": "cdsapi",
     "cfgrib": "cfgrib",
     "xarray": "xarray",

@@ -45,6 +45,8 @@ class NotebookReviewLayerTests(unittest.TestCase):
         self.assertIn("feature-contract", (PROJECT_ROOT / "notebooks/02_data_preparation.ipynb").read_text(encoding="utf-8"))
         self.assertIn("validate_final_visuals", presentation)
         self.assertNotIn("build_national_panel", collection + preparation + presentation)
+        self.assertIn("REBUILD_NATIONAL_PANEL = False", preparation)
+        self.assertIn("REGENERATE_FINAL_VISUALS = False", presentation)
 
     def test_eda_notebook_is_executable_artifact_review(self) -> None:
         source = code_sources("03_eda.ipynb")
@@ -61,6 +63,8 @@ class NotebookReviewLayerTests(unittest.TestCase):
         self.assertNotIn(".fit(", source)
         self.assertNotIn("GridSearchCV", source)
         self.assertIn("plot_prediction_diagnostics", source)
+        self.assertIn("REBUILD_MODEL_DIAGNOSTICS = False", source)
+        self.assertIn("RUN_FROZEN_MODEL_STAGES = False", source)
 
 
 if __name__ == "__main__":

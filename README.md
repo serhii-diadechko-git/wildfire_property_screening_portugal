@@ -116,29 +116,47 @@ Open notebooks in this order after the environment and raw inputs are ready:
 6. `notebooks/05_evaluation_recommendations.ipynb`
 7. `notebooks/06_final_charts.ipynb`
 
-Notebooks are reusable data-science review chapters: they run real artifact
-checks, create compact explanatory tables/plots, and link results to their
-source files. Production calculations live in `src/` and `scripts/`; the
-notebooks do not duplicate the national pipeline. See
-[notebooks/README.md](notebooks/README.md).
-Launch the installed notebook interface with `python -m jupyter lab`.
+Notebooks are reusable, controlled data-science walkthroughs: they run real
+source checks, display artifacts/plots/tables, and can call the same reusable
+functions as the scripts when an explicit rebuild switch is enabled. Production
+calculations remain in `src/`; notebooks do not duplicate their implementation.
+See [notebooks/README.md](notebooks/README.md). In VS Code, install the
+Microsoft **Python** and **Jupyter** extensions, open the repository folder,
+select the project's `.venv` interpreter, then select that same environment as
+the notebook kernel. JupyterLab is not required.
 
 ### What the notebooks are for
 
 Run the notebooks from a fresh kernel, in numeric order, after `preflight`
 and—when reviewing derived/model outputs—after a successful reproduction run.
-They are a transparent learning and review path, not an alternative production
-pipeline:
+They are a transparent learning, review, and controlled-orchestration path:
 
 - `00` checks the portable Python, GIS, and machine-learning environment using synthetic in-memory examples.
 - `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
 - `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
-- `04` is the model evidence notebook: saved model metadata, feature order, MAE/RMSE/capture tables, final-test plots, residuals, and binned observed-versus-estimated comparisons. It never fits or changes a model.
+- `04` is the model evidence notebook: saved model metadata, feature order, MAE/RMSE/capture tables, final-test plots, residuals, and binned observed-versus-estimated comparisons. It can explicitly rerun the frozen refit/final-test stages, but only after its opt-in switch is changed.
 - `05` and `06` inspect the validated historical spatial screening, QGIS outputs, tables, and presentation visuals.
 
-Use the scripts for deliberate regeneration, the notebooks for explanation and
-inspection. If a required artifact is absent, the notebook raises an actionable
-error instead of attempting a hidden rebuild.
+Use `scripts/run_project.py` for the one-command rebuild. Use notebooks when
+you want to step through the same workflow, inspect intermediate evidence, and
+see the calculations visually. Expensive/rewrite-capable notebook stages are
+disabled by default with clearly named Boolean switches; no notebook performs a
+hidden rebuild.
+
+### Model diagnostic outputs
+
+The frozen T=2022–2024 final temporal evaluation produces durable regression
+diagnostics in addition to the interactive notebook views:
+
+- `reports/figures/model_final_test_metric_comparison.png`
+- `reports/figures/model_final_test_observed_vs_estimated.png`
+- `reports/figures/model_final_test_binned_observed_vs_estimated.png`
+- `reports/tables/model_final_test_metrics.csv`
+- `reports/tables/model_final_test_metrics_by_year.csv`
+- `reports/tables/model_final_test_binned_observed_vs_estimated.csv`
+
+They are built by `python scripts/build_model_diagnostics.py` from saved
+predictions/metrics only; that command does not fit a model or change a score.
 
 For spatial inspection, open these portable projects in QGIS after cloning the
 whole repository:
