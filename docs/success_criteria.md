@@ -15,7 +15,7 @@ This document separates:
 
 **Target:** create documented steps that transform the required public sources into the agreed 1 km cell-year dataset.
 
-**Check:** rerun the pipeline for the pilot area and confirm that the same schema and results are produced.
+**Check:** rerun deterministic bounded national batches and confirm identical analytical keys and values before assembling the panel.
 
 ### 2. Consistent spatial design
 
@@ -43,7 +43,7 @@ This document separates:
 coverage = cells with a result status / all eligible cells
 ```
 
-The 95% value must be confirmed during the feasibility pilot. It is not guaranteed before source coverage is measured.
+The published 2026 output contains all 89,112 canonical cells. Future annual outputs must revalidate coverage rather than assume it.
 
 ### 5. Mandatory data completeness
 

@@ -2,9 +2,9 @@
 
 This module deliberately operates only on T=2010-2021.  T=2022-2024 are
 neither present in its input panel nor read from the canonical national panel.
-The two added climate-extreme features are derived from the same local JJAS
-ERA5-Land files and accepted static coastal fallback map as the validated V2
-experiment.  The canonical seven-feature panel is not altered.
+The two added climate-extreme features are derived directly from the registered
+local JJAS ERA5-Land files and accepted static coastal fallback map. The
+canonical seven-feature panel is not altered.
 """
 
 from __future__ import annotations
@@ -24,18 +24,16 @@ import pandas as pd
 from threadpoolctl import threadpool_limits
 
 from src import national_panel as panel
+from src.climate_features import read_grib_variable
+from src.evaluation import evaluate_predictions, evaluate_tie_aware_rankings
 from src.extended_training_panel import (
-    NEW_OBSERVATION_YEARS,
     PANEL_PATH as EXTENDED_PANEL_PATH,
 )
 from src.feature_contract import PREDICTOR_COLUMNS, TARGET_COLUMN
-from src.model_selection import HistoricalFireMeanRegressor, RANDOM_SEED, evaluate_predictions
-from src.model_v2_experiments import HurdleHistGradientRegressor, evaluate_tie_aware_rankings
-from src.representative_feature_pilot import _read_grib_variable
+from src.modeling import HistoricalFireMeanRegressor, HurdleHistGradientRegressor, NINE_FEATURES, RANDOM_SEED
 
 
 ROOT = Path(__file__).resolve().parents[1]
-V2_FEATURE_MATRIX_PATH = ROOT / "data/processed/model_v2_train_validation_features.parquet"
 OUTPUT_DIR = ROOT / "data/processed/extended_model_selection_2010_2021"
 FEATURE_MATRIX_PATH = OUTPUT_DIR / "nine_feature_train_validation_matrix.parquet"
 MODEL_DIR = OUTPUT_DIR / "models"
@@ -46,10 +44,6 @@ REPORT_PATH = ROOT / "reports/validation/extended_training_model_refit.md"
 TRAIN_YEARS = tuple(range(2010, 2020))
 VALIDATION_YEARS = (2020, 2021)
 ALLOWED_YEARS = TRAIN_YEARS + VALIDATION_YEARS
-NINE_FEATURES = PREDICTOR_COLUMNS + (
-    "warm_season_max_monthly_2m_temperature_c",
-    "warm_season_min_monthly_soil_water_layer1",
-)
 EXTRA_FEATURES = NINE_FEATURES[-2:]
 
 
@@ -65,13 +59,13 @@ def _prediction_sha256(values: np.ndarray) -> str:
     return hashlib.sha256(np.ascontiguousarray(values, dtype="<f8").tobytes()).hexdigest().upper()
 
 
-def _early_monthly_extreme_grids() -> dict[int, dict[str, np.ndarray]]:
-    """Read only the two required monthly-extreme fields for T=2010-2014."""
+def _monthly_extreme_grids(years: tuple[int, ...]) -> dict[int, dict[str, np.ndarray]]:
+    """Read the two monthly-extreme fields from each requested annual GRIB."""
     result: dict[int, dict[str, np.ndarray]] = {}
-    for year in NEW_OBSERVATION_YEARS:
+    for year in years:
         path = ROOT / f"data/raw/climate/era5_land/era5_land_monthly_jjas_{year}_mainland_portugal.grib"
-        latitude, longitude, temperature, temperature_months = _read_grib_variable(path, "2t")
-        soil_lat, soil_lon, soil, soil_months = _read_grib_variable(path, "swvl1")
+        latitude, longitude, temperature, temperature_months = read_grib_variable(path, "2t")
+        soil_lat, soil_lon, soil, soil_months = read_grib_variable(path, "swvl1")
         if not (
             temperature_months == soil_months == (6, 7, 8, 9)
             and np.array_equal(latitude, soil_lat)
@@ -89,7 +83,7 @@ def _early_monthly_extreme_grids() -> dict[int, dict[str, np.ndarray]]:
     return result
 
 
-def _derive_early_extremes_batch(
+def _derive_extremes_batch(
     batch_id: str,
     grids: dict[int, dict[str, np.ndarray]],
     fallback: pd.DataFrame,
@@ -100,7 +94,7 @@ def _derive_early_extremes_batch(
     latitudes = grid.centroid_latitude.to_numpy()
     longitudes = grid.centroid_longitude.to_numpy()
     rows: list[pd.DataFrame] = []
-    for year in NEW_OBSERVATION_YEARS:
+    for year in sorted(grids):
         source = grids[year]
         lat_index = np.abs(source["latitude"][:, None] - latitudes).argmin(axis=0)
         lon_index = np.abs(source["longitude"][:, None] - longitudes).argmin(axis=0)
@@ -127,19 +121,21 @@ def _derive_early_extremes_batch(
     return pd.concat(rows, ignore_index=True)
 
 
-def _early_extremes(progress: Callable[[str], None] = print) -> pd.DataFrame:
-    """Build T=2010-2014 extrema in bounded grid batches, then concatenate."""
-    grids = _early_monthly_extreme_grids()
+def _monthly_extremes(
+    years: tuple[int, ...], progress: Callable[[str], None] = print
+) -> pd.DataFrame:
+    """Build annual extrema in bounded grid batches, then concatenate."""
+    grids = _monthly_extreme_grids(years)
     fallback = panel._load_era5_fallback_mapping()
     catalog = panel.load_grid_catalog()
     frames: list[pd.DataFrame] = []
     for number, batch in enumerate(catalog["batches"], start=1):
-        frame = _derive_early_extremes_batch(batch["batch_id"], grids, fallback)
+        frame = _derive_extremes_batch(batch["batch_id"], grids, fallback)
         frames.append(frame)
         progress(f"Extended climate extremes {batch['batch_id']}: {len(frame)} rows ({number}/{catalog['batch_count']})")
     result = pd.concat(frames, ignore_index=True)
     if result.duplicated(["cell_id", "observation_year"]).any() or result[list(EXTRA_FEATURES)].isna().any().any():
-        raise ValueError("Invalid early climate-extreme component")
+        raise ValueError("Invalid climate-extreme component")
     return result
 
 
@@ -188,17 +184,10 @@ def build_extended_nine_feature_matrix(progress: Callable[[str], None] = print) 
         }
     base = pd.read_parquet(EXTENDED_PANEL_PATH)
     base = base.loc[base.observation_year.isin(ALLOWED_YEARS)].copy()
-    early = base.loc[base.observation_year.isin(NEW_OBSERVATION_YEARS)].copy()
-    later = base.loc[~base.observation_year.isin(NEW_OBSERVATION_YEARS)].copy()
-    # The existing V2 matrix contains only T=2015-2021 by construction and
-    # supplies the already validated two monthly-extreme fields exactly.
-    later_v2 = pd.read_parquet(V2_FEATURE_MATRIX_PATH, columns=["cell_id", "observation_year", *EXTRA_FEATURES])
-    if not later_v2.observation_year.isin(tuple(range(2015, 2022))).all():
-        raise ValueError("Existing V2 matrix contains an unexpected year")
-    later = later.merge(later_v2, on=["cell_id", "observation_year"], how="left", validate="one_to_one")
-    early_extremes = _early_extremes(progress)
-    early = early.merge(early_extremes, on=["cell_id", "observation_year"], how="left", validate="one_to_one")
-    result = pd.concat([early, later], ignore_index=True).sort_values(
+    extremes = _monthly_extremes(ALLOWED_YEARS, progress)
+    result = base.merge(
+        extremes, on=["cell_id", "observation_year"], how="left", validate="one_to_one"
+    ).sort_values(
         ["observation_year", "cell_id"], kind="mergesort"
     ).reset_index(drop=True)
     _validate_frame(result)

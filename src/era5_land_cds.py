@@ -1,25 +1,28 @@
-"""Build and optionally submit the approved small ERA5-Land CDS pilot request.
+"""Build and optionally submit one immutable annual ERA5-Land CDS request.
 
-The default operation is a credential-free dry run.  Retrieval requires an
-explicit caller action and relies on CDS credentials configured outside this
-repository (for example, in the user's .cdsapirc file).
+Request construction and dry-run validation never read CDS credentials. Retrieval
+delegates authentication to ``cdsapi`` and refuses to overwrite a raw file.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from src.config import ERA5_LAND, ERA5_LAND_CDS, PILOT_2023_TO_2024
+from src.config import ERA5_LAND, ERA5_LAND_CDS
 
 
-def build_pilot_request() -> dict[str, object]:
-    """Return the exact CDS request; make no network call or filesystem change."""
-    if PILOT_2023_TO_2024.predictor_year != 2023:
-        raise ValueError("This request module is limited to the approved 2023 pilot")
+def build_request(year: int, *, corrected_precipitation: bool = False) -> dict[str, object]:
+    """Return one bounded JJAS request without making a network call."""
+    if year < 1950:
+        raise ValueError("ERA5-Land annual requests must be for 1950 or later")
     return {
-        "product_type": [ERA5_LAND_CDS.product_type],
-        "variable": list(ERA5_LAND.variables),
-        "year": [str(PILOT_2023_TO_2024.predictor_year)],
+        "product_type": [
+            "monthly_averaged_reanalysis_by_hour_of_day"
+            if corrected_precipitation
+            else ERA5_LAND_CDS.product_type
+        ],
+        "variable": ["total_precipitation"] if corrected_precipitation else list(ERA5_LAND.variables),
+        "year": [str(year)],
         "month": [f"{month:02d}" for month in ERA5_LAND.season_months],
         "time": ["00:00"],
         "data_format": ERA5_LAND_CDS.data_format,
@@ -28,13 +31,20 @@ def build_pilot_request() -> dict[str, object]:
     }
 
 
-def dry_run(project_root: Path) -> dict[str, object]:
-    """Validate the local request contract without contacting CDS."""
-    target = project_root / ERA5_LAND_CDS.pilot_raw_output
-    request = build_pilot_request()
+def output_path(project_root: Path, year: int, *, corrected_precipitation: bool = False) -> Path:
+    return (
+        project_root
+        / ERA5_LAND_CDS.raw_directory
+        / ERA5_LAND_CDS.output_filename(year, corrected_precipitation=corrected_precipitation)
+    )
+
+
+def dry_run(project_root: Path, year: int, *, corrected_precipitation: bool = False) -> dict[str, object]:
+    """Validate the request contract without network or credential access."""
+    target = output_path(project_root, year, corrected_precipitation=corrected_precipitation)
     return {
         "dataset_id": ERA5_LAND_CDS.dataset_id,
-        "request": request,
+        "request": build_request(year, corrected_precipitation=corrected_precipitation),
         "target": str(target),
         "network_called": False,
         "credentials_read": False,
@@ -42,16 +52,20 @@ def dry_run(project_root: Path) -> dict[str, object]:
     }
 
 
-def retrieve_pilot(project_root: Path) -> Path:
-    """Submit the approved CDS request after the user has configured credentials."""
+def retrieve(project_root: Path, year: int, *, corrected_precipitation: bool = False) -> Path:
+    """Retrieve one original GRIB, refusing to overwrite an existing raw file."""
     try:
         import cdsapi
     except ImportError as error:
-        raise RuntimeError("Install cdsapi>=0.7.7 before retrieval") from error
+        raise RuntimeError("Install the pinned cdsapi dependency before retrieval") from error
 
-    target = project_root / ERA5_LAND_CDS.pilot_raw_output
+    target = output_path(project_root, year, corrected_precipitation=corrected_precipitation)
     if target.exists():
         raise FileExistsError(f"Refusing to overwrite existing raw download: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
-    cdsapi.Client().retrieve(ERA5_LAND_CDS.dataset_id, build_pilot_request(), str(target))
+    cdsapi.Client().retrieve(
+        ERA5_LAND_CDS.dataset_id,
+        build_request(year, corrected_precipitation=corrected_precipitation),
+        str(target),
+    )
     return target

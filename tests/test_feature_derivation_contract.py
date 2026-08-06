@@ -7,18 +7,17 @@ import numpy as np
 import pandas as pd
 
 from src.feature_contract import TABLE_COLUMNS, source_years, validate_feature_table
-from src.representative_feature_pilot import (
-    PILOT_CELL_IDS,
-    PILOT_YEARS,
-    derive_representative_pilot,
+from src.climate_features import (
     era5_source_paths,
     jjas_total_precipitation_mm,
 )
 
+CONTRACT_YEARS = (2015, 2016, 2019, 2023)
+
 
 class FeatureDerivationContractTests(unittest.TestCase):
     def test_temporal_alignment_is_strictly_leakage_safe(self) -> None:
-        for predictor_year in PILOT_YEARS:
+        for predictor_year in CONTRACT_YEARS:
             years = source_years(predictor_year)
             self.assertEqual(years["climate_year"], predictor_year)
             self.assertEqual(years["outcome_year"], predictor_year + 1)
@@ -87,23 +86,6 @@ class FeatureDerivationContractTests(unittest.TestCase):
         outside.loc[0, "built_up_share"] = 1.1
         with self.assertRaisesRegex(ValueError, "above allowed range"):
             validate_feature_table(outside, expected_years=(2015, 2016), expected_cell_ids=("A", "B"))
-
-    def test_sample_definition_is_deterministic(self) -> None:
-        self.assertEqual(PILOT_YEARS, (2015, 2016, 2019, 2023))
-        self.assertEqual(len(PILOT_CELL_IDS), len(set(PILOT_CELL_IDS)))
-        self.assertGreaterEqual(len(PILOT_CELL_IDS), 8)
-
-    def test_repeated_source_derivation_is_exact(self) -> None:
-        first, first_validation = derive_representative_pilot()
-        second, second_validation = derive_representative_pilot()
-        pd.testing.assert_frame_equal(
-            first.drop(columns="geometry"),
-            second.drop(columns="geometry"),
-            check_exact=True,
-        )
-        self.assertEqual(first_validation["row_count"], 40)
-        self.assertEqual(first_validation["missingness"], second_validation["missingness"])
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

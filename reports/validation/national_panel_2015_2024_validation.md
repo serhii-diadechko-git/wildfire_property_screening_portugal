@@ -42,9 +42,9 @@ This decision authorises panel EDA only. It does not establish modelling readine
 
 The validated nearest-valid-land fallback resolved all 1,506 systematic coastal cells without new acquisition. Climate missingness is now zero; maximum fallback distance was 13.962 km. No interpolation, downscaling, zero substitution, cell exclusion, or T+1 information was used.
 
-## Pilot regression and leakage
+## Determinism and leakage
 
-All 40 representative rows passed the pilot regression. All non-climate pilot values and all originally valid climate values match the representative pilot; only the pilot's previously masked coastal climate rows now contain the validated fallback. CLC and ICNF areas permit only floating-roundoff tolerance; originally valid climate and historical counts require exact equality; slope permits 0.25 degrees solely for fixed national raster alignment. Corrected precipitation was used for 2022 and 2023. No outcome-year information entered predictors. Annual repaired ICNF polygons were locally unioned before intersection, preventing double counting.
+Corrected precipitation was used for 2022 and 2023. No outcome-year information entered predictors. Annual repaired ICNF polygons were locally unioned before intersection, preventing double counting.
 
 Three representative national batches (`x00_y10`, `x06_y21`, `x10_y21`) were re-derived in memory. Every slope, CLC, ICNF, ERA5 and assembled batch value was exactly identical; no files were published by the rerun.
 
@@ -58,10 +58,10 @@ These are minimum observed first-to-last atomic batch-publication spans, not CPU
 | icnf_geometry_repair | 26.50 |
 | slope | 129.76 |
 | clc | 519.09 |
-| era5 | 12.25 |
+| era5 | 23.41 |
 | icnf_components | 357.47 |
-| panel_batches | 50.54 |
+| panel_batches | 25.83 |
 
-Final validation, including the three-batch deterministic rerun, took 94.26 seconds.
+Final validation, including the three-batch deterministic rerun, took 126.38 seconds.
 
-Full machine-readable metrics, ranges, missingness, quantiles, repair logs, and regression differences are stored at `data/processed/national_panel_2015_2024_validation.json`.
+Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at `data/processed/national_panel_2015_2024_validation.json`.

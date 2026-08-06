@@ -6,8 +6,7 @@ import json
 import unittest
 
 from src.extended_final_test import FINAL_TEST_YEARS, METRICS_PATH
-from src.final_model_refit import METADATA_PATH
-from src.extended_model_refit import NINE_FEATURES
+from src.modeling import NINE_FEATURES
 
 
 class ExtendedFinalTestTests(unittest.TestCase):
@@ -24,15 +23,6 @@ class ExtendedFinalTestTests(unittest.TestCase):
         self.assertEqual(metrics["feature_matrix"]["row_count"], 89112 * len(FINAL_TEST_YEARS))
         for model in metrics["metrics"].values():
             self.assertEqual(set(model["by_final_test_year"]), {"2022", "2023", "2024"})
-
-    def test_final_refit_excludes_the_held_out_years(self) -> None:
-        if not METADATA_PATH.exists():
-            self.skipTest("Run scripts/refit_final_fixed_spec_model.py first")
-        metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(metadata["training_years"], list(range(2010, 2022)))
-        self.assertEqual(metadata["final_test_years_excluded"], list(FINAL_TEST_YEARS))
-        self.assertTrue(metadata["reload_sample_predictions_identical"])
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

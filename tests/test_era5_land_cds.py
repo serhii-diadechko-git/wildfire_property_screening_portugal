@@ -3,13 +3,13 @@
 from pathlib import Path
 import unittest
 
-from src.era5_land_cds import build_pilot_request, dry_run
+from src.era5_land_cds import build_request, dry_run
 
 
 class Era5LandCdsTests(unittest.TestCase):
-    def test_approved_pilot_request_is_small_and_t_only(self) -> None:
-        request = build_pilot_request()
-        self.assertEqual(request["year"], ["2023"])
+    def test_annual_request_is_small_and_t_only(self) -> None:
+        request = build_request(2025)
+        self.assertEqual(request["year"], ["2025"])
         self.assertEqual(request["month"], ["06", "07", "08", "09"])
         self.assertEqual(request["variable"], [
             "2m_temperature",
@@ -20,9 +20,14 @@ class Era5LandCdsTests(unittest.TestCase):
         self.assertEqual(request["area"], [42.2, -9.6, 36.8, -6.0])
 
     def test_dry_run_does_not_call_network_or_read_credentials(self) -> None:
-        result = dry_run(Path(__file__).resolve().parents[1])
+        result = dry_run(Path(__file__).resolve().parents[1], 2025)
         self.assertFalse(result["network_called"])
         self.assertFalse(result["credentials_read"])
+
+    def test_precipitation_workaround_request_is_explicit(self) -> None:
+        request = build_request(2023, corrected_precipitation=True)
+        self.assertEqual(request["product_type"], ["monthly_averaged_reanalysis_by_hour_of_day"])
+        self.assertEqual(request["variable"], ["total_precipitation"])
 
 
 if __name__ == "__main__":

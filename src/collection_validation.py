@@ -9,7 +9,7 @@ from zipfile import ZipFile
 import geopandas as gpd
 from pyproj import CRS
 
-from src.config import ERA5_LAND, PILOT_2023_TO_2024, TEMPORAL
+from src.config import ERA5_LAND, TEMPORAL
 from src.source_registry import SourceRecord
 
 
@@ -61,7 +61,6 @@ def validate_zip_archive(record: SourceRecord, project_root: Path) -> dict[str, 
         "archive_members": members,
         "required_members_present": True,
     }
-
 
 def validate_icnf_archive(
     record: SourceRecord,
@@ -145,15 +144,4 @@ def validate_era5_land_request(
         "variables": variables,
         "assignment_method": ERA5_LAND.assignment_method,
         "coverage_check": "configuration only; no CDS request was made",
-    }
-
-
-def validate_era5_land_pilot_request() -> dict[str, object]:
-    """Validate the approved 2023 ERA5-Land request and its T-only relationship."""
-    if PILOT_2023_TO_2024.outcome_year != PILOT_2023_TO_2024.predictor_year + 1:
-        raise ValueError("Pilot outcome year must equal predictor year + 1")
-    if any(year >= PILOT_2023_TO_2024.predictor_year for year in PILOT_2023_TO_2024.historical_fire_years):
-        raise ValueError("Historical-fire years must be strictly before the predictor year")
-    return validate_era5_land_request(PILOT_2023_TO_2024.predictor_year) | {
-        "outcome_year": PILOT_2023_TO_2024.outcome_year,
     }

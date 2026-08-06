@@ -1,7 +1,7 @@
 """Create presentation figures from the validated historical screening evidence.
 
 The figures deliberately use only the completed descriptive screening and the
-closed train/validation model-selection record.  They do not calculate a new
+frozen final-temporal model-evaluation record. They do not calculate a new
 score, prediction, or recommendation.
 """
 
@@ -20,7 +20,7 @@ from src.paths import FIGURES_DIR, TABLES_DIR, VALIDATION_DIR
 
 ROOT = Path(__file__).resolve().parents[1]
 SCREENING_METRICS_PATH = VALIDATION_DIR / "historical_exposure_screening_and_icnf_comparison.json"
-MODEL_SELECTION_PATH = VALIDATION_DIR / "train_validation_model_selection.json"
+MODEL_EVALUATION_PATH = ROOT / "data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json"
 BAND_TABLE_PATH = TABLES_DIR / "historical_exposure_band_summary.csv"
 HAZARD_TABLE_PATH = TABLES_DIR / "icnf_hazard_class_summary.csv"
 CROSSTAB_TABLE_PATH = TABLES_DIR / "historical_exposure_band_by_icnf_hazard_class.csv"
@@ -65,7 +65,7 @@ FIGURE_SOURCE_PATHS = {
         "src/final_visuals.py",
     ),
     "model_comparison": (
-        "reports/validation/train_validation_model_selection.json",
+        "data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json",
         "src/final_visuals.py",
     ),
     "decision_limitations": (
@@ -92,7 +92,7 @@ def _atomic_savefig(figure: plt.Figure, path: Path, *, dpi: int = 180) -> None:
 
 def _inputs() -> tuple[dict[str, object], dict[str, object], pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     screening = json.loads(SCREENING_METRICS_PATH.read_text(encoding="utf-8"))
-    model_selection = json.loads(MODEL_SELECTION_PATH.read_text(encoding="utf-8"))
+    model_selection = json.loads(MODEL_EVALUATION_PATH.read_text(encoding="utf-8"))
     bands = pd.read_csv(BAND_TABLE_PATH)
     hazards = pd.read_csv(HAZARD_TABLE_PATH)
     cross = pd.read_csv(CROSSTAB_TABLE_PATH)
@@ -134,14 +134,14 @@ def _save_and_return(figure: plt.Figure, path: Path) -> Path:
 
 
 def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
-    """Show validation-only evidence explaining why no predictive model advanced."""
+    """Show frozen final-test evidence for the retained model and comparator."""
     metrics = model_selection["metrics"]
-    keys = ["zero_prediction_baseline", "historical_fire_baseline", "random_forest_regressor", "tweedie_regressor"]
-    labels = ["Zero\nreference", "Historical\nrecurrence", "Random\nForest", "Tweedie"]
+    keys = ["historical_recurrence_baseline", "nine_feature_hurdle"]
+    labels = ["Historical\nrecurrence", "Nine-feature\nhurdle"]
     maes = [metrics[key]["overall"]["mae_all"] for key in keys]
     rmses = [metrics[key]["overall"]["rmse_all"] for key in keys]
     captures = [metrics[key]["overall"]["capture_at_20_percent"] for key in keys]
-    colours = ["#9E9E9E", "#9B2226", "#5B8DB8", "#8073AC"]
+    colours = ["#9B2226", "#33658A"]
 
     fig, axes = plt.subplots(1, 3, figsize=(14.5, 5.2), constrained_layout=True)
     for axis, values, metric, note in zip(
@@ -159,12 +159,12 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
             axis.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:.3f}",
                       ha="center", va="bottom", fontsize=9)
         axis.text(0.5, -0.22, note, ha="center", va="top", transform=axis.transAxes, fontsize=8.5)
-    fig.suptitle("Validation-only regression comparison (T=2020–2021)", fontsize=15, fontweight="bold")
+    fig.suptitle("Frozen final-temporal comparison (T=2022–2024)", fontsize=15, fontweight="bold")
     fig.text(
         0.5,
         -0.05,
-        "Neither candidate met the predeclared gate (lower MAE and RMSE, with capture@20% not lower). "
-        "Historical recurrence is retained as descriptive screening evidence; no model advanced to final testing.",
+        "The hurdle lowers all-row MAE and improves capture@20%, while RMSE is similar and high-burn years are underpredicted. "
+        "It is retained for cautious annual comparative estimates; historical recurrence remains descriptive context.",
         ha="center", va="top", fontsize=9.5,
     )
     return _save_and_return(fig, FIGURE_PATHS["model_comparison"])
@@ -272,10 +272,10 @@ def validate_final_visuals() -> dict[str, object]:
         raise ValueError("Screening summary tables no longer cover all canonical cells")
     if int(cross.cell_count.sum()) != 89_112:
         raise ValueError("Historical/ICNF cross-tab no longer covers all canonical cells")
-    if model_selection["selection"]["provisional_model"] is not None:
-        raise ValueError("A model appears selected despite the closed predictive gate")
-    if model_selection["selection"]["final_temporal_test_may_begin"]:
-        raise ValueError("Final-test gate unexpectedly opened")
+    if tuple(model_selection["design"]["final_test_years"]) != (2022, 2023, 2024):
+        raise ValueError("Frozen final-test years changed")
+    if set(model_selection["metrics"]) != {"historical_recurrence_baseline", "nine_feature_hurdle"}:
+        raise ValueError("Final model-comparison candidates changed")
     if qgis_validation["screening_view_feature_count"] != 89_112:
         raise ValueError("QGIS validation no longer resolves all screening cells")
 

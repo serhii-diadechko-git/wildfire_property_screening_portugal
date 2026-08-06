@@ -1,11 +1,11 @@
-"""Read-only test for the downloaded ERA5-Land pilot GRIB."""
+"""Read-only tests for registered annual ERA5-Land GRIBs."""
 
 from pathlib import Path
 import unittest
 
 from src.era5_land_validation import (
     validate_era5_land_grib_record,
-    validate_era5_land_pilot_grib,
+    validate_era5_land_2023_grib,
     validate_extended_training_era5_grib,
 )
 from src.source_registry import (
@@ -36,8 +36,8 @@ class Era5LandValidationTests(unittest.TestCase):
                 self.assertEqual(result["year"], year)
                 self.assertEqual(result["precipitation_status"], "validated")
 
-    def test_downloaded_pilot_grib_matches_approved_request(self) -> None:
-        result = validate_era5_land_pilot_grib(Path(__file__).resolve().parents[1])
+    def test_registered_2023_grib_matches_approved_request(self) -> None:
+        result = validate_era5_land_2023_grib(Path(__file__).resolve().parents[1])
         self.assertEqual(result["dataset_id"], "reanalysis-era5-land-monthly-means")
         self.assertEqual(result["grid_shape_time_latitude_longitude"], (4, 55, 37))
         self.assertEqual(tuple(result["variables"]), (

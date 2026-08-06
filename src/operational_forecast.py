@@ -21,22 +21,18 @@ from pathlib import Path
 from typing import Any
 import warnings
 
-import geopandas as gpd
 import joblib
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 import pyogrio
-import shapely
 from threadpoolctl import threadpool_limits
 
+from src.climate_features import era5_source_paths, jjas_total_precipitation_mm, read_grib_variable
 from src.config import OPERATIONAL_FORECAST
-from src.extended_model_refit import FEATURE_MATRIX_PATH as DEVELOPMENT_MATRIX_PATH, NINE_FEATURES, RANDOM_SEED
-from src.extended_final_test import FEATURE_MATRIX_PATH as FINAL_TEST_MATRIX_PATH
 from src.feature_contract import TARGET_COLUMN
-from src.model_v2_experiments import HurdleHistGradientRegressor
+from src.modeling import HurdleHistGradientRegressor, NINE_FEATURES, RANDOM_SEED
 from src import national_panel as panel
-from src.representative_feature_pilot import _read_grib_variable, era5_source_paths, jjas_total_precipitation_mm
 from src.source_registry import (
     CLC_2018_V2020_20U1,
     CLC_PREPARED_PORTUGAL_LAYERS,
@@ -47,6 +43,9 @@ from src.source_registry import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+HISTORICAL_EVALUATION_DIR = ROOT / "data/processed/extended_model_selection_2010_2021"
+DEVELOPMENT_MATRIX_PATH = HISTORICAL_EVALUATION_DIR / "nine_feature_train_validation_matrix.parquet"
+FINAL_TEST_MATRIX_PATH = HISTORICAL_EVALUATION_DIR / "final_temporal_test_nine_feature_matrix.parquet"
 OUTPUT_DIR = ROOT / "data/processed/final_model_2010_2024"
 LABELED_PANEL_PATH = OUTPUT_DIR / "nine_feature_labeled_panel_2010_2024.parquet"
 PANEL_MANIFEST_PATH = OUTPUT_DIR / "nine_feature_labeled_panel_2010_2024.json"
@@ -285,9 +284,9 @@ def forecast_preflight(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, 
 def _load_scoring_climate_grids(predictor_year: int) -> dict[str, np.ndarray]:
     """Read a small annual ERA5 grid once; all cell assignment stays bounded."""
     paths = era5_source_paths(predictor_year)
-    latitude, longitude, temperature, months = _read_grib_variable(paths["temperature_and_soil_water"], "2t")
-    soil_lat, soil_lon, soil, soil_months = _read_grib_variable(paths["temperature_and_soil_water"], "swvl1")
-    precip_lat, precip_lon, precipitation, precip_months = _read_grib_variable(paths["precipitation"], "tp")
+    latitude, longitude, temperature, months = read_grib_variable(paths["temperature_and_soil_water"], "2t")
+    soil_lat, soil_lon, soil, soil_months = read_grib_variable(paths["temperature_and_soil_water"], "swvl1")
+    precip_lat, precip_lon, precipitation, precip_months = read_grib_variable(paths["precipitation"], "tp")
     if not (
         months == soil_months == precip_months == (6, 7, 8, 9)
         and np.array_equal(latitude, soil_lat) and np.array_equal(latitude, precip_lat)

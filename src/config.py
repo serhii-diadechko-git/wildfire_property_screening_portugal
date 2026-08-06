@@ -1,4 +1,4 @@
-"""Approved spatial, temporal, and pilot configuration."""
+"""Approved spatial, temporal, retrospective-evaluation, and annual-scoring configuration."""
 
 from dataclasses import dataclass
 
@@ -173,17 +173,6 @@ class OperationalForecastConfig:
         return tuple(range(predictor_year - 10, predictor_year))
 
 
-@dataclass(frozen=True)
-class PilotConfig:
-    """The reproducible 2023 predictor to 2024 outcome pilot request."""
-
-    predictor_year: int = 2023
-    outcome_year: int = 2024
-    historical_fire_years: tuple[int, ...] = tuple(range(2013, 2023))
-    clc_release: str = "CLC 2018"
-    clc_role: str = "broad retrospective land-cover context; not annual parcel-level land cover"
-
-
 TEMPORAL = TemporalDesign()
 ERA5_LAND = Era5LandFeatureConfig()
 CLC = ClcGovernanceConfig()
@@ -194,7 +183,7 @@ OPERATIONAL_FORECAST = OperationalForecastConfig()
 
 @dataclass(frozen=True)
 class Era5LandCdsConfig:
-    """Smallest approved CDS request for the 2023 predictor-year pilot."""
+    """Annual ERA5-Land CDS request contract used by the project."""
 
     dataset_id: str = "reanalysis-era5-land-monthly-means"
     product_type: str = "monthly_averaged_reanalysis"
@@ -203,11 +192,12 @@ class Era5LandCdsConfig:
     download_format: str = "unarchived"
     # CDS order: North, West, South, East. Rounded outward from CAOP mainland.
     mainland_portugal_area: tuple[float, float, float, float] = (42.2, -9.6, 36.8, -6.0)
-    pilot_raw_output: str = (
-        "data/raw/climate/era5_land/"
-        "era5_land_monthly_jjas_2023_mainland_portugal.grib"
-    )
+    raw_directory: str = "data/raw/climate/era5_land"
+
+    def output_filename(self, year: int, *, corrected_precipitation: bool = False) -> str:
+        if corrected_precipitation:
+            return f"era5_land_monthly_by_hour_00_jjas_total_precipitation_{year}_mainland_portugal.grib"
+        return f"era5_land_monthly_jjas_{year}_mainland_portugal.grib"
 
 
 ERA5_LAND_CDS = Era5LandCdsConfig()
-PILOT_2023_TO_2024 = PilotConfig()

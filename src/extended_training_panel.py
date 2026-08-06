@@ -24,9 +24,10 @@ import pyogrio
 import shapely
 
 from src import national_panel as canonical
+from src.climate_features import jjas_total_precipitation_mm, read_grib_variable
 from src.config import CLC, EXTENDED_TRAINING, EXTENDED_TRAINING_CLC, SPATIAL
 from src.feature_contract import PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
-from src.representative_feature_pilot import ICNF_ROOT, _icnf_vsi_path, _read_grib_variable, jjas_total_precipitation_mm
+from src.geospatial_utils import ICNF_ROOT, icnf_vsi_path
 from src.source_registry import CLC_2006_V2020_20U1, COP_DEM_GLO30
 
 
@@ -138,7 +139,7 @@ def prepare_early_icnf_years(progress: Callable[[str], None] = print) -> dict[st
             continue
         if combined is None:
             combined = pyogrio.read_dataframe(
-                _icnf_vsi_path(ICNF_ROOT / "ardida_2000_2008.zip"), columns=["Ano"]
+                icnf_vsi_path(ICNF_ROOT / "ardida_2000_2008.zip"), columns=["Ano"]
             )
         source = combined.loc[combined.Ano.astype(int) == year].copy()
         repaired, repair_log = canonical._repair_icnf_frame(source, year)
@@ -210,9 +211,9 @@ def load_early_era5_grids() -> dict[int, dict[str, object]]:
     result: dict[int, dict[str, object]] = {}
     for year in NEW_OBSERVATION_YEARS:
         path = ROOT / f"data/raw/climate/era5_land/era5_land_monthly_jjas_{year}_mainland_portugal.grib"
-        latitude, longitude, temperature, months = _read_grib_variable(path, "2t")
-        soil_lat, soil_lon, soil_water, soil_months = _read_grib_variable(path, "swvl1")
-        precip_lat, precip_lon, precipitation, precip_months = _read_grib_variable(path, "tp")
+        latitude, longitude, temperature, months = read_grib_variable(path, "2t")
+        soil_lat, soil_lon, soil_water, soil_months = read_grib_variable(path, "swvl1")
+        precip_lat, precip_lon, precipitation, precip_months = read_grib_variable(path, "tp")
         if not (
             months == soil_months == precip_months == (6, 7, 8, 9)
             and np.array_equal(latitude, soil_lat)

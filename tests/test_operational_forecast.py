@@ -9,7 +9,7 @@ import joblib
 import pyarrow.parquet as pq
 
 from src.config import OPERATIONAL_FORECAST
-from src.extended_model_refit import NINE_FEATURES
+from src.modeling import NINE_FEATURES
 from src.operational_forecast import (
     CURRENT_FORECAST_YEAR,
     LABELED_PANEL_PATH,

@@ -1,4 +1,4 @@
-"""Read-only validation for the registered ERA5-Land pilot GRIB."""
+"""Read-only validation for registered annual ERA5-Land GRIBs."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from pathlib import Path
 import xarray as xr
 from eccodes import codes_get, codes_grib_new_from_file, codes_release
 
-from src.config import ERA5_LAND, ERA5_LAND_CDS, PILOT_2023_TO_2024
-from src.source_registry import ERA5_LAND_2023_JJAS_PILOT, Era5LandRawRecord
+from src.config import ERA5_LAND, ERA5_LAND_CDS
+from src.source_registry import ERA5_LAND_2023_JJAS, Era5LandRawRecord
 
 
 GRIB_SHORT_NAMES = {
@@ -299,12 +299,12 @@ def validate_era5_land_grib_record(
     }
 
 
-def validate_era5_land_pilot_grib(project_root: Path) -> dict[str, object]:
+def validate_era5_land_2023_grib(project_root: Path) -> dict[str, object]:
     """Validate expected variables, months, spatial grid, and missing values in place."""
-    path = project_root / ERA5_LAND_CDS.pilot_raw_output
+    path = project_root / ERA5_LAND_2023_JJAS.raw_path
     if not path.is_file():
         raise FileNotFoundError(f"Missing ERA5-Land raw GRIB: {path}")
-    if calculate_sha256(path) != ERA5_LAND_2023_JJAS_PILOT.sha256:
+    if calculate_sha256(path) != ERA5_LAND_2023_JJAS.sha256:
         raise ValueError("ERA5-Land GRIB checksum differs from the registered immutable raw file")
 
     expected_months = tuple(f"{month:02d}" for month in ERA5_LAND.season_months)
@@ -353,7 +353,7 @@ def validate_era5_land_pilot_grib(project_root: Path) -> dict[str, object]:
 
     if reference_extent is None or any(abs(actual - expected) > 1e-9 for actual, expected in zip(reference_extent, expected_area)):
         raise ValueError(f"Expected CDS area {expected_area}, found {reference_extent}")
-    facts = ERA5_LAND_2023_JJAS_PILOT.validation_facts
+    facts = ERA5_LAND_2023_JJAS.validation_facts
     observed_short_names = tuple(result["grib_short_name"] for result in variable_results.values())
     observed_missing_counts = tuple(
         (result["grib_short_name"], result["missing_value_count"])
@@ -363,16 +363,16 @@ def validate_era5_land_pilot_grib(project_root: Path) -> dict[str, object]:
             or observed_short_names != facts.grib_short_names
             or observed_missing_counts != facts.missing_value_counts):
         raise ValueError("ERA5-Land GRIB no longer matches registered validation facts")
-    contract = validate_era5_land_grib_record(ERA5_LAND_2023_JJAS_PILOT, project_root)
+    contract = validate_era5_land_grib_record(ERA5_LAND_2023_JJAS, project_root)
     return contract | {
-        "raw_path": ERA5_LAND_CDS.pilot_raw_output,
+        "raw_path": ERA5_LAND_2023_JJAS.raw_path,
         "filename": path.name,
         "size_bytes": path.stat().st_size,
         "sha256": calculate_sha256(path),
         "dataset_id": ERA5_LAND_CDS.dataset_id,
         "request": {
             "product_type": ERA5_LAND_CDS.product_type,
-            "year": PILOT_2023_TO_2024.predictor_year,
+            "year": ERA5_LAND_2023_JJAS.year,
             "months": expected_months,
             "time": "00:00",
             "variables": ERA5_LAND.variables,

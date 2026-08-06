@@ -41,6 +41,7 @@ Build a reproducible geospatial data-science workflow that:
 - a portable QGIS presentation project with two print layouts;
 - recurrence-band and official ICNF hazard comparison tables;
 - six validated presentation maps, charts, and summary visuals;
+- a refreshed capstone presentation in editable PPTX and reviewer-ready PDF formats;
 - a reproducible data-preparation and screening pipeline;
 - a frozen final-temporal evaluation of the historical baseline and nine-feature hurdle model;
 - a reusable fixed-specification nine-feature continuous burned-share model trained on T=2010-2024, with outcomes through 2025;
@@ -50,7 +51,7 @@ Build a reproducible geospatial data-science workflow that:
 ## Analytical and spatial output layers
 
 - `data/processed/national_panel_2015_2024.parquet` is the canonical machine-learning table: one `cell_id` x `observation_year` row, with no repeated geometry.
-- `data/processed/pilot_2023_to_2024/pilot_2023_to_2024_icnf_caop.gpkg` remains the reusable EPSG:3763 canonical grid-geometry lookup.
+- `data/processed/reference/canonical_mainland_grid_1km.gpkg`, layer `canonical_mainland_grid_1km`, is the reusable EPSG:3763 grid-geometry lookup containing one geometry and stable `cell_id` for each of 89,112 cells.
 - `data/processed/spatial_qa/era5_land_coastal_fallback_qa.gpkg`, layer `era5_coastal_fallback_qa`, is a 1,506-feature QA/presentation layer documenting the systematic ERA5-Land coastal fallback.
 - `data/processed/spatial_qa/national_panel_snapshot_2024.gpkg`, layer `national_panel_snapshot_2024`, is an 89,112-feature GIS/EDA snapshot containing the seven predictors, observed 2025 target and climate-assignment method for `T=2024`. It is not the canonical ML table.
 - `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`, is the final 89,112-feature historical/descriptive screening layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context**, using 2016-2025 evidence, CLC 2018 landscape context, static slope, and a predominant-class comparison with the official 25 m ICNF structural-hazard raster.
@@ -66,7 +67,7 @@ The 2 km value is not a second analytical resolution. The final descriptive scre
 
 ## Temporal methodology and data scope
 
-> Final model-evaluation design: fit T=2010-2019; validate T=2020-2021; one frozen final temporal test T=2022-2024 (outcomes 2023-2025). The 1 km EPSG:3763 cell is the only analytical unit; 2 km is an outward context buffer. The 2023->2024 artifact is a feasibility pilot, not the final test.
+> Final model-evaluation design: fit T=2010-2019; validate T=2020-2021; one frozen final temporal test T=2022-2024 (outcomes 2023-2025). The 1 km EPSG:3763 cell is the only analytical unit; 2 km is an outward context buffer.
 
 Each analytical record is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` is used to estimate the observed wildfire outcome in `T+1`.
 
@@ -174,11 +175,13 @@ url: https://cds.climate.copernicus.eu/api
 key: TOKEN_PLACEHOLDER
 ```
 
-Never commit, share, print, or copy the token into this repository. After dependencies are installed, retrieve the approved 2023 JJAS pilot GRIB with:
+Never commit, share, print, or copy the token into this repository. The annual utility defaults to a credential-free dry run. For example, inspect a request for a completed predictor year with:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\request_era5_land_pilot.py --download
+.\.venv\Scripts\python.exe scripts\download_era5_land_year.py 2026
 ```
+
+Add `--download` only after checking the request and confirming the target raw file does not already exist. The script refuses to overwrite immutable raw data.
 
 ## Notebook execution order
 
@@ -202,6 +205,7 @@ Key reviewer outputs are:
 
 - screening GeoPackage: `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening`;
 - final maps and charts: `reports/figures/`;
+- capstone presentation: [`v2_wildfire_exposure_screening_capstone_presentation.pptx`](reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx) and [`PDF`](reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pdf);
 - comparison tables: `reports/tables/`;
 - validated analytical and presentation reports: `reports/validation/`.
 
@@ -266,7 +270,7 @@ No BI tool has been selected yet. If Power BI or Tableau is used:
 
 ## Project documentation
 
-- [Completed Repository Documentation Lab](docs/Repository_Documentation_Lab_Completed.docx) — the completed course starter describing the repository, environment, notebooks, README plan, data dictionary, and figure-export rules.
+- [Completed Repository Documentation Lab](<docs/Repository Setup & Documentation Lab Serhii Diadechko.docx>) — the completed course starter describing the repository, environment, notebooks, README plan, data dictionary, and figure-export rules.
 - [Project brief](docs/project_brief.md) — business decision, project goal, scope, limitation, and spatial design.
 - [Data dictionary](docs/data_dictionary.md) — approved MVP fields, data types, units, sources, examples, and missing-value rules.
 - [Source plan](docs/source_plan.md) — public sources, access methods, collection rules, and limitations.

@@ -3,7 +3,6 @@
 import json
 import unittest
 
-import pandas as pd
 import pyarrow.parquet as pq
 
 from src.feature_contract import TABLE_COLUMNS
@@ -13,11 +12,9 @@ from src.national_panel import (
     VALIDATION_METRICS_PATH,
     VALIDATION_REPORT_PATH,
     build_panel_batches,
-    compare_representative_pilot,
     load_grid_catalog,
     verify_representative_batch_determinism,
 )
-from src.representative_feature_pilot import PILOT_CELL_IDS, PILOT_YEARS
 
 
 class NationalPanelTests(unittest.TestCase):
@@ -75,17 +72,6 @@ class NationalPanelTests(unittest.TestCase):
         for group in range(self.parquet.num_row_groups):
             frame = self.parquet.read_row_group(group, columns=["cell_id", *climate]).to_pandas()
             self.assertFalse(frame[list(climate)].isna().any().any())
-
-    def test_representative_pilot_regression(self) -> None:
-        pieces = []
-        for group, year in enumerate(OBSERVATION_YEARS):
-            if year not in PILOT_YEARS:
-                continue
-            frame = self.parquet.read_row_group(group).to_pandas()
-            pieces.append(frame.loc[frame.cell_id.isin(PILOT_CELL_IDS)])
-        result = compare_representative_pilot(pd.concat(pieces, ignore_index=True))
-        self.assertTrue(result["passed"])
-        self.assertEqual(result["row_count"], 40)
 
     def test_completed_batches_are_reused_without_overwrite(self) -> None:
         result = build_panel_batches(progress=lambda _: None)

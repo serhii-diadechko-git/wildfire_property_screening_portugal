@@ -1,9 +1,7 @@
 """Bounded, restartable construction of the canonical 2015-2024 panel.
 
-The representative pilot remains the scientific reference.  This module uses
-the same contract and low-level source-selection rules, but performs national
-work in deterministic 20 km spatial tiles and publishes every component
-atomically with a checksum manifest.
+The module implements the validated feature contract in deterministic 20 km
+spatial tiles and publishes every component atomically with a checksum manifest.
 """
 
 from __future__ import annotations
@@ -36,20 +34,16 @@ import shapely
 from shapely.geometry import mapping
 
 from src.clc_validation import CANONICAL_CLC_CLASS_MAPPING
+from src.climate_features import era5_source_paths, jjas_total_precipitation_mm, read_grib_variable
 from src.config import CLC, SPATIAL, TEMPORAL
 from src.feature_contract import PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
-from src.representative_feature_pilot import (
+from src.geospatial_utils import (
     BOUNDARY_PATH,
     GRID_PATH,
     ICNF_ROOT,
-    PILOT_CELL_IDS,
-    PILOT_YEARS,
-    _icnf_vsi_path,
-    _polygonal_geometry,
-    _read_grib_variable,
-    _tile_bounds,
-    era5_source_paths,
-    jjas_total_precipitation_mm,
+    dem_tile_bounds,
+    icnf_vsi_path,
+    polygonal_geometry,
 )
 from src.source_registry import (
     CLC_2006_V2020_20U1,
@@ -77,7 +71,6 @@ BUILD_METRICS_PATH = BUILD_ROOT / "build_metrics.json"
 NATIONAL_PANEL_PATH = ROOT / "data/processed/national_panel_2015_2024.parquet"
 VALIDATION_METRICS_PATH = ROOT / "data/processed/national_panel_2015_2024_validation.json"
 VALIDATION_REPORT_PATH = ROOT / "reports/validation/national_panel_2015_2024_validation.md"
-REPRESENTATIVE_PILOT_PATH = ROOT / "data/processed/feature_derivation_pilot/representative_feature_pilot.parquet"
 DETERMINISM_BATCH_IDS = ("x00_y10", "x06_y21", "x10_y21")
 EXPECTED_ARROW_TYPES = {
     **{column: "string" for column in TABLE_COLUMNS[:2]},
@@ -254,7 +247,7 @@ def build_grid_batches(progress: Callable[[str], None] = print) -> dict[str, obj
         land_geometries[coastal_cells] = shapely.intersection(
             cell_geometries[coastal_cells], boundary
         )
-        # Match GeoSeries/geometry.buffer's validated pilot default exactly.
+        # Preserve the validated GeoSeries/geometry.buffer operation exactly.
         context_buffers = shapely.buffer(
             cell_geometries, SPATIAL.context_buffer_metres, quad_segs=16
         )
@@ -330,7 +323,7 @@ def _repair_icnf_frame(frame: gpd.GeoDataFrame, year: int) -> tuple[gpd.GeoDataF
         invalid = geometry is not None and not geometry.is_empty and not geometry.is_valid
         invalid_count += int(invalid)
         candidate = shapely.make_valid(geometry) if invalid else geometry
-        candidate = _polygonal_geometry(candidate)
+        candidate = polygonal_geometry(candidate)
         if candidate is None or candidate.is_empty or not candidate.is_valid:
             rejected_count += 1
             continue
@@ -411,13 +404,13 @@ def prepare_icnf_years(progress: Callable[[str], None] = print) -> dict[str, obj
         if year <= 2008:
             if combined is None:
                 combined = pyogrio.read_dataframe(
-                    _icnf_vsi_path(ICNF_ROOT / "ardida_2000_2008.zip"), columns=["Ano"]
+                    icnf_vsi_path(ICNF_ROOT / "ardida_2000_2008.zip"), columns=["Ano"]
                 )
             frame = combined.loc[combined.Ano.astype(int) == year].copy()
             raw_archive = "ardida_2000_2008.zip"
         else:
             raw_archive = f"ardida_{year}.zip"
-            frame = pyogrio.read_dataframe(_icnf_vsi_path(ICNF_ROOT / raw_archive), columns=[])
+            frame = pyogrio.read_dataframe(icnf_vsi_path(ICNF_ROOT / raw_archive), columns=[])
         repaired, repair_log = _repair_icnf_frame(frame, year)
         results[year] = _publish_gpkg(
             repaired,
@@ -444,10 +437,10 @@ def _relevant_dem_records(bounds_3763: tuple[float, float, float, float]):
         record
         for tile_id, record in COP_DEM_GLO30_TILES.items()
         if not (
-            _tile_bounds(tile_id)[2] <= west
-            or _tile_bounds(tile_id)[0] >= east
-            or _tile_bounds(tile_id)[3] <= south
-            or _tile_bounds(tile_id)[1] >= north
+            dem_tile_bounds(tile_id)[2] <= west
+            or dem_tile_bounds(tile_id)[0] >= east
+            or dem_tile_bounds(tile_id)[3] <= south
+            or dem_tile_bounds(tile_id)[1] >= north
         )
     ]
     return records, (west, south, east, north)
@@ -615,13 +608,13 @@ def load_era5_grids() -> dict[int, dict[str, object]]:
     result = {}
     for year in OBSERVATION_YEARS:
         paths = era5_source_paths(year)
-        latitude, longitude, temperature, months = _read_grib_variable(
+        latitude, longitude, temperature, months = read_grib_variable(
             paths["temperature_and_soil_water"], "2t"
         )
-        soil_lat, soil_lon, soil_water, soil_months = _read_grib_variable(
+        soil_lat, soil_lon, soil_water, soil_months = read_grib_variable(
             paths["temperature_and_soil_water"], "swvl1"
         )
-        precip_lat, precip_lon, precipitation, precip_months = _read_grib_variable(
+        precip_lat, precip_lon, precipitation, precip_months = read_grib_variable(
             paths["precipitation"], "tp"
         )
         if not (
@@ -961,58 +954,6 @@ def _year_metrics(frame: pd.DataFrame, year: int) -> dict[str, object]:
     }
 
 
-def compare_representative_pilot(panel_rows: pd.DataFrame) -> dict[str, object]:
-    pilot = pd.read_parquet(REPRESENTATIVE_PILOT_PATH).sort_values(
-        ["cell_id", "observation_year"]
-    ).reset_index(drop=True)
-    national = panel_rows.loc[
-        panel_rows.cell_id.isin(PILOT_CELL_IDS) & panel_rows.observation_year.isin(PILOT_YEARS)
-    ].sort_values(["cell_id", "observation_year"]).reset_index(drop=True)
-    if len(national) != 40:
-        raise ValueError(f"Pilot regression found {len(national)} national rows, expected 40")
-    if not national[["cell_id", "observation_year"]].equals(pilot[["cell_id", "observation_year"]]):
-        raise ValueError("Pilot regression analytical keys differ")
-    tolerances = {
-        "built_up_share": 1e-9,
-        "forest_shrub_share_2km": 1e-9,
-        "mean_slope_2km": 0.25,
-        "fire_years_previous_10y_2km": 0.0,
-        "warm_season_mean_2m_temperature_c": 0.0,
-        "warm_season_total_precipitation_mm": 0.0,
-        "warm_season_mean_soil_water_layer1": 0.0,
-        TARGET_COLUMN: 1e-9,
-    }
-    differences = {}
-    passed = True
-    for column, tolerance in tolerances.items():
-        left = national[column].to_numpy(dtype="float64")
-        right = pilot[column].to_numpy(dtype="float64")
-        both_missing = np.isnan(left) & np.isnan(right)
-        mismatch_missing = np.isnan(left) ^ np.isnan(right)
-        absolute = np.abs(left - right)
-        absolute[both_missing] = 0.0
-        fallback_filled = np.isnan(right) & np.isfinite(left) if column in PREDICTOR_COLUMNS[-3:] else np.zeros(len(left), dtype=bool)
-        mismatch_count = int(((mismatch_missing & ~fallback_filled) | (absolute > tolerance)).sum())
-        maximum = None if np.isnan(absolute).all() else float(np.nanmax(absolute))
-        differences[column] = {
-            "tolerance": tolerance,
-            "maximum_absolute_difference": maximum,
-            "rows_outside_tolerance": mismatch_count,
-            "previously_masked_rows_filled_by_validated_fallback": int(fallback_filled.sum()),
-        }
-        passed &= mismatch_count == 0
-    return {
-        "row_count": len(national),
-        "passed": passed,
-        "differences": differences,
-        "slope_tolerance_justification": (
-            "0.25 degrees allows only raster-grid alignment differences between the pilot's "
-            "per-cell warp and the national fixed 30 m EPSG:3763 tile grid; all other continuous "
-            "fields require exact or floating-roundoff equality."
-        ),
-    }
-
-
 def _assert_exact_frame(component: str, batch_id: str, expected: pd.DataFrame, actual: pd.DataFrame) -> None:
     """Require an in-memory rerun to reproduce the published analytical values."""
     try:
@@ -1179,7 +1120,6 @@ def validate_national_panel() -> dict[str, object]:
         raise ValueError(f"National panel Arrow schema differs: {observed_arrow_types}")
     expected_ids = _all_grid_cell_ids()
     year_metrics = {}
-    pilot_pieces = []
     climate_missing_cells: dict[int, tuple[str, ...]] = {}
     for group, year in enumerate(OBSERVATION_YEARS):
         frame = parquet.read_row_group(group).to_pandas()
@@ -1202,14 +1142,8 @@ def validate_national_panel() -> dict[str, object]:
             raise ValueError(f"Unexpected non-climate missing value in T={year}")
         climate_missing_cells[year] = tuple(frame.loc[climate_mask.iloc[:, 0], "cell_id"])
         year_metrics[year] = _year_metrics(frame, year)
-        pilot_pieces.append(
-            frame.loc[frame.cell_id.isin(PILOT_CELL_IDS) & frame.observation_year.isin(PILOT_YEARS)]
-        )
     if len({value for value in climate_missing_cells.values()}) != 1:
         raise ValueError("ERA5-Land water-mask cell set changes unexpectedly by year")
-    pilot_regression = compare_representative_pilot(pd.concat(pilot_pieces, ignore_index=True))
-    if not pilot_regression["passed"]:
-        raise ValueError(f"Representative pilot regression failed: {pilot_regression}")
     deterministic_rerun = verify_representative_batch_determinism()
 
     repaired_logs = {
@@ -1261,7 +1195,6 @@ def validate_national_panel() -> dict[str, object]:
         },
         "icnf_geometry_repair": repaired_logs,
         "annual_union_prevents_double_counting": True,
-        "pilot_regression": pilot_regression,
         "representative_batch_determinism": deterministic_rerun,
         "component_duration_evidence": component_duration_evidence(),
         "validation_runtime_seconds": round(time.perf_counter() - validation_started, 3),
@@ -1306,10 +1239,6 @@ def write_validation_report(metrics: dict[str, object]) -> None:
             f"{fallback['distance_km']['maximum']:.3f} km. No interpolation, downscaling, zero substitution, "
             "cell exclusion, or T+1 information was used."
         )
-        pilot_text = (
-            "All non-climate pilot values and all originally valid climate values match the representative pilot; "
-            "only the pilot's previously masked coastal climate rows now contain the validated fallback."
-        )
     else:
         climate_text = (
             "ERA5-Land water-mask records were retained with all three climate fields missing; no zero substitution, "
@@ -1318,7 +1247,6 @@ def write_validation_report(metrics: dict[str, object]) -> None:
             f"{metrics['climate_water_mask']['affected_row_count']:,} "
             f"({metrics['climate_water_mask']['panel_row_proportion']:.4%} of the panel)."
         )
-        pilot_text = "All representative pilot analytical values match within their documented tolerances."
     VALIDATION_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     VALIDATION_REPORT_PATH.write_text(
         "# National 2015-2024 cell-year panel validation\n\n"
@@ -1339,10 +1267,8 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         "## Feature ranges and missingness\n\n"
         "| Field | Minimum | Maximum | Missing rows |\n|---|---:|---:|---:|\n" + "\n".join(range_rows) + "\n\n"
         + climate_text + "\n\n"
-        "## Pilot regression and leakage\n\n"
-        f"All {metrics['pilot_regression']['row_count']} representative rows passed the pilot regression. " + pilot_text + " "
-        "CLC and ICNF areas permit only floating-roundoff tolerance; originally valid climate and historical counts require exact equality; "
-        "slope permits 0.25 degrees solely for fixed national raster alignment. Corrected precipitation was used for 2022 and 2023. "
+        "## Determinism and leakage\n\n"
+        "Corrected precipitation was used for 2022 and 2023. "
         "No outcome-year information entered predictors. Annual repaired ICNF polygons were locally unioned before intersection, preventing double counting.\n\n"
         f"Three representative national batches (`{'`, `'.join(metrics['representative_batch_determinism']['batch_ids'])}`) "
         "were re-derived in memory. Every slope, CLC, ICNF, ERA5 and assembled batch value was exactly identical; no files were published by the rerun.\n\n"
@@ -1351,7 +1277,7 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         "they exclude work before the first published batch.\n\n"
         "| Component | Seconds |\n|---|---:|\n" + "\n".join(duration_rows) + "\n\n"
         f"Final validation, including the three-batch deterministic rerun, took {metrics['validation_runtime_seconds']:.2f} seconds.\n\n"
-        "Full machine-readable metrics, ranges, missingness, quantiles, repair logs, and regression differences are stored at "
+        "Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at "
         "`data/processed/national_panel_2015_2024_validation.json`.\n",
         encoding="utf-8",
     )

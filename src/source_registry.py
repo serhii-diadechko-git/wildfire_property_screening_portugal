@@ -39,34 +39,6 @@ class IcnfValidationFacts:
 
 
 @dataclass(frozen=True)
-class InterimDerivativeRecord:
-    """Provenance for a reproducible interim derivative, never a raw source."""
-
-    key: str
-    input_source_path: str
-    boundary_path: str
-    output_path: str
-    clip_method: str
-    crs: str
-    registered_date: str
-    validation_facts: "ClcInterimValidationFacts | None" = None
-
-
-@dataclass(frozen=True)
-class ClcInterimValidationFacts:
-    """Observed read-only facts for the CLC mainland interim derivative."""
-
-    layer_name: str
-    feature_count: int
-    geometry_type: str
-    class_code_field: str
-    unique_valid_clc_code_count: int
-    null_geometry_count: int
-    empty_geometry_count: int
-    invalid_geometry_count: int
-
-
-@dataclass(frozen=True)
 class Era5LandValidationFacts:
     """Observed read-only facts for one immutable ERA5-Land GRIB."""
 
@@ -404,24 +376,28 @@ ICNF_2025 = _icnf_record(
     required_fields=("Cod_SGIF", "Ano", "DH_Inicio", "AreaHaSIG"),
 )
 
-PILOT_ICNF_HISTORY = (
+ICNF_2013_2022 = (
     ICNF_2013, ICNF_2014, ICNF_2015, ICNF_2016, ICNF_2017,
     ICNF_2018, ICNF_2019, ICNF_2020, ICNF_2021, ICNF_2022,
 )
-PILOT_ICNF_ARCHIVES = {2013: ICNF_2013, 2014: ICNF_2014, 2015: ICNF_2015, 2016: ICNF_2016, 2017: ICNF_2017,
-                       2018: ICNF_2018, 2019: ICNF_2019, 2020: ICNF_2020, 2021: ICNF_2021, 2022: ICNF_2022,
-                       2024: ICNF_2024}
+ICNF_ANNUAL_ARCHIVES = {
+    2009: ICNF_2009, 2010: ICNF_2010, 2011: ICNF_2011, 2012: ICNF_2012,
+    2013: ICNF_2013, 2014: ICNF_2014, 2015: ICNF_2015, 2016: ICNF_2016,
+    2017: ICNF_2017, 2018: ICNF_2018, 2019: ICNF_2019, 2020: ICNF_2020,
+    2021: ICNF_2021, 2022: ICNF_2022, 2023: ICNF_2023, 2024: ICNF_2024,
+    2025: ICNF_2025,
+}
 
 REGISTERED_SOURCES = {
     record.key: record
     for record in (
         CAOP_2025, ICNF_2000_2008_COMBINED, ICNF_2009, ICNF_2010, ICNF_2011,
-        ICNF_2012, *PILOT_ICNF_HISTORY, ICNF_2023, ICNF_2024, ICNF_2025,
+        ICNF_2012, *ICNF_2013_2022, ICNF_2023, ICNF_2024, ICNF_2025,
     )
 }
 PANEL_ICNF_ARCHIVES = {
     2012: ICNF_2012,
-    **{year: record for year, record in PILOT_ICNF_ARCHIVES.items() if year != 2024},
+    **{year: record for year, record in ICNF_ANNUAL_ARCHIVES.items() if 2013 <= year <= 2022},
     2023: ICNF_2023,
     2024: ICNF_2024,
     2025: ICNF_2025,
@@ -433,26 +409,6 @@ EXTENDED_TRAINING_ICNF_ARCHIVES = {
     2011: ICNF_2011,
     **PANEL_ICNF_ARCHIVES,
 }
-
-CLC_2018_MAINLAND_INTERIM = InterimDerivativeRecord(
-    key="clc_2018_mainland_interim",
-    input_source_path="data/raw/clc/u2018_clc2018_v2020_20u1_geoPackage.zip",
-    boundary_path="data/interim/mainland_portugal_boundary.gpkg",
-    output_path="data/interim/clc_2018_mainland.gpkg",
-    clip_method="vector clip/intersection to the mainland boundary; validate as an existing interim derivative",
-    crs="EPSG:3035",
-    registered_date="2026-08-04",
-    validation_facts=ClcInterimValidationFacts(
-        layer_name="clc_2018_mainland",
-        feature_count=54191,
-        geometry_type="MultiPolygon",
-        class_code_field="Code_18",
-        unique_valid_clc_code_count=42,
-        null_geometry_count=0,
-        empty_geometry_count=0,
-        invalid_geometry_count=0,
-    ),
-)
 
 _CLC_RELEASE_LINEAGE_URL = (
     "https://land.copernicus.eu/en/technical-library/clc-release-lineage/@@download/file"
@@ -747,7 +703,7 @@ CLC_NOMENCLATURE_EVIDENCE = EvidenceRecord(
     sha256="8D69D31993481AA334E5391F717EB27558A5290AA039980D06FC5E937CC7F325",
 )
 
-ERA5_LAND_2023_JJAS_PILOT = Era5LandRawRecord(
+ERA5_LAND_2023_JJAS = Era5LandRawRecord(
     key="era5_land_2023_jjas_mainland_portugal",
     dataset_id="reanalysis-era5-land-monthly-means",
     official_source_url="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
@@ -776,7 +732,7 @@ ERA5_LAND_2023_JJAS_PILOT = Era5LandRawRecord(
         validation_note=(
             "The official ECMWF ERA5-Land documentation marks monthly accumulated variables "
             "from September 2022 through February 2024 as incorrect. The raw file remains an "
-            "immutable pilot artifact, but its precipitation must not enter the national panel."
+            "immutable source artifact, but its precipitation must not enter the national panel."
         ),
     ),
 )
@@ -987,7 +943,7 @@ ERA5_LAND_PRECIPITATION_CORRECTIONS = {
 ERA5_LAND_FULL_SCOPE_ARCHIVES = {
     **ERA5_LAND_TRAINING_ARCHIVES,
     2022: ERA5_LAND_2022_JJAS,
-    2023: ERA5_LAND_2023_JJAS_PILOT,
+    2023: ERA5_LAND_2023_JJAS,
     2024: ERA5_LAND_2024_JJAS,
     2025: ERA5_LAND_2025_JJAS,
 }

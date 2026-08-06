@@ -1,75 +1,62 @@
 # Capstone presentation validation
 
-> **Historical presentation record.** This validation predates the frozen expanded-training model evaluation and authorised final temporal test. Before a final presentation is delivered, refresh the model-results slides from `reports/validation/model_final_decision.md`; the validated historical screening/QGIS material remains the buyer-facing comparative output.
+Validation date: 2026-08-06
 
-Validation date: 2026-08-05  
-Author: Serhii Diadechko  
-Presentation: `reports/presentation/wildfire_exposure_screening_capstone_presentation.pptx`  
-PDF export: `reports/presentation/wildfire_exposure_screening_capstone_presentation.pdf`
+Author: Serhii Diadechko
+
+Presentation: `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx`
+
+PDF export: `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pdf`
 
 ## Outcome
 
-The 13-slide, 16:9 capstone presentation was created from validated repository artefacts. Its central conclusion is unchanged: the tested next-year regressions did not pass the predeclared validation gate, so no predictive model was accepted; the final deliverable is a reproducible historical comparative screening layer based directly on observed ICNF burned-area recurrence for 2016–2025.
+The retained 13-slide, 16:9 presentation was refreshed after the final temporal evaluation and operational refit. It now presents two complementary, explicitly separated products:
 
-The presentation consistently describes **1 km mainland grid cells with fire recurrence measured in a 2 km context**. It does not present lower exposure as safety, call regression output a probability, rank the safest places, or make a property purchase recommendation.
+1. observed 2016-2025 historical recurrence screening for broad location comparison; and
+2. the frozen nine-feature hurdle model used for cautious annual comparative estimates.
 
-## Slide outline and sources
+The deck no longer contains the superseded conclusion that no model advanced. It records the frozen `T=2022-2024` comparison: the hurdle improved all-row MAE and Capture@20% versus the historical-recurrence baseline, while RMSE was similar and the unusually high-burn `T=2024` outcome was underpredicted. The published 2026 output remains a target-free comparative estimate, not a probability, property-level safety guarantee, insurance estimate, or purchase recommendation.
 
-| Slide | Purpose | Repository sources recorded in speaker notes |
+## Updated slide evidence
+
+| Slide | Verified purpose | Primary repository evidence |
 |---:|---|---|
-| 1 | Title and evidence-led project conclusion | `README.md`; `reports/validation/train_validation_model_selection.md`; `reports/validation/historical_exposure_screening_and_icnf_comparison.md`; capstone kickoff workbook |
-| 2 | Decision problem, national scope and scope boundary | `README.md`; historical screening/comparison report; spatial-output registry |
-| 3 | Why mainland Portugal was analysed nationally | `README.md`; national-panel validation report; spatial-output registry |
-| 4 | Reproducible workflow and separation of evidence roles | data dictionary; canonical readiness report; model-selection report; historical screening/comparison report |
-| 5 | Zero-heavy target and complementary model metrics | national-panel EDA; model-selection report; success criteria |
-| 6 | Validation-only comparison and rejection of both candidates | validated baseline/model figure; model-selection Markdown and JSON reports |
-| 7 | Fictional buyer workflow demonstrating appropriate use | historical screening/comparison report; QGIS README; fictional explanatory example explicitly labelled as such |
-| 8 | Final observed historical-exposure screening map and bands | validated national map; historical screening/comparison report; ICNF annual burned-area cartography, 2016–2025 |
-| 9 | National band distribution | validated summary-table figure; band-summary CSV; historical screening/comparison report |
-| 10 | Historical exposure versus official ICNF structural hazard | validated comparison map; historical screening/comparison report; ICNF SRUP structural hazard 2020–2030 |
-| 11 | Descriptive cross-tab, correspondence and disagreement | validated cross-tab figure; cross-tab CSV; historical screening/comparison report |
-| 12 | Evidence-to-use contract, limitations and deliverables | validated decision/limitations figure; spatial-output registry; QGIS validation report; QGIS project; `README.md` |
-| 13 | Likely assessor questions and concise evidence-backed answers | model-selection report; historical screening/comparison report; spatial-output registry; success criteria |
+| 1 | Current project conclusion and two-product distinction | `README.md`; final-test and operational-validation reports |
+| 3 | National scope and 15 labelled predictor years | national-panel and final-test reports |
+| 4 | Separation of observed history, frozen ML evaluation and official comparison | data dictionary; final-test report; operational cycle |
+| 5 | Zero-heavy target and complementary error/ranking diagnostics | panel EDA; final-test report; success criteria |
+| 6 | Frozen baseline versus nine-feature final-test comparison | final-test metrics JSON and regenerated comparison figure |
+| 12 | Evidence-to-use contract and current deliverables | model decision; operational validation; spatial-output registry |
+| 13 | Updated assessor questions and evidence-backed answers | final-test, model-decision, operational and historical-screening reports |
 
-## Speaker-note validation
-
-- Speaker notes are present on all 13 slides.
-- Every note includes a key takeaway and a `[Sources]` section.
-- Notes contain at least 132 words per slide, supporting an approximately 45–75 second spoken explanation depending on delivery pace.
-- Methodological nuance and likely assessor Q&A are included where relevant.
-- No absolute personal filesystem path appears in visible slide text or speaker notes.
+Slides 2 and 7-11 retain the validated historical-screening, QGIS and ICNF-comparison material. Their data, thresholds, styling and interpretation were not changed.
 
 ## Numerical and terminology checks
 
-The deck was programmatically checked for the following validated values:
-
-- national grid: 89,112 cells;
-- evidence window: 2016–2025;
-- exposure distribution: 36,645 lower (41.12%), 29,919 moderate (33.57%), 22,548 higher (25.30%);
-- Capture@20%: historical recurrence 55.88%, Random Forest 28.62%, Tweedie 49.46%;
-- broad descriptive correspondence: 43.59%;
-- selected cross-tab counts: 6,794, 14,014, 3,805 and 2,375 cells.
-
-The validation also confirmed that the deck preserves these distinctions:
-
-- historical exposure is observed comparative evidence, not a forecast;
-- ICNF structural hazard is an independent official comparison layer, not a model target or accuracy benchmark;
-- 1 km is the sole analytical grid resolution;
-- 2 km is an outward recurrence context, not a second grid;
-- no predictive model advanced to final testing.
+- Canonical grid: 89,112 mainland cells.
+- Historical-screening evidence window: 2016-2025.
+- Frozen model fit years: `T=2010-2019`; validation years: `T=2020-2021`; final temporal test: `T=2022-2024`.
+- Final-test historical-recurrence baseline: MAE 0.0292, RMSE 0.1106, Capture@20% 48.2%.
+- Final-test nine-feature hurdle: MAE 0.0214, RMSE 0.1107, Capture@20% 50.0%.
+- Historical exposure remains observed evidence, separate from annual model estimates.
+- ICNF structural hazard remains an independent official comparison layer, not a model target or accuracy benchmark.
+- The deck consistently distinguishes 1 km analytical cells from recurrence measured in a 2 km context.
+- No absolute personal filesystem path or retired model-selection report reference remains in visible text or speaker notes.
+- Speaker notes are present on all 13 slides.
 
 ## Rendering and packaging QA
 
-- Artifact-tool PowerPoint generation completed with 13 slides.
-- All 13 PowerPoint slide renders were inspected individually; clipping found during draft review was corrected before packaging.
-- The official slide-overflow test passed: `Test passed. No overflow detected.`
-- Microsoft PowerPoint opened the deck and exported the PDF successfully.
-- The PDF contains 13 pages; all 13 pages were rasterised and visually inspected.
-- PPTX size: 2,267,140 bytes.
-- PDF size: 964,722 bytes.
-- PPTX SHA-256: `12F2B493ADB13C0DE6E2476BC6D7F66E5FEDDAD5FB00BD90DFD0F5A74B1AB429`.
-- PDF SHA-256: `7B886B80B27B13F3221A287677DBA680E1F27F875F5FB27D28BEA5F667B488B6`.
+- The existing deck layout, visual theme, slide order and historical-screening figures were preserved.
+- The embedded slide-6 chart was replaced with the frozen final-temporal comparison generated from `data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json`.
+- Targeted slide renders were inspected during editing.
+- Microsoft PowerPoint exported a new 13-page PDF from the corrected PPTX.
+- All 13 PDF pages were rasterised and visually inspected as a contact sheet; no clipping, overlap or unreadable content was found.
+- Official slide-overflow test: `Test passed. No overflow detected.`
+- PPTX size: 2,252,018 bytes.
+- PDF size: 949,545 bytes.
+- PPTX SHA-256: `0BEDB6E077C035893F60E9D5D127C3C4F9A3643779B5FFEBAC82491EC99884A3`.
+- PDF SHA-256: `C9F41F718951CD8D19F8132B15618D47140D4509F333005B682BD499D91FF0E9`.
 
 ## Validation decision
 
-**Passed.** The PPTX and PDF are complete, visually readable, numerically consistent with validated project artefacts, and appropriately limited to historical comparative wildfire-exposure screening.
+**Passed.** The PPTX and PDF are visually readable and consistent with the final nine-feature model state, the separate historical-screening output, and the documented operational limitations.

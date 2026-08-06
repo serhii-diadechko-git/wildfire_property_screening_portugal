@@ -22,11 +22,10 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from src import national_panel as panel
+from src.climate_features import era5_source_paths, read_grib_variable
+from src.evaluation import regression_metrics, tie_aware_ranking_metrics
 from src.extended_model_refit import MODEL_DIR, NINE_FEATURES, ROOT, _sha256
 from src.feature_contract import TARGET_COLUMN
-from src.model_selection import regression_metrics
-from src.model_v2_experiments import tie_aware_ranking_metrics
-from src.representative_feature_pilot import _read_grib_variable, era5_source_paths
 
 
 FINAL_TEST_YEARS = (2022, 2023, 2024)
@@ -76,8 +75,8 @@ def _read_final_panel_rows() -> tuple[pd.DataFrame, dict[str, object]]:
 
 def _load_monthly_extrema(year: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     path = era5_source_paths(year)["temperature_and_soil_water"]
-    latitude, longitude, temperature, temperature_months = _read_grib_variable(path, "2t")
-    soil_lat, soil_lon, soil, soil_months = _read_grib_variable(path, "swvl1")
+    latitude, longitude, temperature, temperature_months = read_grib_variable(path, "2t")
+    soil_lat, soil_lon, soil, soil_months = read_grib_variable(path, "swvl1")
     if not (
         temperature_months == soil_months == (6, 7, 8, 9)
         and np.array_equal(latitude, soil_lat)

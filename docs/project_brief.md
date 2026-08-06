@@ -154,7 +154,7 @@ Test model uncertainty, false reassurance, target thresholds, the initial 2 km b
 
 - use documented public data sources;
 - build the reproducible 1 km cell-year dataset using the agreed MVP columns;
-- return a score, insufficient-evidence status, or documented exclusion for at least 95% of eligible cells, subject to pilot confirmation;
+- return a score, insufficient-evidence status, or documented exclusion for every canonical cell, with coverage revalidated for each annual release;
 - represent every mainland municipality containing eligible cells;
 - assign recommendations only when mandatory data is complete;
 - produce clear maps, ranked tables, uncertainty flags, and limitations;
@@ -173,7 +173,7 @@ These are evaluation targets, not guaranteed project outcomes.
 
 - Decision-maker and decision: **ready**
 - Measurable business and data questions: **ready**
-- Completion criteria and evaluation targets: **ready for pilot validation**
+- Completion criteria and evaluation targets: **validated historical evaluation and published 2026 comparative estimate; annual update cycle documented**
 - Minimum schema: **aligned with the workbook**
 - Analysis-to-decision alignment: **ready**
 - 60-second explanation: **ready**
