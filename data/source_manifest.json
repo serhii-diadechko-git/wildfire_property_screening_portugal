@@ -1,0 +1,79 @@
+{
+  "manifest_version": "1.0",
+  "purpose": "Public reproducibility manifest for locally acquired raw inputs. It contains no credentials and no downloadable private links.",
+  "raw_data_policy": "Do not commit, rename, edit, or publicly mirror data/raw files unless the official terms explicitly allow the intended redistribution.",
+  "sources": [
+    {
+      "key": "icnf_annual_burned_areas",
+      "provider": "Instituto da Conservacao da Natureza e das Florestas (ICNF)",
+      "official_url": "https://geocatalogo.icnf.pt/catalogo_tema5.html",
+      "terms_url": "https://geocatalogo.icnf.pt/",
+      "access": "Official catalogue download; no project-hosted mirror.",
+      "redistribution_status": "official_open_data_with_attribution; verify current layer metadata before republishing files",
+      "citation_requirement": "ICNF, [layer name], [download URL], [download date].",
+      "local_path_pattern": "data/raw/wildfire/icnf_burned_areas/ardida_<YEAR>.zip",
+      "required_years": "2000-2025; years 2000-2008 are stored in the registered combined archive",
+      "validation": "ZIP sidecars, CRS, year field, geometry and checksum against src/source_registry.py"
+    },
+    {
+      "key": "caop_2025",
+      "provider": "Direcao-Geral do Territorio (DGT)",
+      "official_url": "https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop",
+      "terms_url": "https://www.dgterritorio.gov.pt/",
+      "access": "Official download.",
+      "redistribution_status": "review_before_redistribution",
+      "local_path": "data/raw/boundaries/dgt_caop/CAOP_Continente_2025-gpkg.zip",
+      "validation": "ZIP member, GeoPackage layer, EPSG:3763 and checksum against src/source_registry.py"
+    },
+    {
+      "key": "copernicus_clc",
+      "provider": "Copernicus Land Monitoring Service (CLMS)",
+      "official_url": "https://land.copernicus.eu/en/products/corine-land-cover",
+      "terms_url": "https://land.copernicus.eu/en/data-policy",
+      "access": "Official catalogue/download; a provider account may be required for download.",
+      "redistribution_status": "open_with_attribution_and_adaptation_disclosure",
+      "citation_requirement": "Use the provider's current Copernicus/CLMS attribution guidance and identify any adapted Portugal-clipped derivative.",
+      "raw_paths": [
+        "data/raw/clc/u2012_clc2006_v2020_20u1_geoPackage.zip",
+        "data/raw/clc/u2018_clc2012_v2020_20u1_geoPackage.zip",
+        "data/raw/clc/u2018_clc2018_v2020_20u1_geoPackage.zip"
+      ],
+      "derived_paths": [
+        "data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg",
+        "data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg",
+        "data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg"
+      ],
+      "validation": "Package integrity, CRS, class field, Portugal coverage and governed reference-year assignment"
+    },
+    {
+      "key": "copernicus_dem_glo30",
+      "provider": "Copernicus DEM",
+      "official_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+      "terms_url": "https://registry.opendata.aws/copernicus-dem/",
+      "access": "Official public Copernicus distribution.",
+      "redistribution_status": "review_before_redistribution",
+      "local_path_pattern": "data/raw/terrain/copernicus_dem_glo30_2021/*.tif",
+      "validation": "Tile identifiers, checksums, EPSG:4326, one-arc-second grid and mainland-plus-2-km-context coverage"
+    },
+    {
+      "key": "era5_land_jjas",
+      "provider": "Copernicus Climate Data Store (CDS) / ECMWF",
+      "official_url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
+      "terms_url": "https://cds.climate.copernicus.eu/terms",
+      "access": "Personal CDS account, acceptance of dataset terms, and local credentials are required for API download.",
+      "redistribution_status": "review_before_redistribution; obtain your own files through CDS",
+      "local_path_pattern": "data/raw/climate/era5_land/era5_land_monthly_jjas_<YEAR>_mainland_portugal.grib",
+      "validation": "0.1-degree grid, JJAS months, variables 2t/tp/swvl1, precipitation encoding and checksum against src/source_registry.py"
+    },
+    {
+      "key": "icnf_structural_hazard",
+      "provider": "ICNF / DGT",
+      "official_url": "https://geocatalogo.icnf.pt/metadados/perigosidade_estrutural_20_30.html",
+      "terms_url": "https://geocatalogo.icnf.pt/metadados/perigosidade_estrutural_20_30.html",
+      "access": "Official metadata and geospatial service.",
+      "redistribution_status": "review_before_redistribution",
+      "local_path": "data/raw/hazard/icnf_structural_2020_2030/icnf_structural_hazard_2020_2030_25m_epsg3763.tif",
+      "validation": "Checksum, EPSG:3763, 25 m grid, class coding and mainland coverage"
+    }
+  ]
+}

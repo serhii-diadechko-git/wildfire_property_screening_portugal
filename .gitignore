@@ -7,6 +7,14 @@ __pycache__/
 # VS Code local state
 .vscode/*.local.json
 
+# Local assistants, credentials, and machine-specific configuration
+.codex/
+.agents/
+.env
+.env.*
+!.env.example
+local_data_paths.json
+
 # Data: keep folder structure, not downloaded or generated data
 /data/raw/*
 !/data/raw/.gitkeep
@@ -20,11 +28,20 @@ __pycache__/
 # Generated reports
 /reports/figures/*
 !/reports/figures/.gitkeep
+!/reports/figures/README.md
 /reports/bi_exports/*
 !/reports/bi_exports/.gitkeep
 /reports/tables/*
 !/reports/tables/.gitkeep
+!/reports/tables/README.md
 /reports/validation/*.txt
+/reports/run_logs/*
+!/reports/run_logs/.gitkeep
+
+# Transient processing output; final artefacts use atomic publication paths.
+/tmp/
+*.tmp
+*.tmp.*
 
 # OS files
 .DS_Store

@@ -6,6 +6,7 @@ import json
 import unittest
 
 import joblib
+import pandas as pd
 import pyarrow.parquet as pq
 
 from src.config import OPERATIONAL_FORECAST
@@ -16,6 +17,8 @@ from src.operational_forecast import (
     MODEL_METADATA_PATH,
     MODEL_PATH,
     PANEL_MANIFEST_PATH,
+    _forecast_paths,
+    _sha256,
     forecast_preflight,
     run_operational_forecast,
     validate_forecast_artifacts,
@@ -62,6 +65,13 @@ class OperationalForecastTests(unittest.TestCase):
         self.assertEqual(validation["matrix_missing_values"], 0)
         self.assertEqual(validation["score_missing_values"], 0)
         self.assertTrue(validation["model_reload_predictions_identical"])
+        self.assertFalse(validation["model_checksum_reconciled"])
+        paths = _forecast_paths(CURRENT_FORECAST_YEAR)
+        manifest = json.loads(paths["manifest"].read_text(encoding="utf-8"))
+        scores = pd.read_parquet(paths["scores"])
+        self.assertEqual(manifest["model"]["sha256"], scores.model_sha256.iloc[0])
+        self.assertEqual(manifest["model"]["sha256"], _sha256(MODEL_PATH))
+        self.assertEqual(manifest["score_table"]["sha256"], _sha256(paths["scores"]))
         self.assertEqual(
             validation["climate_assignment_counts"],
             {"containing_valid_era5_land_cell": 87_606, "nearest_valid_era5_land_cell": 1_506},

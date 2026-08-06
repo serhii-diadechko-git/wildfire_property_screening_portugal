@@ -1,6 +1,20 @@
 @echo off
 setlocal
-set "QGIS_ROOT=C:\Program Files\QGIS 3.44.12"
+rem Optional Windows helper. It never stores a user-specific QGIS location.
+rem Set QGIS_ROOT once in your user environment, or let this script discover
+rem the newest QGIS directory under Program Files.
+if not defined QGIS_ROOT (
+  for /d %%D in ("%ProgramFiles%\QGIS *") do set "QGIS_ROOT=%%~fD"
+)
+if not defined QGIS_ROOT (
+  echo QGIS_ROOT is not set and QGIS was not found under Program Files.
+  echo Set QGIS_ROOT to your QGIS installation directory, then run this script again.
+  exit /b 1
+)
+if not exist "%QGIS_ROOT%\bin\o4w_env.bat" (
+  echo QGIS_ROOT does not point to a valid QGIS installation: %QGIS_ROOT%
+  exit /b 1
+)
 set "QGIS_ARGUMENTS="
 if /I "%~1"=="--validate-existing" (
   set "QGIS_SCRIPT=%~dp0build_qgis_presentation_project.py"

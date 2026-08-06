@@ -2,7 +2,7 @@
 
 Open `wildfire_exposure_screening_portugal.qgz` in QGIS 3.44 or later. The project uses EPSG:3763 and stores project-relative paths where QGIS can resolve them from the repository root. It reads existing GeoPackages only; it does not duplicate or alter them.
 
-For a read-only package/layer/layout-path check, run `.\.venv\Scripts\python.exe -m unittest tests.test_presentation_outputs -v` and `scripts\run_qgis_presentation_project.bat --validate-existing` from the repository root. To deliberately regenerate the project and its layout exports, run the latter command without the flag. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
+For a read-only package/layer/layout-path check, run `python -m unittest tests.test_presentation_outputs -v` from the repository root. On Windows, `scripts\run_qgis_presentation_project.bat --validate-existing` provides an optional QGIS helper. On Linux/macOS, open the project directly or invoke the build script from a PyQGIS-enabled environment. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
 
 ## Layer tree
 

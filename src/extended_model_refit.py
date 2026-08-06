@@ -2,9 +2,9 @@
 
 This module deliberately operates only on T=2010-2021.  T=2022-2024 are
 neither present in its input panel nor read from the canonical national panel.
-The two added climate-extreme features are derived directly from the registered
-local JJAS ERA5-Land files and accepted static coastal fallback map. The
-canonical seven-feature panel is not altered.
+The two climate-extreme features are derived directly from the registered local
+JJAS ERA5-Land files and accepted static coastal fallback map. The validated
+base panel is read without changing its values.
 """
 
 from __future__ import annotations

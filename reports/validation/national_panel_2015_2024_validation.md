@@ -62,6 +62,6 @@ These are minimum observed first-to-last atomic batch-publication spans, not CPU
 | icnf_components | 357.47 |
 | panel_batches | 25.83 |
 
-Final validation, including the three-batch deterministic rerun, took 126.38 seconds.
+Final validation, including the three-batch deterministic rerun, took 17.18 seconds.
 
 Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at `data/processed/national_panel_2015_2024_validation.json`.

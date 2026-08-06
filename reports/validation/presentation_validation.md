@@ -6,8 +6,6 @@ Author: Serhii Diadechko
 
 Presentation: `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx`
 
-PDF export: `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pdf`
-
 ## Outcome
 
 The retained 13-slide, 16:9 presentation was refreshed after the final temporal evaluation and operational refit. It now presents two complementary, explicitly separated products:
@@ -49,14 +47,10 @@ Slides 2 and 7-11 retain the validated historical-screening, QGIS and ICNF-compa
 - The existing deck layout, visual theme, slide order and historical-screening figures were preserved.
 - The embedded slide-6 chart was replaced with the frozen final-temporal comparison generated from `data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json`.
 - Targeted slide renders were inspected during editing.
-- Microsoft PowerPoint exported a new 13-page PDF from the corrected PPTX.
-- All 13 PDF pages were rasterised and visually inspected as a contact sheet; no clipping, overlap or unreadable content was found.
 - Official slide-overflow test: `Test passed. No overflow detected.`
 - PPTX size: 2,252,018 bytes.
-- PDF size: 949,545 bytes.
 - PPTX SHA-256: `0BEDB6E077C035893F60E9D5D127C3C4F9A3643779B5FFEBAC82491EC99884A3`.
-- PDF SHA-256: `C9F41F718951CD8D19F8132B15618D47140D4509F333005B682BD499D91FF0E9`.
 
 ## Validation decision
 
-**Passed.** The PPTX and PDF are visually readable and consistent with the final nine-feature model state, the separate historical-screening output, and the documented operational limitations.
+**Passed.** The editable PPTX is visually readable and consistent with the final nine-feature model state, the separate historical-screening output, and the documented operational limitations. A PDF export is intentionally not tracked because it is a duplicate delivery format.

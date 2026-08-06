@@ -1,8 +1,8 @@
-# Data Dictionary - First Version
+# Data Dictionary
 
 ## Analytical unit
 
-> Canonical national-panel schema: seven predictors are `built_up_share`, `forest_shrub_share_2km`, `mean_slope_2km`, `fire_years_previous_10y_2km`, and three T-only JJAS ERA5-Land fields. The fixed final model adds two explicitly documented monthly-extreme climate fields. Identifiers/geometry are stored separately.
+> The retained analytical model has exactly nine predictors. Identifiers and geometry are stored separately from the tabular model matrix.
 
 One analytical record represents one **1 km grid cell and one predictor reference year `T`**.
 
@@ -18,7 +18,7 @@ The 2 km buffer is not a second grid resolution. It is an initial modelling para
 
 ## Temporal scope and split
 
-The canonical national seven-feature panel is `T=2015-2024`. The validated model-development extension uses fitting years `2010-2019`, validation years `2020-2021`, and one completed frozen final temporal test at `T=2022-2024`. The expanded ICNF archive range is `2000-2025` inclusive.
+The labelled nine-feature model panel covers predictor years `T=2010-2024`. Model development used `T=2010-2019`, validation used `T=2020-2021`, and the completed frozen final temporal test used `T=2022-2024`. The ICNF archive range is `2000-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
@@ -39,7 +39,7 @@ These fields are required to store and join the analytical records. They are not
 | `land_cover_release_id` | string | Current official revised package identifier used for that reference layer. | CLC package provenance |
 | `land_cover_release_date` | string/date | Official package release/update date, or an explicit statement that the exact day is unavailable. | CLC package provenance |
 
-## MVP analytical columns
+## Nine-feature analytical columns
 
 This table matches the minimum schema in the completed Capstone Kickoff Workbook.
 
@@ -53,6 +53,8 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 | `warm_season_mean_2m_temperature_c` | float | degrees Celsius | Mean ERA5-Land 2 m temperature for June–September (`JJAS`) in predictor year `T`. | ERA5-Land `2m_temperature` |
 | `warm_season_total_precipitation_mm` | float | millimetres | Total ERA5-Land precipitation for `JJAS` in predictor year `T`. | ERA5-Land `total_precipitation` |
 | `warm_season_mean_soil_water_layer1` | float | m³/m³ | Mean ERA5-Land volumetric soil water in layer 1 for `JJAS` in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1` |
+| `warm_season_max_monthly_2m_temperature_c` | float | degrees Celsius | Maximum of the four monthly mean 2 m temperatures for June-September in predictor year `T`. | ERA5-Land `2m_temperature`; T-only JJAS GRIB |
+| `warm_season_min_monthly_soil_water_layer1` | float | m³/m³ | Minimum of the four monthly mean layer-1 volumetric soil-water values for June-September in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1`; T-only JJAS GRIB |
 | `burned_share_next_year` | float | 0-1 | Share of the mainland-land portion of the 1 km cell intersected by the dissolved burned-area geometry in observed outcome year `T+1`. This is the main continuous target. | ICNF burned-area intersections after derived-only geometry repair and annual union |
 
 ## Derived classification target
@@ -73,20 +75,6 @@ The retained final model is a continuous comparative estimate, not a probability
 | `model_sha256` | string | Checksum of the exact serialized nine-feature model used for scoring. |
 | `score_status` | string | `scored_comparative_estimate`, `blocked_missing_input`, or `insufficient_evidence`; never interpret an absent score as low exposure. |
 | `predicted_wildfire_probability` | float, 0-1 | Conditional future output only if a separate classification model and `burned_next_year` threshold are later documented. Probability metrics and calibration do not apply to the initial regression output. |
-| `structural_exposure_score` | float or category | Exposure estimate based mainly on slower-changing features and historical fire activity. Final calculation is defined only after model validation. |
-| `annual_outlook_score` | float or category | Updated result using the latest available annual inputs. Final calculation is defined only after model validation. |
-| `score_stability` | float or category | Stability of the result across test years and reasonable model variants. |
-| `uncertainty_flag` | category | Normal, caution, or insufficient evidence. |
-| `recommendation_category` | category | Conditional future concept only; no buyer-facing recommendation category is authorized by the current model evidence. |
-
-## Fixed final-model additions
-
-These two fields are the final-model additions. They are present in the versioned labelled nine-feature model panel and every future scoring matrix, but not in the original canonical seven-feature national panel.
-
-| Column | Type | Unit | Description | Source / derivation |
-|---|---|---|---|---|
-| `warm_season_max_monthly_2m_temperature_c` | float | degrees Celsius | Maximum of the four monthly mean 2 m temperatures for June-September in predictor year `T`. | ERA5-Land `2m_temperature`; T-only JJAS GRIB |
-| `warm_season_min_monthly_soil_water_layer1` | float | m³/m³ | Minimum of the four monthly mean layer-1 volumetric soil-water values for June-September in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1`; T-only JJAS GRIB |
 
 ## Historical exposure screening output
 

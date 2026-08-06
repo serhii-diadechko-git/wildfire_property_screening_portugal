@@ -1,0 +1,15 @@
+# Keep source files consistent across Windows, Linux, and macOS clones.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ipynb text eol=lf
+
+# Project deliverables that must not be treated as text.
+*.qgz binary
+*.gpkg binary
+*.parquet binary
+*.grib binary
+*.tif binary
+*.zip binary
+*.pptx binary
+*.pdf binary
+*.png binary

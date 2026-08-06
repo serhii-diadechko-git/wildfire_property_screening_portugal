@@ -1,8 +1,8 @@
-"""Compatibility import for historical baseline joblib artefacts.
+"""Compatibility import for the retained historical-baseline artefact.
 
-The original seven-feature selection workflow was retired. Historical serialized
-baseline models still reference this module path, so the estimator remains
-available without preserving the superseded training implementation.
+Earlier serialized artefacts reference this module path.  Keep this small
+import shim so those reproducible artefacts can still be loaded without
+duplicating a second training implementation.
 """
 
 from src.modeling import HistoricalFireMeanRegressor

@@ -7,7 +7,7 @@ The validated project state is a nine-feature annual continuous burned-share mod
 - [x] Register immutable CAOP, ICNF 2000-2025, governed CLC 2006/2012/2018, Copernicus DEM GLO-30, and ERA5-Land sources.
 - [x] Create and validate the 89,112-cell EPSG:3763 canonical 1 km grid.
 - [x] Derive 2 km mainland-masked context buffers; 2 km is context, not a second grid.
-- [x] Build and validate the national `T=2015-2024` seven-feature panel.
+- [x] Build and validate the bounded national spatial components used by the final nine-feature model.
 - [x] Resolve systematic ERA5-Land coastal masking with the validated nearest-valid-land-cell fallback.
 - [x] Extend model training backward to `T=2010` using the governed source rules.
 - [x] Freeze and evaluate the historical-recurrence baseline and nine-feature hurdle model.
@@ -20,9 +20,9 @@ The validated project state is a nine-feature annual continuous burned-share mod
 ## Current maintenance cycle
 
 - [x] Consolidate reusable model, climate, evaluation, and geospatial helpers.
-- [x] Retire superseded pilot, seven-feature selection, and exploratory V2 execution code.
+- [x] Consolidate the final nine-feature feature, model, climate, and geospatial implementation.
 - [x] Move the canonical geometry lookup to `data/processed/reference/canonical_mainland_grid_1km.gpkg`.
-- [ ] Review and commit the repository-cleanup changes.
+- [ ] Review the public-reproducibility cleanup and choose a licence before release.
 
 ## Next annual update (forecast year 2027)
 

@@ -3,7 +3,7 @@
 ## Fixed model
 
 - Model: fixed nine-feature hurdle refit on predictor years T=2010-2024, with observed ICNF outcomes 2011-2025.
-- Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `F66BAC0F9D4FEAE0AE2657A7006B7C8DB51F08A9DB44728FE3BF0771CDF8E46A`).
+- Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `3923A98D8921401435976530041B89F2DE128006815AA8B6607841C66EED3B0F`).
 - Model selection remains the completed frozen T=2022-2024 final temporal test; no post-test tuning occurred.
 
 ## 2026 scoring contract

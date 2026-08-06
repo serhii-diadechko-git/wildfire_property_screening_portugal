@@ -89,6 +89,34 @@ def _atomic_json(payload: dict[str, Any], path: Path) -> None:
     os.replace(temporary, path)
 
 
+def _atomic_parquet(frame: pd.DataFrame, path: Path) -> None:
+    """Publish a derived Parquet artifact only after its temporary write succeeds."""
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    if temporary.exists():
+        raise FileExistsError(f"Stale temporary Parquet requires inspection: {temporary}")
+    frame.to_parquet(temporary, index=False, compression="zstd")
+    os.replace(temporary, path)
+
+
+def _write_forecast_geopackage(scores: pd.DataFrame, paths: dict[str, Path], forecast_year: int) -> dict[str, Any]:
+    """Publish one spatial score layer from canonical geometry and a score table."""
+    grid = pyogrio.read_dataframe(panel.GRID_PATH, columns=["cell_id"])
+    spatial = grid.merge(scores, on="cell_id", how="inner", validate="one_to_one")
+    if len(spatial) != len(scores) or str(spatial.crs) != "EPSG:3763":
+        raise ValueError("QGIS forecast layer failed its canonical-grid join")
+    paths["gpkg"].parent.mkdir(parents=True, exist_ok=True)
+    temporary_gpkg = paths["gpkg"].with_name(paths["gpkg"].stem + "_temporary.gpkg")
+    if temporary_gpkg.exists():
+        raise FileExistsError(f"Stale temporary GeoPackage requires inspection: {temporary_gpkg}")
+    layer = f"estimated_comparative_exposure_{forecast_year}"
+    pyogrio.write_dataframe(spatial, temporary_gpkg, layer=layer, driver="GPKG")
+    info = pyogrio.read_info(temporary_gpkg, layer=layer)
+    if info["features"] != len(scores) or str(info["crs"]) != "EPSG:3763":
+        raise ValueError("Temporary forecast GeoPackage failed validation")
+    os.replace(temporary_gpkg, paths["gpkg"])
+    return {"path": paths["gpkg"].relative_to(ROOT).as_posix(), "layer": layer, "crs": "EPSG:3763", "feature_count": len(spatial)}
+
+
 def _source_years(path: Path) -> tuple[int, ...]:
     years = pd.read_parquet(path, columns=["observation_year"])["observation_year"]
     return tuple(sorted(int(year) for year in years.unique()))
@@ -193,6 +221,20 @@ def refit_operational_model() -> dict[str, Any]:
         model.fit(frame.loc[:, NINE_FEATURES], frame[TARGET_COLUMN])
     sample = frame.loc[:999, NINE_FEATURES]
     expected = model.predict(sample)
+    if MODEL_PATH.exists() and MODEL_METADATA_PATH.exists():
+        existing_metadata = json.loads(MODEL_METADATA_PATH.read_text(encoding="utf-8"))
+        existing_payload = joblib.load(MODEL_PATH)
+        existing_panel = existing_metadata.get("labelled_panel", {})
+        same_lineage = (
+            existing_panel.get("sha256") == panel_manifest.get("sha256")
+            and existing_payload.get("feature_order") == list(NINE_FEATURES)
+            and existing_payload.get("training_predictor_years") == list(LABELED_YEARS)
+            and existing_payload.get("target") == TARGET_COLUMN
+        )
+        if same_lineage:
+            existing = np.asarray(existing_payload["model"].predict(sample), dtype="float64")
+            if np.array_equal(expected, existing):
+                return existing_metadata | {"status": "validated_reused"}
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     temporary = MODEL_PATH.with_suffix(".joblib.tmp")
     if temporary.exists():
@@ -436,24 +478,8 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
     scores["predicted_exposure_percentile"] = scores["predicted_burned_share_next_year"].rank(method="average", pct=True)
     scores["model_sha256"] = _sha256(MODEL_PATH)
     scores["score_status"] = "scored_comparative_estimate"
-    temporary = paths["scores"].with_suffix(".parquet.tmp")
-    scores.to_parquet(temporary, index=False, compression="zstd")
-    os.replace(temporary, paths["scores"])
-
-    grid = pyogrio.read_dataframe(panel.GRID_PATH, columns=["cell_id"])
-    spatial = grid.merge(scores, on="cell_id", how="inner", validate="one_to_one")
-    if len(spatial) != len(scores) or str(spatial.crs) != "EPSG:3763":
-        raise ValueError("QGIS forecast layer failed its canonical-grid join")
-    paths["gpkg"].parent.mkdir(parents=True, exist_ok=True)
-    temporary_gpkg = paths["gpkg"].with_name(paths["gpkg"].stem + "_temporary.gpkg")
-    if temporary_gpkg.exists():
-        raise FileExistsError(f"Stale temporary GeoPackage requires inspection: {temporary_gpkg}")
-    layer = f"estimated_comparative_exposure_{forecast_year}"
-    pyogrio.write_dataframe(spatial, temporary_gpkg, layer=layer, driver="GPKG")
-    info = pyogrio.read_info(temporary_gpkg, layer=layer)
-    if info["features"] != len(scores) or str(info["crs"]) != "EPSG:3763":
-        raise ValueError("Temporary forecast GeoPackage failed validation")
-    os.replace(temporary_gpkg, paths["gpkg"])
+    _atomic_parquet(scores, paths["scores"])
+    spatial_output = _write_forecast_geopackage(scores, paths, forecast_year)
     manifest = {
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "forecast_year": forecast_year,
@@ -461,7 +487,7 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
         "target_present": False,
         "feature_matrix": matrix,
         "score_table": {"path": paths["scores"].relative_to(ROOT).as_posix(), "sha256": _sha256(paths["scores"]), "row_count": len(scores)},
-        "spatial_output": {"path": paths["gpkg"].relative_to(ROOT).as_posix(), "layer": layer, "crs": "EPSG:3763", "feature_count": len(spatial)},
+        "spatial_output": spatial_output,
         "model": {"path": MODEL_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(MODEL_PATH), "feature_order": list(NINE_FEATURES)},
         "input_sources": {
             "era5_land": {
@@ -482,6 +508,43 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
     }
     _atomic_json(manifest, paths["manifest"])
     return manifest
+
+
+def _reconcile_score_model_provenance(
+    *, paths: dict[str, Path], manifest: dict[str, Any], scores: pd.DataFrame, forecast_year: int, current_model_sha256: str
+) -> tuple[dict[str, Any], pd.DataFrame]:
+    """Update only model-provenance fields after exact prediction equivalence.
+
+    A deterministic refit can serialize to different bytes across runs even
+    when every prediction is identical.  This recovery is intentionally narrow:
+    callers must prove equality before it updates the score checksum, manifest,
+    and QGIS attribute table.  No score value, raw input, or model setting is
+    changed.
+    """
+    recorded_checksums = sorted(str(value) for value in scores.model_sha256.dropna().unique())
+    if len(recorded_checksums) != 1:
+        raise ValueError("Forecast score table has multiple model checksums")
+    reconciled = scores.copy()
+    reconciled["model_sha256"] = current_model_sha256
+    _atomic_parquet(reconciled, paths["scores"])
+    spatial_output = _write_forecast_geopackage(reconciled, paths, forecast_year)
+    updated_manifest = dict(manifest)
+    updated_model = dict(updated_manifest.get("model", {}))
+    updated_model["sha256"] = current_model_sha256
+    updated_manifest["model"] = updated_model
+    updated_score_table = dict(updated_manifest.get("score_table", {}))
+    updated_score_table["sha256"] = _sha256(paths["scores"])
+    updated_score_table["row_count"] = len(reconciled)
+    updated_manifest["score_table"] = updated_score_table
+    updated_manifest["spatial_output"] = spatial_output
+    updated_manifest["model_provenance_reconciliation"] = {
+        "reconciled_utc": datetime.now(timezone.utc).isoformat(),
+        "current_model_sha256": current_model_sha256,
+        "reason": "current serialized-model checksum was recorded only after exact prediction equivalence was verified",
+        "score_values_changed": False,
+    }
+    _atomic_json(updated_manifest, paths["manifest"])
+    return updated_manifest, reconciled
 
 
 def validate_forecast_artifacts(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]:
@@ -506,13 +569,32 @@ def validate_forecast_artifacts(forecast_year: int = CURRENT_FORECAST_YEAR) -> d
         raise ValueError("Forecast score table has missing/out-of-range estimates")
     if not scores.predicted_exposure_percentile.between(0.0, 1.0).all():
         raise ValueError("Forecast percentile is outside [0, 1]")
-    if not scores.model_sha256.eq(_sha256(MODEL_PATH)).all():
-        raise ValueError("Forecast score table model checksum mismatch")
+    current_model_sha256 = _sha256(MODEL_PATH)
     payload = joblib.load(MODEL_PATH)
     reloaded_predictions = np.asarray(payload["model"].predict(matrix.loc[:, NINE_FEATURES]), dtype="float64")
     ordered_scores = scores.set_index("cell_id").loc[matrix.cell_id, "predicted_burned_share_next_year"].to_numpy(dtype="float64")
     if not np.array_equal(reloaded_predictions, ordered_scores):
         raise ValueError("Reloaded model does not reproduce the published forecast values")
+    model_checksum_reconciled = False
+    provenance_mismatch = (
+        not scores.model_sha256.eq(current_model_sha256).all()
+        or manifest.get("model", {}).get("sha256") != current_model_sha256
+        or manifest.get("score_table", {}).get("sha256") != _sha256(paths["scores"])
+        or "previous_model_sha256" in manifest.get("model_provenance_reconciliation", {})
+    )
+    if provenance_mismatch:
+        manifest, scores = _reconcile_score_model_provenance(
+            paths=paths,
+            manifest=manifest,
+            scores=scores,
+            forecast_year=forecast_year,
+            current_model_sha256=current_model_sha256,
+        )
+        model_checksum_reconciled = True
+    if manifest.get("model", {}).get("sha256") != current_model_sha256:
+        raise ValueError("Forecast manifest model checksum mismatch")
+    if manifest.get("score_table", {}).get("sha256") != _sha256(paths["scores"]):
+        raise ValueError("Forecast manifest score-table checksum mismatch")
     spatial_info = pyogrio.read_info(paths["gpkg"], layer=manifest["spatial_output"]["layer"])
     if spatial_info["features"] != len(matrix) or str(spatial_info["crs"]) != "EPSG:3763":
         raise ValueError("Forecast GeoPackage CRS or feature count mismatch")
@@ -523,6 +605,7 @@ def validate_forecast_artifacts(forecast_year: int = CURRENT_FORECAST_YEAR) -> d
         "matrix_missing_values": int(matrix.isna().sum().sum()),
         "score_missing_values": int(scores.isna().sum().sum()),
         "model_reload_predictions_identical": True,
+        "model_checksum_reconciled": model_checksum_reconciled,
         "spatial_layer": manifest["spatial_output"],
         "prediction_summary": manifest["prediction_summary"],
         "climate_assignment_counts": scores.climate_assignment_method.value_counts().sort_index().to_dict(),
@@ -555,6 +638,7 @@ def write_forecast_validation_report(validation: dict[str, Any]) -> None:
         "",
         f"- Unique cells/rows: {validation['row_count']:,}; target present: {validation['target_present']}; matrix missing values: {validation['matrix_missing_values']}; score missing values: {validation['score_missing_values']}.",
         f"- Reloaded model predictions identical to published scores: {validation['model_reload_predictions_identical']}.",
+        f"- Model-provenance checksum reconciled after exact prediction equivalence: {validation['model_checksum_reconciled']}.",
         f"- Climate assignment counts: {validation['climate_assignment_counts']}.",
         f"- Estimated burned-share summary: min {summary['minimum']:.6f}; median {summary['median']:.6f}; mean {summary['mean']:.6f}; max {summary['maximum']:.6f}; exact-zero estimates {summary['zero_count']:,}.",
         "",
@@ -587,6 +671,10 @@ def run_operational_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict
         else score_forecast(forecast_year)
     )
     validation = validate_forecast_artifacts(forecast_year)
+    # Validation may have reconciled derived provenance after proving exact
+    # prediction equality, so return the persisted manifest rather than a
+    # stale pre-validation copy.
+    manifest = json.loads(paths["manifest"].read_text(encoding="utf-8"))
     write_forecast_validation_report(validation)
     return {"status": "validated_reused" if all(present.values()) else "created_and_validated", "manifest": manifest, "validation": validation}
 

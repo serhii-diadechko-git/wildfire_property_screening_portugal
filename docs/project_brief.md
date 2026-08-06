@@ -78,7 +78,8 @@ The frozen nine-feature hurdle model achieved lower held-out all-row MAE and str
 - exact building construction and fire resistance;
 - private vegetation maintenance and evacuation access;
 - guaranteed long-term or property-level safety;
-- additional optional predictors unless the MVP is completed first.
+- alternative feature sets or tuning beyond the retained nine-feature model,
+  unless evaluated as a separately versioned research change.
 
 ## Business and data questions
 
@@ -185,5 +186,5 @@ These are evaluation targets, not guaranteed project outcomes.
 3. Verify comparable land-cover editions.
 4. Test one small-area 1 km grid and 2 km buffer workflow.
 5. Validate the residential-relevance proxy.
-6. Select the target threshold from the observed burned-share distribution.
-7. Confirm that the provisional 95% coverage target is realistic.
+6. Revalidate the annual source cutoff before publishing each new comparative estimate.
+7. Confirm coverage and missing-data status for each annual update.

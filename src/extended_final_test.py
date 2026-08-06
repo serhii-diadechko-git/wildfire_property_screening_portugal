@@ -55,7 +55,7 @@ def _row_group_year(parquet: pq.ParquetFile, index: int) -> int:
 
 
 def _read_final_panel_rows() -> tuple[pd.DataFrame, dict[str, object]]:
-    """Open exactly final-test row groups from the canonical seven-feature panel."""
+    """Open exactly final-test row groups from the validated base panel."""
     parquet = pq.ParquetFile(panel.NATIONAL_PANEL_PATH)
     groups = []
     tables = []

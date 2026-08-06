@@ -67,10 +67,10 @@ class ClcGovernanceConfig:
 
 @dataclass(frozen=True)
 class ExtendedTrainingClcConfig:
-    """Separate governed CLC assignment for the proposed backward extension.
+    """Governed CLC assignment for the retained 2010-2021 development rows.
 
-    This deliberately does not alter the canonical 2015-2024 configuration or
-    its validated panel artefacts.
+    The 2015-2024 national panel remains a reusable source component; the
+    earlier rows extend the final nine-feature model-development record.
     """
 
     assignment_by_predictor_year: tuple[tuple[int, int], ...] = tuple(
@@ -111,7 +111,7 @@ class TemporalDesign:
 
 @dataclass(frozen=True)
 class ExtendedTrainingDesign:
-    """Backward-only training extension; canonical final-test rows stay unopened."""
+    """Retained 2010-2021 development design; final-test rows stay unopened."""
 
     predictor_start_year: int = 2010
     predictor_end_year: int = 2021

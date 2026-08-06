@@ -4,13 +4,16 @@ Notebooks are thin orchestration and inspection layers. Reusable calculations li
 
 ## Standalone reviewer setup
 
-From the repository root on Windows, install the pinned environment and select `.venv\Scripts\python.exe` as the Jupyter kernel:
+From the repository root, create the pinned environment described in the root
+[`README.md`](../README.md). On Windows select `.venv\Scripts\python.exe` as
+the Jupyter kernel; on Linux/macOS use `.venv/bin/python`.
 
-```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
+Before opening notebooks, run `python scripts/run_project.py --mode preflight`.
+It confirms that locally acquired raw data is present without downloading or
+changing it.
+
+Launch the notebook interface with `python -m jupyter lab`, then select the
+environment's Python kernel.
 
 Run each notebook from a fresh kernel in the order below. Routine notebook review reads the validated project artefacts; it does not rebuild the national panel, screening GeoPackage, QGIS project, or final figures.
 
@@ -37,16 +40,19 @@ The validated result represents **1 km mainland grid cells with fire recurrence 
 - Summary and comparison tables: `reports/tables/`
 - Validation evidence: `reports/validation/`
 
-Open the `.qgz` project in QGIS after cloning or moving the whole repository so its relative layer paths remain intact.
+Open the `.qgz` project in QGIS after cloning or moving the whole repository so its relative layer paths remain intact. The project is a presentation of the validated spatial data, not a separate analytical workflow.
 
 ## Regeneration versus verification
 
 Full processing scripts should be run only when regeneration is required. For normal review, execute notebooks 05 and 06 and use these read-only checks:
 
-```powershell
-.\.venv\Scripts\python.exe scripts\build_historical_exposure_screening.py --validate-existing
-.\.venv\Scripts\python.exe -m unittest tests.test_presentation_outputs -v
-scripts\run_qgis_presentation_project.bat --validate-existing
+```text
+python scripts/build_historical_exposure_screening.py --validate-existing
+python -m unittest tests.test_presentation_outputs -v
 ```
+
+`scripts/run_qgis_presentation_project.bat` is an optional Windows helper. On
+other platforms, open the QGIS project directly or invoke the QGIS build script
+from a PyQGIS-enabled environment.
 
 The chart-building functions in `src/final_visuals.py` and QGIS build scripts remain the reproducible sources for deliberate regeneration. The consolidated notebooks verify the already validated deliverables by default.

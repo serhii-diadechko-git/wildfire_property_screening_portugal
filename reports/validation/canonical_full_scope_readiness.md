@@ -1,6 +1,6 @@
 # Canonical full-scope acquisition and readiness gate
 
-> **Status addendum, 2026-08-05:** this report remains the acquisition/design gate for the canonical `T=2015-2024` seven-feature panel. A separately validated backward training extension added `T=2010-2014` with CLC 2006, ICNF 2000-2004 history, and ERA5-Land 2010-2014. The frozen final comparison is complete; see `final_temporal_test_protocol.md`, `final_temporal_test_2022_2024.md`, and `model_final_decision.md`. This addendum supersedes only the original modelling-status wording, not the documented source facts.
+> **Historical acquisition record:** this report documents the source gate for the original national `T=2015-2024` build. The retained project model is the later nine-feature specification, with development years extended backward to `T=2010-2014` using CLC 2006, ICNF 2000-2004 history, and ERA5-Land 2010-2014. See `final_temporal_test_protocol.md`, `final_temporal_test_2022_2024.md`, and `model_final_decision.md` for the completed model evidence.
 
 > **Operational-status addendum, 2026-08-06:** the frozen nine-feature specification is refit through labelled predictor year `T=2024` / observed outcome 2025. The ERA5-Land JJAS 2025 GRIB is now validated and registered. A 2026 unlabelled scoring matrix, Parquet score table, and 89,112-feature EPSG:3763 GeoPackage are published; see `operational_forecast_readiness.md` and `operational_forecast_2026_validation.md`.
 

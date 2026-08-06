@@ -10,13 +10,14 @@
 ## Published artifacts
 
 - Feature matrix: `data/processed/operational_forecasts/forecast_2026_nine_feature_matrix.parquet` (89,112 rows; SHA-256 `1C131D00DA3CA70C9B6559BC1D5A98984A3F3FB254EA8B727D5DBA36A17BAD48`).
-- Score table: `data/processed/operational_forecasts/forecast_2026_scores.parquet` (89,112 rows; SHA-256 `F39AF98410CE904EF8E5201B040ACAC2D0991A0C6DA4F43D57252F96FBDED278`).
+- Score table: `data/processed/operational_forecasts/forecast_2026_scores.parquet` (89,112 rows; SHA-256 `B9BDA6213B2DDC94FAB3587AEA303DD15CFF2F337ACD864F150E25C77F34AA03`).
 - QGIS-ready layer: `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg`, layer `estimated_comparative_exposure_2026`, 89,112 EPSG:3763 features.
 
 ## Validation
 
 - Unique cells/rows: 89,112; target present: False; matrix missing values: 0; score missing values: 0.
 - Reloaded model predictions identical to published scores: True.
+- Model-provenance checksum reconciled after exact prediction equivalence: False.
 - Climate assignment counts: {'containing_valid_era5_land_cell': 87606, 'nearest_valid_era5_land_cell': 1506}.
 - Estimated burned-share summary: min 0.000000; median 0.003207; mean 0.010615; max 0.386156; exact-zero estimates 1,598.
 
