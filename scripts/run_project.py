@@ -11,10 +11,43 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _project_venv_python() -> Path:
+    """Return the platform-specific interpreter inside the repository `.venv`."""
+    executable = "python.exe" if os.name == "nt" else "python"
+    directory = "Scripts" if os.name == "nt" else "bin"
+    return ROOT / ".venv" / directory / executable
+
+
+def _use_project_venv_if_available() -> None:
+    """Re-execute the public launcher in the pinned local virtual environment.
+
+    This check happens before importing project code, so `python
+    scripts/run_project.py ...` is reliable even when an editor or terminal has
+    selected a global Python installation.  If `.venv` does not exist, normal
+    Python import errors still make the missing environment visible to the user.
+    """
+    venv_python = _project_venv_python()
+    if not venv_python.is_file():
+        return
+    try:
+        already_using_venv = Path(sys.executable).resolve() == venv_python.resolve()
+    except OSError:
+        already_using_venv = False
+    if already_using_venv:
+        return
+    print(f"Using project virtual environment: {venv_python.relative_to(ROOT).as_posix()}", flush=True)
+    os.execv(str(venv_python), [str(venv_python), str(Path(__file__).resolve()), *sys.argv[1:]])
+
+
+_use_project_venv_if_available()
+
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 

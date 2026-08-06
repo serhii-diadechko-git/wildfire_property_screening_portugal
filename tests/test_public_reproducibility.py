@@ -67,6 +67,12 @@ class PublicReproducibilityTests(unittest.TestCase):
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))
 
+    def test_public_launcher_bootstraps_the_repository_virtual_environment(self) -> None:
+        launcher = (ROOT / "scripts" / "run_project.py").read_text(encoding="utf-8")
+        self.assertIn("_use_project_venv_if_available()", launcher)
+        self.assertIn("os.execv", launcher)
+        self.assertIn('ROOT / ".venv"', launcher)
+
     def test_windows_qgis_helper_uses_discovery_not_a_pinned_installation(self) -> None:
         batch = (ROOT / "scripts/run_qgis_presentation_project.bat").read_text(encoding="utf-8")
         self.assertNotIn("QGIS 3.44.12", batch)

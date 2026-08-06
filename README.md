@@ -69,6 +69,9 @@ python scripts/run_project.py --mode preflight
 
 `preflight` does not download or alter data. It lists any missing official raw
 files and writes a local, Git-ignored run summary under `reports/run_logs/`.
+The launcher automatically switches to the repository `.venv` when it exists,
+so the commands remain correct if VS Code or a terminal accidentally starts
+them with a global Python installation.
 
 After preflight passes:
 

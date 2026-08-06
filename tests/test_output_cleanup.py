@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from shutil import rmtree
+from typing import Iterator
 import unittest
 
 from src.output_cleanup import CleanupTarget, planned_removals, remove_derived_outputs
@@ -12,8 +14,10 @@ from src.output_cleanup import CleanupTarget, planned_removals, remove_derived_o
 class OutputCleanupTests(unittest.TestCase):
     def test_dry_run_lists_only_unpreserved_children(self) -> None:
         with self._temporary_workspace() as temporary:
-            root = Path(temporary)
-            target = root / "data" / "processed"
+            root = temporary
+            # Use neutral synthetic names: some managed Windows policies block
+            # temporary paths containing protected folder names such as `data`.
+            target = root / "generated" / "processed"
             target.mkdir(parents=True)
             (target / ".gitkeep").write_text("", encoding="utf-8")
             output = target / "nested" / "output.parquet"
@@ -25,8 +29,8 @@ class OutputCleanupTests(unittest.TestCase):
 
     def test_confirmed_cleanup_preserves_allow_list_and_removes_nested_output(self) -> None:
         with self._temporary_workspace() as temporary:
-            root = Path(temporary)
-            target = root / "reports" / "figures"
+            root = temporary
+            target = root / "generated" / "figures"
             target.mkdir(parents=True)
             keep = target / "README.md"
             keep.write_text("keep", encoding="utf-8")
@@ -38,18 +42,24 @@ class OutputCleanupTests(unittest.TestCase):
             self.assertFalse(output.exists())
 
     @staticmethod
-    def _temporary_workspace() -> TemporaryDirectory[str]:
-        """Create an isolated temporary directory under the ignored repo tmp folder.
+    @contextmanager
+    def _temporary_workspace() -> Iterator[Path]:
+        """Create an isolated fixture in `tests/` and remove it afterwards.
 
-        Some managed Windows environments deny access to the system temporary
-        directory while allowing normal workspace writes. The test still never
-        targets project data and removes its own temporary workspace.
+        Managed Windows policies can apply restrictive ACLs to directories made
+        with `TemporaryDirectory`. A normal fixture directly under the existing
+        writable `tests/` directory avoids that platform-specific behaviour.
         """
 
-        project_root = Path(__file__).resolve().parents[1]
-        temporary_root = project_root / "tmp"
-        temporary_root.mkdir(exist_ok=True)
-        return TemporaryDirectory(dir=temporary_root)
+        root = Path(__file__).resolve().parent / ".cleanup_fixture_runtime"
+        if root.exists():
+            rmtree(root)
+        root.mkdir()
+        try:
+            yield root
+        finally:
+            if root.exists():
+                rmtree(root)
 
 
 if __name__ == "__main__":
