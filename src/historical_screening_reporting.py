@@ -19,6 +19,11 @@ from matplotlib.patches import Patch
 HISTORICAL_ORDER = ("lower", "moderate", "higher")
 HAZARD_ORDER = ("very_low", "low", "medium", "high", "very_high", "unmatched")
 HISTORICAL_COLOURS = {"lower": "#E9D8A6", "moderate": "#E69F00", "higher": "#9B2226"}
+HISTORICAL_LABELS = {
+    "lower": "Lower historical exposure (0–1 years)",
+    "moderate": "Moderate historical exposure (2–3 years)",
+    "higher": "Higher historical exposure (4–10 years)",
+}
 HAZARD_COLOURS = {
     "very_low": "#509E2F",
     "low": "#FFE900",
@@ -26,6 +31,25 @@ HAZARD_COLOURS = {
     "high": "#CB333B",
     "very_high": "#6F263D",
     "unmatched": "#BDBDBD",
+}
+HAZARD_LABELS = {
+    "very_low": "Official very low structural hazard",
+    "low": "Official low structural hazard",
+    "medium": "Official medium structural hazard",
+    "high": "Official high structural hazard",
+    "very_high": "Official very high structural hazard",
+    "unmatched": "Official class unmatched",
+}
+ESTIMATED_EXPOSURE_ORDER = ("lower", "intermediate", "higher")
+ESTIMATED_EXPOSURE_COLOURS = {
+    "lower": "#F2E2B8",
+    "intermediate": "#F2A900",
+    "higher": "#A9272C",
+}
+ESTIMATED_EXPOSURE_LABELS = {
+    "lower": "Lower estimated comparative exposure percentile (0–50%)",
+    "intermediate": "Intermediate estimated comparative exposure percentile (50–80%)",
+    "higher": "Higher estimated comparative exposure percentile (80–100%)",
 }
 
 
@@ -87,38 +111,79 @@ def load_historical_screening_artifacts(project_root: Path) -> HistoricalScreeni
     return HistoricalScreeningArtifacts(screening, band_summary, hazard_summary, cross_matrix)
 
 
-def plot_historical_and_icnf_maps(screening: gpd.GeoDataFrame):
-    """Return side-by-side maps of recurrence bands and official hazard classes.
+def plot_historical_and_icnf_maps(
+    screening: gpd.GeoDataFrame, operational_scores: gpd.GeoDataFrame | None = None
+):
+    """Return historical, official, and optional 2026-estimate map panels.
 
-    Both maps use the same 1 km geometries.  Their different colour schemes
-    represent different descriptive concepts and must not be read as an
-    accuracy comparison or as a predictive map.
+    Every panel uses the same 1 km grid geometry. The first two panels are
+    descriptive historical and official layers; the optional third panel is a
+    separate model-based estimate. They aid spatial comparison but are not an
+    accuracy comparison or a property-level recommendation.
     """
 
-    figure, axes = plt.subplots(1, 2, figsize=(15, 8), constrained_layout=True)
+    panel_count = 3 if operational_scores is not None else 2
+    figure, axes = plt.subplots(1, panel_count, figsize=(7.5 * panel_count, 10.5))
+    # Reserve a common lower margin: legends sit below, never over Portugal.
+    figure.subplots_adjust(bottom=0.28, wspace=0.10)
     for value in HISTORICAL_ORDER:
-        screening.loc[screening.historical_exposure_band.eq(value)].plot(
-            ax=axes[0], color=HISTORICAL_COLOURS[value], linewidth=0
-        )
+        subset = screening.loc[screening.historical_exposure_band.eq(value)]
+        if not subset.empty:
+            subset.plot(ax=axes[0], color=HISTORICAL_COLOURS[value], linewidth=0)
     axes[0].set_title("Observed historical exposure band\n2016-2025 recurrence in 2 km context")
     axes[0].axis("off")
     axes[0].legend(
-        handles=[Patch(facecolor=HISTORICAL_COLOURS[value], label=value.title()) for value in HISTORICAL_ORDER],
-        loc="lower left",
-        title="Historical exposure",
+        handles=[Patch(facecolor=HISTORICAL_COLOURS[value], label=HISTORICAL_LABELS[value]) for value in HISTORICAL_ORDER],
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.04),
+        frameon=False,
+        title="Historical exposure bands — 1 km cells",
     )
 
     for value in HAZARD_ORDER:
-        screening.loc[screening.official_icnf_hazard_class.eq(value)].plot(
-            ax=axes[1], color=HAZARD_COLOURS[value], linewidth=0
-        )
+        subset = screening.loc[screening.official_icnf_hazard_class.eq(value)]
+        if not subset.empty:
+            subset.plot(ax=axes[1], color=HAZARD_COLOURS[value], linewidth=0)
     axes[1].set_title("Official ICNF structural hazard\npredominant valid 25 m class per 1 km cell")
     axes[1].axis("off")
     axes[1].legend(
-        handles=[Patch(facecolor=HAZARD_COLOURS[value], label=value.replace("_", " ").title()) for value in HAZARD_ORDER],
-        loc="lower left",
-        title="Official ICNF class",
+        handles=[Patch(facecolor=HAZARD_COLOURS[value], label=HAZARD_LABELS[value]) for value in HAZARD_ORDER],
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.04),
+        frameon=False,
+        title="ICNF structural hazard class — predominant class per 1 km cell",
     )
+
+    if operational_scores is not None:
+        # These are presentation bands from the stored percentile field. The
+        # model output remains the separate continuous burned-share estimate.
+        percentile = operational_scores.predicted_exposure_percentile
+        estimated_bands = {
+            "lower": percentile.le(0.50),
+            "intermediate": percentile.gt(0.50) & percentile.le(0.80),
+            "higher": percentile.gt(0.80),
+        }
+        for value in ESTIMATED_EXPOSURE_ORDER:
+            subset = operational_scores.loc[estimated_bands[value]]
+            if not subset.empty:
+                subset.plot(ax=axes[2], color=ESTIMATED_EXPOSURE_COLOURS[value], linewidth=0)
+        input_year = int(operational_scores.prediction_input_year.iloc[0])
+        forecast_year = int(operational_scores.forecast_year.iloc[0])
+        axes[2].set_title(
+            f"{forecast_year} estimated comparative wildfire exposure\n"
+            f"Fixed nine-feature hurdle model; {input_year} predictor inputs; percentile bands"
+        )
+        axes[2].axis("off")
+        axes[2].legend(
+            handles=[
+                Patch(facecolor=ESTIMATED_EXPOSURE_COLOURS[value], label=ESTIMATED_EXPOSURE_LABELS[value])
+                for value in ESTIMATED_EXPOSURE_ORDER
+            ],
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.04),
+            frameon=False,
+            title="Estimated comparative exposure",
+        )
     return figure
 
 
