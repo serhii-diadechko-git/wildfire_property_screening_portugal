@@ -40,6 +40,8 @@ It does not recommend the purchase of a specific property.
 
 ## Temporal methodology and model evaluation
 
+In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
+
 > Final model-evaluation design: fit T=2010-2019; validate T=2020-2021; one frozen final temporal test T=2022-2024. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.

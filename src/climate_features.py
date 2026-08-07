@@ -1,4 +1,8 @@
-"""Stable ERA5-Land source selection and JJAS derivation helpers."""
+"""Stable ERA5-Land source selection and JJAS derivation helpers.
+
+ERA5-Land ``2m_temperature`` means air temperature at a standard height of
+two metres above the land surface; it is not a two-metre spatial grid.
+"""
 
 from __future__ import annotations
 

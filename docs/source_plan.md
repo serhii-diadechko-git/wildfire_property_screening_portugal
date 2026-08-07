@@ -6,6 +6,8 @@ Collection date for this initial plan: **31 July 2026**.
 
 ## Required model sources
 
+For ERA5-Land, `2m_temperature` refers to air temperature at 2 metres above the land surface. It does not mean a 2 m grid; ERA5-Land remains coarse regional context assigned to 1 km cells by source-cell rules.
+
 These sources support the agreed MVP schema. Optional feature sources are intentionally excluded from the first version.
 
 | Source | Expected fields / products | Access method | Accessibility | Main limitation | Official URL |

@@ -72,7 +72,7 @@ FIELD_CONTRACTS = {
     ),
     "warm_season_mean_2m_temperature_c": FieldContract(
         "float64", "degrees_Celsius", -20.0, 60.0, "forbidden",
-        "JJAS of T only",
+        "JJAS of T only; ERA5-Land air temperature at 2 m above ground",
     ),
     "warm_season_total_precipitation_mm": FieldContract(
         "float64", "millimetres_JJAS_total", 0.0, 3000.0, "forbidden",
@@ -84,7 +84,7 @@ FIELD_CONTRACTS = {
     ),
     "warm_season_max_monthly_2m_temperature_c": FieldContract(
         "float64", "degrees_Celsius", -20.0, 60.0, "forbidden",
-        "maximum of monthly-mean June-September 2 m temperature in T only",
+        "maximum of monthly-mean June-September air temperature at 2 m above ground in T only",
     ),
     "warm_season_min_monthly_soil_water_layer1": FieldContract(
         "float64", "m3_per_m3", 0.0, 1.0, "forbidden",

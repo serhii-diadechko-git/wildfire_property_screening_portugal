@@ -18,6 +18,8 @@ The 2 km buffer is not a second grid resolution. It is an initial modelling para
 
 ## Temporal scope and split
 
+In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
+
 The labelled nine-feature model panel covers predictor years `T=2010-2024`. Model development used `T=2010-2019`, validation used `T=2020-2021`, and the completed frozen final temporal test used `T=2022-2024`. The ICNF archive range is `2000-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
