@@ -6,7 +6,8 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from src.feature_contract import TABLE_COLUMNS, source_years, validate_feature_table
+from src.feature_contract import MODEL_FIELD_CONTRACTS, MODEL_PREDICTOR_COLUMNS, TABLE_COLUMNS, source_years, validate_feature_table
+from src.modeling import NINE_FEATURES
 from src.climate_features import (
     era5_source_paths,
     jjas_total_precipitation_mm,
@@ -16,6 +17,15 @@ CONTRACT_YEARS = (2015, 2016, 2019, 2023)
 
 
 class FeatureDerivationContractTests(unittest.TestCase):
+    def test_final_model_contract_has_the_nine_documented_predictors(self) -> None:
+        self.assertEqual(MODEL_PREDICTOR_COLUMNS, NINE_FEATURES)
+        self.assertEqual(len(MODEL_PREDICTOR_COLUMNS), 9)
+        self.assertEqual(MODEL_PREDICTOR_COLUMNS[-2:], (
+            "warm_season_max_monthly_2m_temperature_c",
+            "warm_season_min_monthly_soil_water_layer1",
+        ))
+        self.assertEqual(MODEL_FIELD_CONTRACTS[NINE_FEATURES[-1]].unit, "m3_per_m3")
+
     def test_temporal_alignment_is_strictly_leakage_safe(self) -> None:
         for predictor_year in CONTRACT_YEARS:
             years = source_years(predictor_year)

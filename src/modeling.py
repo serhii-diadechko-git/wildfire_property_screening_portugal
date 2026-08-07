@@ -8,14 +8,11 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 from threadpoolctl import threadpool_limits
 
-from src.feature_contract import PREDICTOR_COLUMNS
+from src.feature_contract import MODEL_PREDICTOR_COLUMNS
 
 
 RANDOM_SEED = 20260805
-NINE_FEATURES = PREDICTOR_COLUMNS + (
-    "warm_season_max_monthly_2m_temperature_c",
-    "warm_season_min_monthly_soil_water_layer1",
-)
+NINE_FEATURES = MODEL_PREDICTOR_COLUMNS
 
 
 @dataclass
