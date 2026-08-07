@@ -1,10 +1,9 @@
 """Refit the frozen nine-feature candidate on the extended training period.
 
-This module deliberately operates only on T=2010-2021.  T=2022-2024 are
+This module deliberately operates only on T=2010-2021. T=2022-2024 are
 neither present in its input panel nor read from the canonical national panel.
-The two climate-extreme features are derived directly from the registered local
-JJAS ERA5-Land files and accepted static coastal fallback map. The validated
-base panel is read without changing its values.
+The validated extended panel already contains the single nine-predictor
+contract, including all five T-only ERA5-Land climate summaries.
 """
 
 from __future__ import annotations
@@ -13,7 +12,6 @@ import hashlib
 import json
 import os
 import time
-import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -24,13 +22,12 @@ import pandas as pd
 from threadpoolctl import threadpool_limits
 
 from src import national_panel as panel
-from src.climate_features import read_grib_variable
 from src.evaluation import evaluate_predictions, evaluate_tie_aware_rankings
 from src.extended_training_panel import (
     PANEL_PATH as EXTENDED_PANEL_PATH,
 )
-from src.feature_contract import PREDICTOR_COLUMNS, TARGET_COLUMN
-from src.modeling import HistoricalFireMeanRegressor, HurdleHistGradientRegressor, NINE_FEATURES, RANDOM_SEED
+from src.feature_contract import FIELD_CONTRACTS, PREDICTOR_COLUMNS, TARGET_COLUMN
+from src.modeling import HistoricalFireMeanRegressor, HurdleHistGradientRegressor, RANDOM_SEED
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,7 +41,6 @@ REPORT_PATH = ROOT / "reports/validation/extended_training_model_refit.md"
 TRAIN_YEARS = tuple(range(2010, 2020))
 VALIDATION_YEARS = (2020, 2021)
 ALLOWED_YEARS = TRAIN_YEARS + VALIDATION_YEARS
-EXTRA_FEATURES = NINE_FEATURES[-2:]
 
 
 def _sha256(path: Path) -> str:
@@ -59,86 +55,6 @@ def _prediction_sha256(values: np.ndarray) -> str:
     return hashlib.sha256(np.ascontiguousarray(values, dtype="<f8").tobytes()).hexdigest().upper()
 
 
-def _monthly_extreme_grids(years: tuple[int, ...]) -> dict[int, dict[str, np.ndarray]]:
-    """Read the two monthly-extreme fields from each requested annual GRIB."""
-    result: dict[int, dict[str, np.ndarray]] = {}
-    for year in years:
-        path = ROOT / f"data/raw/climate/era5_land/era5_land_monthly_jjas_{year}_mainland_portugal.grib"
-        latitude, longitude, temperature, temperature_months = read_grib_variable(path, "2t")
-        soil_lat, soil_lon, soil, soil_months = read_grib_variable(path, "swvl1")
-        if not (
-            temperature_months == soil_months == (6, 7, 8, 9)
-            and np.array_equal(latitude, soil_lat)
-            and np.array_equal(longitude, soil_lon)
-        ):
-            raise ValueError(f"ERA5 monthly grids/months do not align for T={year}")
-        with warnings.catch_warnings(), np.errstate(invalid="ignore"):
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            result[year] = {
-                "latitude": latitude,
-                "longitude": longitude,
-                "warm_season_max_monthly_2m_temperature_c": np.nanmax(temperature, axis=0) - 273.15,
-                "warm_season_min_monthly_soil_water_layer1": np.nanmin(soil, axis=0),
-            }
-    return result
-
-
-def _derive_extremes_batch(
-    batch_id: str,
-    grids: dict[int, dict[str, np.ndarray]],
-    fallback: pd.DataFrame,
-) -> pd.DataFrame:
-    grid = pd.read_parquet(
-        panel._grid_batch_path(batch_id), columns=["cell_id", "centroid_latitude", "centroid_longitude"]
-    )
-    latitudes = grid.centroid_latitude.to_numpy()
-    longitudes = grid.centroid_longitude.to_numpy()
-    rows: list[pd.DataFrame] = []
-    for year in sorted(grids):
-        source = grids[year]
-        lat_index = np.abs(source["latitude"][:, None] - latitudes).argmin(axis=0)
-        lon_index = np.abs(source["longitude"][:, None] - longitudes).argmin(axis=0)
-        maximum_temperature = source["warm_season_max_monthly_2m_temperature_c"][lat_index, lon_index].astype("float64")
-        minimum_soil_water = source["warm_season_min_monthly_soil_water_layer1"][lat_index, lon_index].astype("float64")
-        masked = np.isnan(maximum_temperature)
-        if not np.array_equal(np.isnan(minimum_soil_water), masked):
-            raise ValueError(f"ERA5 monthly-extreme water-mask differs for T={year}/{batch_id}")
-        for position in np.flatnonzero(masked):
-            cell_id = grid.cell_id.iloc[position]
-            if cell_id not in fallback.index:
-                raise ValueError(f"No accepted ERA5 fallback mapping for {cell_id}")
-            flat_index = int(fallback.loc[cell_id, "fallback_flat_index"])
-            maximum_temperature[position] = float(source["warm_season_max_monthly_2m_temperature_c"].ravel()[flat_index])
-            minimum_soil_water[position] = float(source["warm_season_min_monthly_soil_water_layer1"].ravel()[flat_index])
-        if np.isnan(maximum_temperature).any() or np.isnan(minimum_soil_water).any():
-            raise ValueError(f"ERA5 fallback left missing monthly extrema for T={year}/{batch_id}")
-        rows.append(pd.DataFrame({
-            "cell_id": grid.cell_id.to_numpy(),
-            "observation_year": np.full(len(grid), year, dtype="int16"),
-            "warm_season_max_monthly_2m_temperature_c": maximum_temperature,
-            "warm_season_min_monthly_soil_water_layer1": minimum_soil_water,
-        }))
-    return pd.concat(rows, ignore_index=True)
-
-
-def _monthly_extremes(
-    years: tuple[int, ...], progress: Callable[[str], None] = print
-) -> pd.DataFrame:
-    """Build annual extrema in bounded grid batches, then concatenate."""
-    grids = _monthly_extreme_grids(years)
-    fallback = panel._load_era5_fallback_mapping()
-    catalog = panel.load_grid_catalog()
-    frames: list[pd.DataFrame] = []
-    for number, batch in enumerate(catalog["batches"], start=1):
-        frame = _derive_extremes_batch(batch["batch_id"], grids, fallback)
-        frames.append(frame)
-        progress(f"Extended climate extremes {batch['batch_id']}: {len(frame)} rows ({number}/{catalog['batch_count']})")
-    result = pd.concat(frames, ignore_index=True)
-    if result.duplicated(["cell_id", "observation_year"]).any() or result[list(EXTRA_FEATURES)].isna().any().any():
-        raise ValueError("Invalid climate-extreme component")
-    return result
-
-
 def _validate_frame(frame: pd.DataFrame) -> None:
     if tuple(sorted(int(value) for value in frame.observation_year.unique())) != ALLOWED_YEARS:
         raise ValueError("Extended model frame does not contain precisely T=2010-2021")
@@ -146,16 +62,13 @@ def _validate_frame(frame: pd.DataFrame) -> None:
         raise ValueError("Final-test year entered extended model frame")
     if frame.duplicated(["cell_id", "observation_year"]).any():
         raise ValueError("Duplicate extended model analytical key")
-    required = list(NINE_FEATURES) + [TARGET_COLUMN]
+    required = list(PREDICTOR_COLUMNS) + [TARGET_COLUMN]
     if frame[required].isna().any().any() or not np.isfinite(frame[required].to_numpy(dtype="float64")).all():
         raise ValueError("Extended model frame contains non-finite values")
-    ranges = {
-        "warm_season_max_monthly_2m_temperature_c": (-20.0, 60.0),
-        "warm_season_min_monthly_soil_water_layer1": (0.0, 1.0),
-    }
-    for column, (minimum, maximum) in ranges.items():
+    for column in PREDICTOR_COLUMNS:
+        contract = FIELD_CONTRACTS[column]
         values = frame[column].to_numpy(dtype="float64")
-        if values.min() < minimum or values.max() > maximum:
+        if values.min() < contract.minimum or values.max() > contract.maximum:
             raise ValueError(f"{column} violates its model feature range")
     if not frame.outcome_year.eq(frame.observation_year + 1).all():
         raise ValueError("Outcome year is not T+1")
@@ -178,16 +91,13 @@ def build_extended_nine_feature_matrix(progress: Callable[[str], None] = print) 
             "row_count": len(existing),
             "train_rows": int(existing.observation_year.isin(TRAIN_YEARS).sum()),
             "validation_rows": int(existing.observation_year.isin(VALIDATION_YEARS).sum()),
-            "feature_order": list(NINE_FEATURES),
+            "feature_order": list(PREDICTOR_COLUMNS),
             "final_test_rows_read": 0,
             "status": "validated_reused",
         }
     base = pd.read_parquet(EXTENDED_PANEL_PATH)
     base = base.loc[base.observation_year.isin(ALLOWED_YEARS)].copy()
-    extremes = _monthly_extremes(ALLOWED_YEARS, progress)
-    result = base.merge(
-        extremes, on=["cell_id", "observation_year"], how="left", validate="one_to_one"
-    ).sort_values(
+    result = base.sort_values(
         ["observation_year", "cell_id"], kind="mergesort"
     ).reset_index(drop=True)
     _validate_frame(result)
@@ -201,7 +111,7 @@ def build_extended_nine_feature_matrix(progress: Callable[[str], None] = print) 
         "row_count": len(result),
         "train_rows": int(result.observation_year.isin(TRAIN_YEARS).sum()),
         "validation_rows": int(result.observation_year.isin(VALIDATION_YEARS).sum()),
-        "feature_order": list(NINE_FEATURES),
+        "feature_order": list(PREDICTOR_COLUMNS),
         "final_test_rows_read": 0,
     }
 
@@ -212,7 +122,7 @@ def _save_model(name: str, model: Any, predictions: np.ndarray) -> dict[str, obj
     payload = {
         "model": model,
         "model_name": name,
-        "feature_order": list(NINE_FEATURES),
+        "feature_order": list(PREDICTOR_COLUMNS),
         "train_years": list(TRAIN_YEARS),
         "validation_years": list(VALIDATION_YEARS),
         "random_seed": RANDOM_SEED,
@@ -236,7 +146,7 @@ def refit_extended_models() -> dict[str, object]:
     validation = frame.loc[frame.observation_year.isin(VALIDATION_YEARS)].copy()
     if len(train) != 89112 * len(TRAIN_YEARS) or len(validation) != 89112 * len(VALIDATION_YEARS):
         raise ValueError("Unexpected extended split row count")
-    X_train, X_validation = train.loc[:, NINE_FEATURES], validation.loc[:, NINE_FEATURES]
+    X_train, X_validation = train.loc[:, PREDICTOR_COLUMNS], validation.loc[:, PREDICTOR_COLUMNS]
     historical = HistoricalFireMeanRegressor().fit(X_train, train[TARGET_COLUMN])
     historical_predictions = np.clip(historical.predict(X_validation), 0.0, 1.0)
     hurdle = HurdleHistGradientRegressor()
@@ -272,7 +182,7 @@ def refit_extended_models() -> dict[str, object]:
         "design": {
             "train_years": list(TRAIN_YEARS), "validation_years": list(VALIDATION_YEARS),
             "final_test_years_accessed": [], "final_test_rows_read": 0,
-            "feature_order": list(NINE_FEATURES), "target": TARGET_COLUMN,
+            "feature_order": list(PREDICTOR_COLUMNS), "target": TARGET_COLUMN,
         },
         "row_counts": {"train": len(train), "validation": len(validation)},
         "models": {

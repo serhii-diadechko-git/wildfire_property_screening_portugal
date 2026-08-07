@@ -9,7 +9,6 @@ from src.extended_model_refit import (
     ALLOWED_YEARS,
     FEATURE_MATRIX_PATH,
     METRICS_PATH,
-    NINE_FEATURES,
     TRAIN_YEARS,
     VALIDATION_YEARS,
 )
@@ -37,8 +36,8 @@ class ExtendedTrainingRefitTests(unittest.TestCase):
         self.assertEqual(CANONICAL_REUSED_YEARS, (2015, 2016, 2017, 2018, 2019, 2020, 2021))
 
     def test_frozen_nine_feature_contract(self) -> None:
-        self.assertEqual(NINE_FEATURES[:7], PREDICTOR_COLUMNS)
-        self.assertEqual(NINE_FEATURES[-2:], (
+        self.assertEqual(len(PREDICTOR_COLUMNS), 9)
+        self.assertEqual(PREDICTOR_COLUMNS[-2:], (
             "warm_season_max_monthly_2m_temperature_c",
             "warm_season_min_monthly_soil_water_layer1",
         ))
@@ -54,7 +53,7 @@ class ExtendedTrainingRefitTests(unittest.TestCase):
         self.assertEqual(metrics["design"]["final_test_rows_read"], 0)
         self.assertEqual(metrics["design"]["train_years"], list(TRAIN_YEARS))
         self.assertEqual(metrics["design"]["validation_years"], list(VALIDATION_YEARS))
-        self.assertEqual(metrics["design"]["feature_order"], list(NINE_FEATURES))
+        self.assertEqual(metrics["design"]["feature_order"], list(PREDICTOR_COLUMNS))
         self.assertTrue(metrics["reproducibility"]["saved_model_reload_predictions_identical"])
 
 

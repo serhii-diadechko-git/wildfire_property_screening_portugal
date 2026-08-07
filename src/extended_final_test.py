@@ -1,9 +1,9 @@
 """One frozen final-temporal evaluation of the extended training candidates.
 
 This module may be run only after ``final_temporal_test_protocol.md`` is
-committed.  It does not fit, tune, or select a model: it reconstructs the two
-already frozen monthly-extreme features for T=2022-2024, loads the models fitted
-on T=2010-2019, and reports held-out performance.
+committed. It does not fit, tune, or select a model: it reads the nine-feature
+T=2022-2024 rows, loads models fitted on T=2010-2019, and reports held-out
+performance.
 """
 
 from __future__ import annotations
@@ -11,7 +11,6 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -22,10 +21,9 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from src import national_panel as panel
-from src.climate_features import era5_source_paths, read_grib_variable
 from src.evaluation import regression_metrics, tie_aware_ranking_metrics
-from src.extended_model_refit import MODEL_DIR, NINE_FEATURES, ROOT, _sha256
-from src.feature_contract import TARGET_COLUMN
+from src.extended_model_refit import MODEL_DIR, ROOT, _sha256
+from src.feature_contract import PREDICTOR_COLUMNS, TARGET_COLUMN
 
 
 FINAL_TEST_YEARS = (2022, 2023, 2024)
@@ -73,71 +71,12 @@ def _read_final_panel_rows() -> tuple[pd.DataFrame, dict[str, object]]:
     return result, {"row_groups": groups, "rows_read": len(result), "years_read": list(FINAL_TEST_YEARS)}
 
 
-def _load_monthly_extrema(year: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    path = era5_source_paths(year)["temperature_and_soil_water"]
-    latitude, longitude, temperature, temperature_months = read_grib_variable(path, "2t")
-    soil_lat, soil_lon, soil, soil_months = read_grib_variable(path, "swvl1")
-    if not (
-        temperature_months == soil_months == (6, 7, 8, 9)
-        and np.array_equal(latitude, soil_lat)
-        and np.array_equal(longitude, soil_lon)
-    ):
-        raise ValueError(f"Monthly-extreme GRIB fields do not align for T={year}")
-    with warnings.catch_warnings(), np.errstate(invalid="ignore"):
-        warnings.simplefilter("ignore", category=RuntimeWarning)
-        return latitude, longitude, np.nanmax(temperature, axis=0) - 273.15, np.nanmin(soil, axis=0)
-
-
-def _derive_final_monthly_extrema() -> pd.DataFrame:
-    """Assign only the two frozen extreme features, retaining the coastal fallback."""
-    catalog = panel.load_grid_catalog()
-    grids = {year: _load_monthly_extrema(year) for year in FINAL_TEST_YEARS}
-    fallback = panel._load_era5_fallback_mapping()
-    frames: list[pd.DataFrame] = []
-    for batch in catalog["batches"]:
-        grid = pd.read_parquet(
-            panel._grid_batch_path(batch["batch_id"]),
-            columns=["cell_id", "centroid_latitude", "centroid_longitude"],
-        )
-        rows = []
-        for year, (latitude, longitude, maximum_temperature, minimum_soil_water) in grids.items():
-            latitude_index = np.abs(latitude[:, None] - grid.centroid_latitude.to_numpy()).argmin(axis=0)
-            longitude_index = np.abs(longitude[:, None] - grid.centroid_longitude.to_numpy()).argmin(axis=0)
-            temperature = maximum_temperature[latitude_index, longitude_index].astype("float64")
-            soil_water = minimum_soil_water[latitude_index, longitude_index].astype("float64")
-            masked = np.isnan(temperature)
-            if not np.array_equal(np.isnan(soil_water), masked):
-                raise ValueError(f"Monthly-extreme water mask differs for T={year}/{batch['batch_id']}")
-            for position in np.flatnonzero(masked):
-                cell_id = grid.cell_id.iloc[position]
-                if cell_id not in fallback.index:
-                    raise ValueError(f"No accepted ERA5 fallback for {cell_id}")
-                flat = int(fallback.loc[cell_id, "fallback_flat_index"])
-                temperature[position] = float(maximum_temperature.ravel()[flat])
-                soil_water[position] = float(minimum_soil_water.ravel()[flat])
-            if np.isnan(temperature).any() or np.isnan(soil_water).any():
-                raise ValueError(f"Final monthly-extreme fallback left missing values for T={year}")
-            rows.append(pd.DataFrame({
-                "cell_id": grid.cell_id.to_numpy(),
-                "observation_year": np.full(len(grid), year, dtype="int16"),
-                "warm_season_max_monthly_2m_temperature_c": temperature,
-                "warm_season_min_monthly_soil_water_layer1": soil_water,
-            }))
-        frames.append(pd.concat(rows, ignore_index=True))
-    result = pd.concat(frames, ignore_index=True)
-    if result.duplicated(["cell_id", "observation_year"]).any() or result.isna().any().any():
-        raise ValueError("Invalid final monthly-extreme component")
-    return result
-
-
 def build_final_feature_matrix() -> dict[str, object]:
     if not PROTOCOL_PATH.exists():
         raise FileNotFoundError("Final-test protocol must be present before execution")
     base, access = _read_final_panel_rows()
-    extrema = _derive_final_monthly_extrema()
-    result = base.merge(extrema, on=["cell_id", "observation_year"], how="left", validate="one_to_one")
-    result = result.sort_values(["observation_year", "cell_id"], kind="mergesort").reset_index(drop=True)
-    if result[list(NINE_FEATURES) + [TARGET_COLUMN]].isna().any().any():
+    result = base.sort_values(["observation_year", "cell_id"], kind="mergesort").reset_index(drop=True)
+    if result[list(PREDICTOR_COLUMNS) + [TARGET_COLUMN]].isna().any().any():
         raise ValueError("Final feature matrix contains missing values")
     if not result.outcome_year.eq(result.observation_year + 1).all():
         raise ValueError("Final target year is not T+1")
@@ -185,11 +124,11 @@ def run_final_test() -> dict[str, object]:
     artifact_checks = {}
     for name, path in model_files.items():
         payload = joblib.load(path)
-        if payload.get("feature_order") != list(NINE_FEATURES):
+        if payload.get("feature_order") != list(PREDICTOR_COLUMNS):
             raise ValueError(f"Frozen model {name} has a different feature contract")
         if payload.get("train_years") != list(range(2010, 2020)):
             raise ValueError(f"Frozen model {name} has a different training period")
-        values = np.clip(np.asarray(payload["model"].predict(frame.loc[:, NINE_FEATURES]), dtype="float64"), 0.0, 1.0)
+        values = np.clip(np.asarray(payload["model"].predict(frame.loc[:, PREDICTOR_COLUMNS]), dtype="float64"), 0.0, 1.0)
         if not np.isfinite(values).all():
             raise ValueError(f"Frozen model {name} returned non-finite values")
         predictions[name] = values
@@ -203,7 +142,7 @@ def run_final_test() -> dict[str, object]:
     result = {
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "protocol_path": PROTOCOL_PATH.relative_to(ROOT).as_posix(),
-        "design": {"train_years": list(range(2010, 2020)), "validation_years": [2020, 2021], "final_test_years": list(FINAL_TEST_YEARS), "feature_order": list(NINE_FEATURES), "target": TARGET_COLUMN, "tuning_performed": False},
+        "design": {"train_years": list(range(2010, 2020)), "validation_years": [2020, 2021], "final_test_years": list(FINAL_TEST_YEARS), "feature_order": list(PREDICTOR_COLUMNS), "target": TARGET_COLUMN, "tuning_performed": False},
         "feature_matrix": matrix,
         "frozen_artifacts": artifact_checks,
         "metrics": metrics,

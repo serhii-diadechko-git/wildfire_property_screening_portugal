@@ -36,7 +36,7 @@ from shapely.geometry import mapping
 from src.clc_validation import CANONICAL_CLC_CLASS_MAPPING
 from src.climate_features import era5_source_paths, jjas_total_precipitation_mm, read_grib_variable
 from src.config import CLC, SPATIAL, TEMPORAL
-from src.feature_contract import PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
+from src.feature_contract import CLIMATE_PREDICTOR_COLUMNS, PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
 from src.geospatial_utils import (
     BOUNDARY_PATH,
     GRID_PATH,
@@ -83,6 +83,8 @@ EXPECTED_ARROW_TYPES = {
     "warm_season_mean_2m_temperature_c": "double",
     "warm_season_total_precipitation_mm": "double",
     "warm_season_mean_soil_water_layer1": "double",
+    "warm_season_max_monthly_2m_temperature_c": "double",
+    "warm_season_min_monthly_soil_water_layer1": "double",
     TARGET_COLUMN: "double",
 }
 
@@ -126,7 +128,11 @@ def _manifest_path(path: Path) -> Path:
     return path.with_suffix(path.suffix + ".json")
 
 
-def _validate_existing_batch(path: Path, expected_rows: int | None = None) -> dict[str, object]:
+def _validate_existing_batch(
+    path: Path,
+    expected_rows: int | None = None,
+    required_columns: tuple[str, ...] = (),
+) -> dict[str, object]:
     manifest_path = _manifest_path(path)
     if path.exists() != manifest_path.exists():
         raise FileExistsError(f"Incomplete batch publication; inspect {path} and {manifest_path}")
@@ -138,6 +144,9 @@ def _validate_existing_batch(path: Path, expected_rows: int | None = None) -> di
     rows = pq.ParquetFile(path).metadata.num_rows
     if rows != manifest["row_count"] or (expected_rows is not None and rows != expected_rows):
         raise ValueError(f"Completed batch row count changed: {path}")
+    columns = tuple(pq.ParquetFile(path).schema.names)
+    if required_columns and not set(required_columns).issubset(columns):
+        return {}
     return manifest
 
 
@@ -148,8 +157,9 @@ def _publish_parquet(
     component: str,
     batch_id: str,
     metadata: dict[str, object] | None = None,
+    required_columns: tuple[str, ...] = (),
 ) -> dict[str, object]:
-    existing = _validate_existing_batch(path, len(frame))
+    existing = _validate_existing_batch(path, len(frame), required_columns)
     if existing:
         return existing | {"status": "reused"}
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -629,12 +639,16 @@ def load_era5_grids() -> dict[int, dict[str, object]]:
             warnings.simplefilter("ignore", category=RuntimeWarning)
             temperature_c = np.nanmean(temperature, axis=0) - 273.15
             soil_mean = np.nanmean(soil_water, axis=0)
+            temperature_max = np.nanmax(temperature, axis=0) - 273.15
+            soil_min = np.nanmin(soil_water, axis=0)
         result[year] = {
             "latitude": latitude,
             "longitude": longitude,
             "warm_season_mean_2m_temperature_c": temperature_c,
             "warm_season_total_precipitation_mm": jjas_total_precipitation_mm(precipitation, months),
             "warm_season_mean_soil_water_layer1": soil_mean,
+            "warm_season_max_monthly_2m_temperature_c": temperature_max,
+            "warm_season_min_monthly_soil_water_layer1": soil_min,
             "temperature_soil_path": str(paths["temperature_and_soil_water"].relative_to(ROOT)).replace("\\", "/"),
             "precipitation_path": str(paths["precipitation"].relative_to(ROOT)).replace("\\", "/"),
         }
@@ -669,7 +683,7 @@ def derive_era_batch(
         lon_index = np.abs(source["longitude"][:, None] - longitude_points).argmin(axis=0)
         values = {
             feature: source[feature][lat_index, lon_index]
-            for feature in PREDICTOR_COLUMNS[-3:]
+            for feature in CLIMATE_PREDICTOR_COLUMNS
         }
         mask = np.isnan(values["warm_season_mean_2m_temperature_c"])
         for feature in values:
@@ -704,7 +718,9 @@ def build_era_batches(progress: Callable[[str], None] = print) -> dict[str, obje
         batch_id = batch["batch_id"]
         path = _component_batch_path(CANONICAL_ERA_BATCH_DIR, "era5", batch_id)
         expected_rows = batch["row_count"] * len(OBSERVATION_YEARS)
-        existing = _validate_existing_batch(path, expected_rows)
+        existing = _validate_existing_batch(
+            path, expected_rows, ("cell_id", "observation_year", *CLIMATE_PREDICTOR_COLUMNS)
+        )
         if existing:
             reused += 1
             continue
@@ -723,6 +739,7 @@ def build_era_batches(progress: Callable[[str], None] = print) -> dict[str, obje
                     "source_paths_by_year": source_paths,
                     "assignment": "containing_valid_cell_else_accepted_nearest_valid_land_cell_no_interpolation",
                 },
+                required_columns=("cell_id", "observation_year", *CLIMATE_PREDICTOR_COLUMNS),
             )
         except Exception as error:
             raise BatchError(f"era5/{batch_id} failed: {error}") from error
@@ -798,7 +815,7 @@ def derive_panel_batch(batch_id: str) -> pd.DataFrame:
         release = _CLC_RAW_BY_REFERENCE_YEAR[reference_year]
         cell_ids = grid.cell_id.to_numpy()
         historical_count = icnf.loc[cell_ids, [f"context_{item}" for item in history]].sum(axis=1).astype("int8")
-        climate = era.loc[(cell_ids, year), list(PREDICTOR_COLUMNS[-3:])]
+        climate = era.loc[(cell_ids, year), list(CLIMATE_PREDICTOR_COLUMNS)]
         rows.append(pd.DataFrame({
             "cell_year_id": cell_ids + np.full(len(cell_ids), f"_{year}", dtype=object),
             "cell_id": cell_ids,
@@ -818,6 +835,8 @@ def derive_panel_batch(batch_id: str) -> pd.DataFrame:
             "warm_season_mean_2m_temperature_c": climate["warm_season_mean_2m_temperature_c"].to_numpy(),
             "warm_season_total_precipitation_mm": climate["warm_season_total_precipitation_mm"].to_numpy(),
             "warm_season_mean_soil_water_layer1": climate["warm_season_mean_soil_water_layer1"].to_numpy(),
+            "warm_season_max_monthly_2m_temperature_c": climate["warm_season_max_monthly_2m_temperature_c"].to_numpy(),
+            "warm_season_min_monthly_soil_water_layer1": climate["warm_season_min_monthly_soil_water_layer1"].to_numpy(),
             TARGET_COLUMN: icnf.loc[cell_ids, f"share_{int(years['outcome_year'])}"].to_numpy(),
         }, columns=TABLE_COLUMNS))
     frame = pd.concat(rows, ignore_index=True)
@@ -837,7 +856,7 @@ def build_panel_batches(progress: Callable[[str], None] = print) -> dict[str, ob
         batch_id = batch["batch_id"]
         path = _component_batch_path(CANONICAL_PANEL_BATCH_DIR, "panel", batch_id)
         expected_rows = batch["row_count"] * len(OBSERVATION_YEARS)
-        existing = _validate_existing_batch(path, expected_rows)
+        existing = _validate_existing_batch(path, expected_rows, TABLE_COLUMNS)
         if existing:
             reused += 1
             continue
@@ -846,6 +865,7 @@ def build_panel_batches(progress: Callable[[str], None] = print) -> dict[str, ob
             _publish_parquet(
                 frame, path, component="panel", batch_id=batch_id,
                 metadata={"observation_years": OBSERVATION_YEARS},
+                required_columns=TABLE_COLUMNS,
             )
         except Exception as error:
             raise BatchError(f"panel/{batch_id} failed: {error}") from error
@@ -873,9 +893,12 @@ def assemble_national_panel(progress: Callable[[str], None] = print) -> dict[str
         manifest = json.loads(metadata_path.read_text(encoding="utf-8"))
         if _sha256(NATIONAL_PANEL_PATH) != manifest["sha256"]:
             raise ValueError("Assembled national panel checksum changed")
-        if pq.ParquetFile(NATIONAL_PANEL_PATH).metadata.num_rows != expected_rows:
+        parquet = pq.ParquetFile(NATIONAL_PANEL_PATH)
+        if parquet.metadata.num_rows != expected_rows:
             raise ValueError("Assembled national panel row count changed")
-        return manifest | {"status": "reused"}
+        if set(TABLE_COLUMNS).issubset(parquet.schema.names):
+            return manifest | {"status": "reused"}
+        parquet.close()
     NATIONAL_PANEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     temporary = NATIONAL_PANEL_PATH.with_suffix(".parquet.tmp")
     if temporary.exists():
@@ -1131,7 +1154,7 @@ def validate_national_panel() -> dict[str, object]:
         )
         if tuple(frame.cell_id) != expected_ids:
             raise ValueError(f"National panel ordering differs in T={year}")
-        climate_columns = list(PREDICTOR_COLUMNS[-3:])
+        climate_columns = list(CLIMATE_PREDICTOR_COLUMNS)
         climate_mask = frame[climate_columns].isna()
         if not climate_mask.eq(climate_mask.iloc[:, 0], axis=0).all().all():
             raise ValueError(f"Climate missingness is not joint in T={year}")
@@ -1241,7 +1264,7 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         )
     else:
         climate_text = (
-            "ERA5-Land water-mask records were retained with all three climate fields missing; no zero substitution, "
+            "ERA5-Land water-mask records were retained with all five climate fields missing; no zero substitution, "
             "imputation, exclusion, or nearest-cell substitution was applied. "
             f"Affected cells: {metrics['climate_water_mask']['affected_cell_count']:,}; affected rows: "
             f"{metrics['climate_water_mask']['affected_row_count']:,} "

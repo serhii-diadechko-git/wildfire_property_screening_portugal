@@ -25,7 +25,7 @@ The continuous target remains scientifically meaningful, but aggregate MAE/RMSE 
 
 ## Predictor completeness, drift and redundancy
 
-All seven predictors and the target have zero missing values. Standardized mean differences below compare each later split with training:
+All nine predictors and the target have zero missing values. Standardized mean differences below compare each later split with training:
 
 | Split | Predictor | Standardized mean difference |
 |---|---|---:|
@@ -36,6 +36,8 @@ All seven predictors and the target have zero missing values. Standardized mean 
 | validation | `warm_season_mean_2m_temperature_c` | -0.188 |
 | validation | `warm_season_total_precipitation_mm` | 0.678 |
 | validation | `warm_season_mean_soil_water_layer1` | 0.214 |
+| validation | `warm_season_max_monthly_2m_temperature_c` | 0.147 |
+| validation | `warm_season_min_monthly_soil_water_layer1` | -0.064 |
 | final_test | `built_up_share` | 0.004 |
 | final_test | `forest_shrub_share_2km` | -0.023 |
 | final_test | `mean_slope_2km` | 0.000 |
@@ -43,8 +45,10 @@ All seven predictors and the target have zero missing values. Standardized mean 
 | final_test | `warm_season_mean_2m_temperature_c` | 0.089 |
 | final_test | `warm_season_total_precipitation_mm` | 0.849 |
 | final_test | `warm_season_mean_soil_water_layer1` | 0.289 |
+| final_test | `warm_season_max_monthly_2m_temperature_c` | 0.409 |
+| final_test | `warm_season_min_monthly_soil_water_layer1` | -0.126 |
 
-High predictor redundancy: None at |r| >= 0.8.
+High predictor redundancy: `warm_season_mean_2m_temperature_c` / `warm_season_max_monthly_2m_temperature_c`: 0.920; `warm_season_mean_soil_water_layer1` / `warm_season_min_monthly_soil_water_layer1`: 0.850
 
 The largest split drift is JJAS precipitation: validation is +0.678 and final test +0.849 training standard deviations. Final-test years contain 9,332 precipitation rows above the training 3-IQR upper fence, but all remain inside the physical feature contract. The built-up-share training IQR is zero because most cells have zero mapped built-up area, so its 3-IQR flag counts non-zero values rather than implausible extremes.
 

@@ -24,7 +24,7 @@ training period for this comparison.
 
 1. **Historical recurrence baseline** — training-period empirical mean of
    `burned_share_next_year` by `fire_years_previous_10y_2km`.
-2. **Nine-feature hurdle regressor** — the seven canonical predictors plus
+2. **Nine-feature hurdle regressor** — all nine canonical predictors, including
    `warm_season_max_monthly_2m_temperature_c` and
    `warm_season_min_monthly_soil_water_layer1`. Its fixed output is expected
    next-year burned share, not a probability.

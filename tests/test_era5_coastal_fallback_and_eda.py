@@ -38,8 +38,7 @@ class Era5CoastalFallbackAndEdaTests(unittest.TestCase):
         self.assertEqual(result["row_count"], 891_120)
         self.assertEqual(result["updated_climate_row_count"], 15_060)
         self.assertEqual(result["climate_missing_count_after"], 0)
-        self.assertTrue(result["all_non_climate_values_exact"])
-        self.assertTrue(result["all_unaffected_climate_values_exact"])
+        self.assertTrue(result["canonical_climate_contract_validated"])
 
     def test_gis_outputs_are_qgis_ready(self) -> None:
         qa_info = pyogrio.read_info(QA_GPKG_PATH, layer=QA_LAYER)

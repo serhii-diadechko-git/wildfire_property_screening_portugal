@@ -10,7 +10,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from src.config import OPERATIONAL_FORECAST
-from src.modeling import NINE_FEATURES
+from src.feature_contract import PREDICTOR_COLUMNS
 from src.operational_forecast import (
     CURRENT_FORECAST_YEAR,
     LABELED_PANEL_PATH,
@@ -38,7 +38,7 @@ class OperationalForecastTests(unittest.TestCase):
         metadata = pq.ParquetFile(LABELED_PANEL_PATH).metadata
         self.assertEqual(metadata.num_rows, 89_112 * 15)
         self.assertEqual(manifest["observation_years"], list(range(2010, 2025)))
-        self.assertEqual(manifest["feature_order"], list(NINE_FEATURES))
+        self.assertEqual(manifest["feature_order"], list(PREDICTOR_COLUMNS))
         self.assertEqual(manifest["target_lineage"], "Copied from validated ICNF T+1 labels; no target recalculation performed.")
 
     def test_operational_model_is_refit_only_through_observed_2025_outcome(self) -> None:
@@ -47,7 +47,7 @@ class OperationalForecastTests(unittest.TestCase):
         payload = joblib.load(MODEL_PATH)
         self.assertEqual(metadata["training_predictor_years"], list(range(2010, 2025)))
         self.assertEqual(metadata["training_observed_outcome_years"], list(range(2011, 2026)))
-        self.assertEqual(payload["feature_order"], list(NINE_FEATURES))
+        self.assertEqual(payload["feature_order"], list(PREDICTOR_COLUMNS))
         self.assertIn("not a probability", payload["output_interpretation"])
 
     def test_current_preflight_is_ready_with_2025_era5_and_no_future_data(self) -> None:

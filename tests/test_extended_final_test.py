@@ -6,7 +6,7 @@ import json
 import unittest
 
 from src.extended_final_test import FINAL_TEST_YEARS, METRICS_PATH
-from src.modeling import NINE_FEATURES
+from src.feature_contract import PREDICTOR_COLUMNS
 
 
 class ExtendedFinalTestTests(unittest.TestCase):
@@ -19,7 +19,7 @@ class ExtendedFinalTestTests(unittest.TestCase):
         metrics = json.loads(METRICS_PATH.read_text(encoding="utf-8"))
         self.assertEqual(metrics["design"]["final_test_years"], list(FINAL_TEST_YEARS))
         self.assertFalse(metrics["design"]["tuning_performed"])
-        self.assertEqual(metrics["design"]["feature_order"], list(NINE_FEATURES))
+        self.assertEqual(metrics["design"]["feature_order"], list(PREDICTOR_COLUMNS))
         self.assertEqual(metrics["feature_matrix"]["row_count"], 89112 * len(FINAL_TEST_YEARS))
         for model in metrics["metrics"].values():
             self.assertEqual(set(model["by_final_test_year"]), {"2022", "2023", "2024"})

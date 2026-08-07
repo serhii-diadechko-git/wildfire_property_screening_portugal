@@ -219,7 +219,7 @@ def _write_report(metrics: dict[str, object]) -> None:
         "The model design therefore retains continuous regression and adds a zero-prediction baseline, positive-row error reporting, "
         "and a compound/Tweedie candidate without defining the deferred classification threshold.\n\n"
         "## Predictor completeness, drift and redundancy\n\n"
-        "All seven predictors and the target have zero missing values. Standardized mean differences below compare each later split with training:\n\n"
+        "All nine predictors and the target have zero missing values. Standardized mean differences below compare each later split with training:\n\n"
         "| Split | Predictor | Standardized mean difference |\n|---|---|---:|\n" + "\n".join(drift_rows) + "\n\n"
         f"High predictor redundancy: {redundancy_text}\n\n"
         "The largest split drift is JJAS precipitation: validation is +0.678 and final test +0.849 training standard deviations. "

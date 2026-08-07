@@ -1,5 +1,5 @@
 {
-  "created_utc": "2026-08-05T12:05:00.515474+00:00",
+  "created_utc": "2026-08-07T09:06:43.841717+00:00",
   "panel_path": "data/processed/national_panel_2015_2024.parquet",
   "row_count": 891120,
   "split_row_counts": {
@@ -15,6 +15,8 @@
     "warm_season_mean_2m_temperature_c": 0,
     "warm_season_total_precipitation_mm": 0,
     "warm_season_mean_soil_water_layer1": 0,
+    "warm_season_max_monthly_2m_temperature_c": 0,
+    "warm_season_min_monthly_soil_water_layer1": 0,
     "burned_share_next_year": 0
   },
   "target": {
@@ -266,6 +268,38 @@
         "standard_deviation": 0.046671499618296704,
         "zero_count": 0
       },
+      "warm_season_max_monthly_2m_temperature_c": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 18.347802734375023,
+        "p01": 19.435693359375023,
+        "p05": 20.274072265625023,
+        "p25": 22.043115234375023,
+        "median": 23.706445312500023,
+        "p75": 25.556787109375023,
+        "p95": 27.663476562500023,
+        "p99": 28.620507812500023,
+        "maximum": 29.420556640625023,
+        "mean": 23.814937335047837,
+        "standard_deviation": 2.3046110890483797,
+        "zero_count": 0
+      },
+      "warm_season_min_monthly_soil_water_layer1": {
+        "count": 445560,
+        "missing": 0,
+        "minimum": 0.0306549072265625,
+        "p01": 0.041107177734375,
+        "p05": 0.04888916015625,
+        "p25": 0.0893096923828125,
+        "median": 0.1149749755859375,
+        "p75": 0.1338958740234375,
+        "p95": 0.1614990234375,
+        "p99": 0.2297515869140625,
+        "maximum": 0.3411407470703125,
+        "mean": 0.11111599385968465,
+        "standard_deviation": 0.0373808279924686,
+        "zero_count": 0
+      },
       "burned_share_next_year": {
         "count": 445560,
         "missing": 0,
@@ -394,6 +428,38 @@
         "maximum": 0.3411407470703125,
         "mean": 0.14559366643316432,
         "standard_deviation": 0.04589680353256566,
+        "zero_count": 0
+      },
+      "warm_season_max_monthly_2m_temperature_c": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 18.672998046875023,
+        "p01": 19.379785156250023,
+        "p05": 20.197412109375023,
+        "p25": 22.223779296875023,
+        "median": 24.033349609375023,
+        "p75": 26.004052734375023,
+        "p95": 28.703271484375023,
+        "p99": 29.584130859375023,
+        "maximum": 30.369287109375023,
+        "mean": 24.153101091413163,
+        "standard_deviation": 2.5596691232795137,
+        "zero_count": 0
+      },
+      "warm_season_min_monthly_soil_water_layer1": {
+        "count": 178224,
+        "missing": 0,
+        "minimum": 0.037078857421875,
+        "p01": 0.0423431396484375,
+        "p05": 0.049041748046875,
+        "p25": 0.087860107421875,
+        "median": 0.1128692626953125,
+        "p75": 0.12994384765625,
+        "p95": 0.14984130859375,
+        "p99": 0.2201690673828125,
+        "maximum": 0.3411407470703125,
+        "mean": 0.10871768064093938,
+        "standard_deviation": 0.03570902091637867,
         "zero_count": 0
       },
       "burned_share_next_year": {
@@ -526,6 +592,38 @@
         "standard_deviation": 0.050388382296963984,
         "zero_count": 0
       },
+      "warm_season_max_monthly_2m_temperature_c": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 19.229882812500023,
+        "p01": 20.113671875000023,
+        "p05": 21.118798828125023,
+        "p25": 22.801171875000023,
+        "median": 24.700830078125023,
+        "p75": 26.575830078125023,
+        "p95": 28.603906250000023,
+        "p99": 29.650048828125023,
+        "maximum": 30.909814453125023,
+        "mean": 24.756822766457777,
+        "standard_deviation": 2.3724485217681774,
+        "zero_count": 0
+      },
+      "warm_season_min_monthly_soil_water_layer1": {
+        "count": 267336,
+        "missing": 0,
+        "minimum": 0.023834228515625,
+        "p01": 0.0365753173828125,
+        "p05": 0.0458526611328125,
+        "p25": 0.0866546630859375,
+        "median": 0.10943603515625,
+        "p75": 0.1276092529296875,
+        "p95": 0.1473388671875,
+        "p99": 0.2234344482421875,
+        "maximum": 0.3411407470703125,
+        "mean": 0.10640765536383316,
+        "standard_deviation": 0.03589950663225606,
+        "zero_count": 0
+      },
       "burned_share_next_year": {
         "count": 267336,
         "missing": 0,
@@ -552,7 +650,9 @@
       "fire_years_previous_10y_2km": 2.2643639464942993,
       "warm_season_mean_2m_temperature_c": 21.662715160021612,
       "warm_season_total_precipitation_mm": 84.3428610171359,
-      "warm_season_mean_soil_water_layer1": 0.1321752604981044
+      "warm_season_mean_soil_water_layer1": 0.1321752604981044,
+      "warm_season_max_monthly_2m_temperature_c": 23.34364031918315,
+      "warm_season_min_monthly_soil_water_layer1": 0.10801622360096616
     },
     "2016": {
       "built_up_share": 0.03803253617007097,
@@ -561,7 +661,9 @@
       "fire_years_previous_10y_2km": 2.1360759493670884,
       "warm_season_mean_2m_temperature_c": 22.780487395338895,
       "warm_season_total_precipitation_mm": 46.2722048447141,
-      "warm_season_mean_soil_water_layer1": 0.13872347944824537
+      "warm_season_mean_soil_water_layer1": 0.13872347944824537,
+      "warm_season_max_monthly_2m_temperature_c": 24.756687319990423,
+      "warm_season_min_monthly_soil_water_layer1": 0.10823140245802859
     },
     "2017": {
       "built_up_share": 0.03803253617007097,
@@ -570,7 +672,9 @@
       "fire_years_previous_10y_2km": 2.233402908699165,
       "warm_season_mean_2m_temperature_c": 22.14568788018346,
       "warm_season_total_precipitation_mm": 32.92012034497125,
-      "warm_season_mean_soil_water_layer1": 0.120076849233934
+      "warm_season_mean_soil_water_layer1": 0.120076849233934,
+      "warm_season_max_monthly_2m_temperature_c": 23.21785117170845,
+      "warm_season_min_monthly_soil_water_layer1": 0.11209904264639627
     },
     "2018": {
       "built_up_share": 0.03803253617007097,
@@ -579,7 +683,9 @@
       "fire_years_previous_10y_2km": 2.5112779423646647,
       "warm_season_mean_2m_temperature_c": 21.978761199038875,
       "warm_season_total_precipitation_mm": 80.01878601434066,
-      "warm_season_mean_soil_water_layer1": 0.15444605007389095
+      "warm_season_mean_soil_water_layer1": 0.15444605007389095,
+      "warm_season_max_monthly_2m_temperature_c": 25.037219103487768,
+      "warm_season_min_monthly_soil_water_layer1": 0.10911602678135424
     },
     "2019": {
       "built_up_share": 0.03839488368041521,
@@ -588,7 +694,9 @@
       "fire_years_previous_10y_2km": 2.513185654008439,
       "warm_season_mean_2m_temperature_c": 21.074393042384536,
       "warm_season_total_precipitation_mm": 67.62014755841365,
-      "warm_season_mean_soil_water_layer1": 0.13262272459010116
+      "warm_season_mean_soil_water_layer1": 0.13262272459010116,
+      "warm_season_max_monthly_2m_temperature_c": 22.71928876086942,
+      "warm_season_min_monthly_soil_water_layer1": 0.118117273811678
     },
     "2020": {
       "built_up_share": 0.03839488368041521,
@@ -597,7 +705,9 @@
       "fire_years_previous_10y_2km": 2.55886973696023,
       "warm_season_mean_2m_temperature_c": 22.060761890365168,
       "warm_season_total_precipitation_mm": 69.29009646124081,
-      "warm_season_mean_soil_water_layer1": 0.137614978987542
+      "warm_season_mean_soil_water_layer1": 0.137614978987542,
+      "warm_season_max_monthly_2m_temperature_c": 25.446804881076645,
+      "warm_season_min_monthly_soil_water_layer1": 0.10944391043933828
     },
     "2021": {
       "built_up_share": 0.03839488368041521,
@@ -606,7 +716,9 @@
       "fire_years_previous_10y_2km": 2.5386255498698267,
       "warm_season_mean_2m_temperature_c": 21.03136150381685,
       "warm_season_total_precipitation_mm": 128.5207690788493,
-      "warm_season_mean_soil_water_layer1": 0.15357235387878665
+      "warm_season_mean_soil_water_layer1": 0.15357235387878665,
+      "warm_season_max_monthly_2m_temperature_c": 22.85939730174968,
+      "warm_season_min_monthly_soil_water_layer1": 0.1079914508425405
     },
     "2022": {
       "built_up_share": 0.03839488368041521,
@@ -615,7 +727,9 @@
       "fire_years_previous_10y_2km": 2.376627165813807,
       "warm_season_mean_2m_temperature_c": 22.391527867713197,
       "warm_season_total_precipitation_mm": 94.92117771805732,
-      "warm_season_mean_soil_water_layer1": 0.14064696652958386
+      "warm_season_mean_soil_water_layer1": 0.14064696652958386,
+      "warm_season_max_monthly_2m_temperature_c": 25.768124014582796,
+      "warm_season_min_monthly_soil_water_layer1": 0.10630227436613958
     },
     "2023": {
       "built_up_share": 0.03839488368041521,
@@ -624,7 +738,9 @@
       "fire_years_previous_10y_2km": 2.3251413950983033,
       "warm_season_mean_2m_temperature_c": 22.176275276960126,
       "warm_season_total_precipitation_mm": 141.5204240046886,
-      "warm_season_mean_soil_water_layer1": 0.16722665413972002
+      "warm_season_mean_soil_water_layer1": 0.16722665413972002,
+      "warm_season_max_monthly_2m_temperature_c": 24.358332320738253,
+      "warm_season_min_monthly_soil_water_layer1": 0.106140215656511
     },
     "2024": {
       "built_up_share": 0.03839488368041521,
@@ -633,7 +749,9 @@
       "fire_years_previous_10y_2km": 2.275911212855732,
       "warm_season_mean_2m_temperature_c": 21.757545924475682,
       "warm_season_total_precipitation_mm": 88.00155855155906,
-      "warm_season_mean_soil_water_layer1": 0.13943423624686807
+      "warm_season_mean_soil_water_layer1": 0.13943423624686807,
+      "warm_season_max_monthly_2m_temperature_c": 24.144011964052282,
+      "warm_season_min_monthly_soil_water_layer1": 0.10678047606884893
     }
   },
   "split_standardized_mean_difference_from_train": {
@@ -644,7 +762,9 @@
       "fire_years_previous_10y_2km": 0.09006924566431772,
       "warm_season_mean_2m_temperature_c": -0.18795768239059063,
       "warm_season_total_precipitation_mm": 0.6783759193926933,
-      "warm_season_mean_soil_water_layer1": 0.21393770815101043
+      "warm_season_mean_soil_water_layer1": 0.21393770815101043,
+      "warm_season_max_monthly_2m_temperature_c": 0.14673354561743443,
+      "warm_season_min_monthly_soil_water_layer1": -0.0641589110660812
     },
     "final_test": {
       "built_up_share": 0.004420440539573778,
@@ -653,7 +773,9 @@
       "fire_years_previous_10y_2km": -0.0023931554547148423,
       "warm_season_mean_2m_temperature_c": 0.08850604771888133,
       "warm_season_total_precipitation_mm": 0.8493505871632341,
-      "warm_season_mean_soil_water_layer1": 0.28912176196524386
+      "warm_season_mean_soil_water_layer1": 0.28912176196524386,
+      "warm_season_max_monthly_2m_temperature_c": 0.40869604241940155,
+      "warm_season_min_monthly_soil_water_layer1": -0.12595597124815203
     }
   },
   "correlations": {
@@ -665,6 +787,8 @@
       "warm_season_mean_2m_temperature_c": -0.15702864681027132,
       "warm_season_total_precipitation_mm": 0.05715066887587153,
       "warm_season_mean_soil_water_layer1": -0.010234100759501059,
+      "warm_season_max_monthly_2m_temperature_c": -0.1921430700786708,
+      "warm_season_min_monthly_soil_water_layer1": -0.04187172218240684,
       "burned_share_next_year": -0.032029063058384676
     },
     "forest_shrub_share_2km": {
@@ -675,6 +799,8 @@
       "warm_season_mean_2m_temperature_c": -0.31288292773550447,
       "warm_season_total_precipitation_mm": 0.21698429456576446,
       "warm_season_mean_soil_water_layer1": -0.12245927756314685,
+      "warm_season_max_monthly_2m_temperature_c": -0.26442126340718763,
+      "warm_season_min_monthly_soil_water_layer1": -0.25422612970059466,
       "burned_share_next_year": 0.12543076203888948
     },
     "mean_slope_2km": {
@@ -685,6 +811,8 @@
       "warm_season_mean_2m_temperature_c": -0.4146802911064668,
       "warm_season_total_precipitation_mm": 0.4091427202083713,
       "warm_season_mean_soil_water_layer1": 0.2895584485596223,
+      "warm_season_max_monthly_2m_temperature_c": -0.29750430062167693,
+      "warm_season_min_monthly_soil_water_layer1": 0.13628826215376252,
       "burned_share_next_year": 0.12395552527761046
     },
     "fire_years_previous_10y_2km": {
@@ -695,6 +823,8 @@
       "warm_season_mean_2m_temperature_c": -0.470303659585062,
       "warm_season_total_precipitation_mm": 0.5315460429084166,
       "warm_season_mean_soil_water_layer1": 0.36981875057250047,
+      "warm_season_max_monthly_2m_temperature_c": -0.35655392588161766,
+      "warm_season_min_monthly_soil_water_layer1": 0.14372860753298788,
       "burned_share_next_year": 0.06874470096974634
     },
     "warm_season_mean_2m_temperature_c": {
@@ -705,6 +835,8 @@
       "warm_season_mean_2m_temperature_c": 1.0,
       "warm_season_total_precipitation_mm": -0.631905069932751,
       "warm_season_mean_soil_water_layer1": -0.2015993187041663,
+      "warm_season_max_monthly_2m_temperature_c": 0.9195909363849064,
+      "warm_season_min_monthly_soil_water_layer1": 0.06483845502441074,
       "burned_share_next_year": -0.07892397580636515
     },
     "warm_season_total_precipitation_mm": {
@@ -715,6 +847,8 @@
       "warm_season_mean_2m_temperature_c": -0.631905069932751,
       "warm_season_total_precipitation_mm": 1.0,
       "warm_season_mean_soil_water_layer1": 0.5627982662303287,
+      "warm_season_max_monthly_2m_temperature_c": -0.46730941175012003,
+      "warm_season_min_monthly_soil_water_layer1": 0.1211519561582151,
       "burned_share_next_year": 0.08446026412067514
     },
     "warm_season_mean_soil_water_layer1": {
@@ -725,7 +859,33 @@
       "warm_season_mean_2m_temperature_c": -0.2015993187041663,
       "warm_season_total_precipitation_mm": 0.5627982662303287,
       "warm_season_mean_soil_water_layer1": 1.0,
+      "warm_season_max_monthly_2m_temperature_c": -0.031282295912034526,
+      "warm_season_min_monthly_soil_water_layer1": 0.8497608358301967,
       "burned_share_next_year": 0.05315989718494774
+    },
+    "warm_season_max_monthly_2m_temperature_c": {
+      "built_up_share": -0.1921430700786708,
+      "forest_shrub_share_2km": -0.26442126340718763,
+      "mean_slope_2km": -0.29750430062167693,
+      "fire_years_previous_10y_2km": -0.35655392588161766,
+      "warm_season_mean_2m_temperature_c": 0.9195909363849064,
+      "warm_season_total_precipitation_mm": -0.46730941175012003,
+      "warm_season_mean_soil_water_layer1": -0.031282295912034526,
+      "warm_season_max_monthly_2m_temperature_c": 1.0,
+      "warm_season_min_monthly_soil_water_layer1": 0.14842377938743218,
+      "burned_share_next_year": -0.06495425926998198
+    },
+    "warm_season_min_monthly_soil_water_layer1": {
+      "built_up_share": -0.04187172218240684,
+      "forest_shrub_share_2km": -0.25422612970059466,
+      "mean_slope_2km": 0.13628826215376252,
+      "fire_years_previous_10y_2km": 0.14372860753298788,
+      "warm_season_mean_2m_temperature_c": 0.06483845502441074,
+      "warm_season_total_precipitation_mm": 0.1211519561582151,
+      "warm_season_mean_soil_water_layer1": 0.8497608358301967,
+      "warm_season_max_monthly_2m_temperature_c": 0.14842377938743218,
+      "warm_season_min_monthly_soil_water_layer1": 1.0,
+      "burned_share_next_year": -0.0016063821993065977
     },
     "burned_share_next_year": {
       "built_up_share": -0.032029063058384676,
@@ -735,10 +895,23 @@
       "warm_season_mean_2m_temperature_c": -0.07892397580636515,
       "warm_season_total_precipitation_mm": 0.08446026412067514,
       "warm_season_mean_soil_water_layer1": 0.05315989718494774,
+      "warm_season_max_monthly_2m_temperature_c": -0.06495425926998198,
+      "warm_season_min_monthly_soil_water_layer1": -0.0016063821993065977,
       "burned_share_next_year": 1.0
     }
   },
-  "high_redundancy_pairs_abs_ge_0_8": [],
+  "high_redundancy_pairs_abs_ge_0_8": [
+    {
+      "left": "warm_season_mean_2m_temperature_c",
+      "right": "warm_season_max_monthly_2m_temperature_c",
+      "correlation": 0.9195909363849064
+    },
+    {
+      "left": "warm_season_mean_soil_water_layer1",
+      "right": "warm_season_min_monthly_soil_water_layer1",
+      "correlation": 0.8497608358301967
+    }
+  ],
   "outlier_screen": {
     "built_up_share": {
       "train_3iqr_lower": 0.0,
@@ -801,6 +974,24 @@
         "train": 0,
         "validation": 0,
         "final_test": 0
+      }
+    },
+    "warm_season_max_monthly_2m_temperature_c": {
+      "train_3iqr_lower": 11.502099609375023,
+      "train_3iqr_upper": 36.09780273437502,
+      "counts_by_split": {
+        "train": 0,
+        "validation": 0,
+        "final_test": 0
+      }
+    },
+    "warm_season_min_monthly_soil_water_layer1": {
+      "train_3iqr_lower": -0.0444488525390625,
+      "train_3iqr_upper": 0.2676544189453125,
+      "counts_by_split": {
+        "train": 658,
+        "validation": 182,
+        "final_test": 273
       }
     }
   },

@@ -26,7 +26,7 @@ import shapely
 from src import national_panel as canonical
 from src.climate_features import jjas_total_precipitation_mm, read_grib_variable
 from src.config import CLC, EXTENDED_TRAINING, EXTENDED_TRAINING_CLC, SPATIAL
-from src.feature_contract import PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
+from src.feature_contract import CLIMATE_PREDICTOR_COLUMNS, PREDICTOR_COLUMNS, TABLE_COLUMNS, TARGET_COLUMN, source_years, validate_feature_table
 from src.geospatial_utils import ICNF_ROOT, icnf_vsi_path
 from src.source_registry import CLC_2006_V2020_20U1, COP_DEM_GLO30
 
@@ -76,8 +76,9 @@ def _publish_parquet(
     component: str,
     batch_id: str,
     metadata: dict[str, object] | None = None,
+    required_columns: tuple[str, ...] = (),
 ) -> dict[str, object]:
-    existing = canonical._validate_existing_batch(path, len(frame))
+    existing = canonical._validate_existing_batch(path, len(frame), required_columns)
     if existing:
         return existing | {"status": "reused"}
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -230,6 +231,8 @@ def load_early_era5_grids() -> dict[int, dict[str, object]]:
                 "warm_season_mean_2m_temperature_c": np.nanmean(temperature, axis=0) - 273.15,
                 "warm_season_total_precipitation_mm": jjas_total_precipitation_mm(precipitation, months),
                 "warm_season_mean_soil_water_layer1": np.nanmean(soil_water, axis=0),
+                "warm_season_max_monthly_2m_temperature_c": np.nanmax(temperature, axis=0) - 273.15,
+                "warm_season_min_monthly_soil_water_layer1": np.nanmin(soil_water, axis=0),
                 "source_path": str(path.relative_to(ROOT)).replace("\\", "/"),
             }
     return result
@@ -248,7 +251,10 @@ def derive_early_era_batch(
         source = grids[year]
         lat_index = np.abs(source["latitude"][:, None] - latitude_points).argmin(axis=0)
         lon_index = np.abs(source["longitude"][:, None] - longitude_points).argmin(axis=0)
-        values = {feature: np.asarray(source[feature][lat_index, lon_index], dtype="float64") for feature in PREDICTOR_COLUMNS[-3:]}
+        values = {
+            feature: np.asarray(source[feature][lat_index, lon_index], dtype="float64")
+            for feature in CLIMATE_PREDICTOR_COLUMNS
+        }
         mask = np.isnan(values["warm_season_mean_2m_temperature_c"])
         if not all(np.array_equal(np.isnan(value), mask) for value in values.values()):
             raise ValueError(f"ERA5 water mask differs across fields for {year}/{batch_id}")
@@ -278,7 +284,9 @@ def build_early_era_batches(progress: Callable[[str], None] = print) -> dict[str
         batch_id = batch["batch_id"]
         path = _early_era_batch_path(batch_id)
         expected_rows = batch["row_count"] * len(NEW_OBSERVATION_YEARS)
-        existing = canonical._validate_existing_batch(path, expected_rows)
+        existing = canonical._validate_existing_batch(
+            path, expected_rows, ("cell_id", "observation_year", *CLIMATE_PREDICTOR_COLUMNS)
+        )
         if existing:
             reused += 1
             continue
@@ -290,6 +298,7 @@ def build_early_era_batches(progress: Callable[[str], None] = print) -> dict[str
                     "source_paths_by_year": {year: grids[year]["source_path"] for year in NEW_OBSERVATION_YEARS},
                     "assignment": "containing_valid_cell_else_accepted_nearest_valid_land_cell_no_interpolation",
                 },
+                required_columns=("cell_id", "observation_year", *CLIMATE_PREDICTOR_COLUMNS),
             )
         except Exception as error:
             raise canonical.BatchError(f"extended-era5/{batch_id} failed: {error}") from error
@@ -318,7 +327,7 @@ def derive_early_panel_batch(batch_id: str) -> pd.DataFrame:
         years = extended_source_years(year)
         history = years["history_years"]
         historical_count = icnf.loc[cell_ids, [f"context_{item}" for item in history]].sum(axis=1).astype("int8")
-        climate = era.loc[(cell_ids, year), list(PREDICTOR_COLUMNS[-3:])]
+        climate = era.loc[(cell_ids, year), list(CLIMATE_PREDICTOR_COLUMNS)]
         rows.append(pd.DataFrame({
             "cell_year_id": cell_ids + np.full(len(cell_ids), f"_{year}", dtype=object),
             "cell_id": cell_ids,
@@ -338,6 +347,8 @@ def derive_early_panel_batch(batch_id: str) -> pd.DataFrame:
             "warm_season_mean_2m_temperature_c": climate["warm_season_mean_2m_temperature_c"].to_numpy(),
             "warm_season_total_precipitation_mm": climate["warm_season_total_precipitation_mm"].to_numpy(),
             "warm_season_mean_soil_water_layer1": climate["warm_season_mean_soil_water_layer1"].to_numpy(),
+            "warm_season_max_monthly_2m_temperature_c": climate["warm_season_max_monthly_2m_temperature_c"].to_numpy(),
+            "warm_season_min_monthly_soil_water_layer1": climate["warm_season_min_monthly_soil_water_layer1"].to_numpy(),
             TARGET_COLUMN: icnf.loc[cell_ids, f"share_{years['outcome_year']}"] .to_numpy(),
         }, columns=TABLE_COLUMNS))
     frame = pd.concat(rows, ignore_index=True).sort_values(["observation_year", "cell_id"], kind="mergesort").reset_index(drop=True)
@@ -357,7 +368,7 @@ def build_early_panel_batches(progress: Callable[[str], None] = print) -> dict[s
         batch_id = batch["batch_id"]
         path = _early_panel_batch_path(batch_id)
         expected_rows = batch["row_count"] * len(NEW_OBSERVATION_YEARS)
-        existing = canonical._validate_existing_batch(path, expected_rows)
+        existing = canonical._validate_existing_batch(path, expected_rows, TABLE_COLUMNS)
         if existing:
             reused += 1
             continue
@@ -366,6 +377,7 @@ def build_early_panel_batches(progress: Callable[[str], None] = print) -> dict[s
             _publish_parquet(
                 frame, path, component="panel_early", batch_id=batch_id,
                 metadata={"observation_years": NEW_OBSERVATION_YEARS},
+                required_columns=TABLE_COLUMNS,
             )
         except Exception as error:
             raise canonical.BatchError(f"extended-panel/{batch_id} failed: {error}") from error
@@ -418,9 +430,12 @@ def assemble_extended_panel(progress: Callable[[str], None] = print) -> dict[str
         manifest = json.loads(existing.read_text(encoding="utf-8"))
         if canonical._sha256(PANEL_PATH) != manifest["sha256"]:
             raise ValueError("Extended panel checksum changed")
-        if pq.ParquetFile(PANEL_PATH).metadata.num_rows != expected_rows:
+        parquet = pq.ParquetFile(PANEL_PATH)
+        if parquet.metadata.num_rows != expected_rows:
             raise ValueError("Extended panel row count changed")
-        return manifest | {"status": "reused"}
+        if set(TABLE_COLUMNS).issubset(parquet.schema.names):
+            return manifest | {"status": "reused"}
+        parquet.close()
     temporary = PANEL_PATH.with_suffix(".parquet.tmp")
     if temporary.exists():
         raise FileExistsError(f"Stale temporary extended panel requires inspection: {temporary}")
@@ -494,7 +509,7 @@ def validate_extended_panel() -> dict[str, object]:
         )
         if tuple(frame.cell_id) != expected_ids:
             raise ValueError(f"Extended panel ordering differs in T={year}")
-        climate_missing = int(frame[list(PREDICTOR_COLUMNS[-3:])].isna().sum().sum())
+        climate_missing = int(frame[list(CLIMATE_PREDICTOR_COLUMNS)].isna().sum().sum())
         if climate_missing:
             raise ValueError(f"Climate missingness remains in extended T={year}")
         year_metrics[year] = canonical._year_metrics(frame, year)
@@ -553,7 +568,7 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         f"- Newly derived years: {list(metrics['newly_derived_years'])}.\n"
         f"- Canonical regression rows: {sum(item['rows'] for item in metrics['canonical_regression'].values()):,}, all exact.\n"
         f"- Final-test rows read: {metrics['final_test_access']['final_test_rows_read']}.\n"
-        "- All three climate fields are complete after the accepted static nearest-valid-land fallback; no value was set to zero.\n"
+        "- All five climate fields are complete after the accepted static nearest-valid-land fallback; no value was set to zero.\n"
         "- ICNF uses the established derived-only `make_valid` policy and annual geometry unions before share intersection.\n\n"
         "## Target by predictor year\n\n"
         "| T | Outcome | Positive rows | Zero proportion | Mean burned share | Maximum |\n"

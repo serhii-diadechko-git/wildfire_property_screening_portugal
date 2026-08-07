@@ -31,11 +31,11 @@ kernel (`ipykernel`), not the separate JupyterLab application.
 
 1. `00_environment_test.ipynb` — portable environment, pinned-package, EPSG:3763, and in-memory ML/GIS smoke checks; writes no project output.
 2. `01_data_collection.ipynb` — immutable source inventory, provenance ledger, and representative archive checks; no download.
-3. `02_data_preparation.ipynb` — canonical grid, seven-predictor contract, CLC assignment, and panel-validation evidence.
+3. `02_data_preparation.ipynb` — canonical grid, nine-predictor contract, CLC assignment, and panel-validation evidence.
 4. `03_eda.ipynb` — validated panel completeness, zero inflation, target behaviour, predictor correlations, temporal drift, and extreme-value screening.
 5. `04_modelling.ipynb` — saved nine-feature hurdle metadata, model components, MAE/RMSE/capture tables, final-test prediction/residual plots, and annual scoring logic; no tuning or retraining.
 6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison, including verified spatial-output previews; no prediction or recommendation category.
-7. `06_final_charts.ipynb` — verifies and displays the six presentation visuals from their real source artefacts without duplicate images.
+7. `06_final_charts.ipynb` — final capstone narrative: project design, nine-predictor contract, EDA, frozen final-test regression evidence, and validated GIS/presentation outputs; it reads real artefacts without duplicate analysis.
 
 Run each notebook from a fresh kernel. They read and check validated artefacts;
 they render real tables/plots from them. By default, costly/rewrite-capable
@@ -58,7 +58,7 @@ claim direct feature importance from correlated spatial predictors.
 | `03` | Reads saved EDA evidence and plots it. | `REGENERATE_EDA` regenerates EDA reports/figures. |
 | `04` | Displays saved final-test model artifacts and durable diagnostics. | `REBUILD_MODEL_DIAGNOSTICS` rebuilds figures/tables; `RUN_FROZEN_MODEL_STAGES` calls the frozen refit and final test. |
 | `05` | Inspects the published historical screening. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
-| `06` | Verifies/displays final visuals. | `REGENERATE_FINAL_VISUALS` rebuilds code-generated charts/tables. |
+| `06` | Reads and presents validated EDA, model-diagnostic, GIS, and final-screening artefacts. | `REGENERATE_FINAL_VISUALS` rebuilds only the code-generated historical-screening charts/tables. |
 
 For a complete automated rebuild, use the root command rather than enabling
 several switches manually:

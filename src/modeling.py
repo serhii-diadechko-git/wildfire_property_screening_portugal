@@ -8,11 +8,7 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 from threadpoolctl import threadpool_limits
 
-from src.feature_contract import MODEL_PREDICTOR_COLUMNS
-
-
 RANDOM_SEED = 20260805
-NINE_FEATURES = MODEL_PREDICTOR_COLUMNS
 
 
 @dataclass

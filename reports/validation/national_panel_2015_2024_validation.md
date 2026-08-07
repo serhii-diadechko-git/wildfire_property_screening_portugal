@@ -9,8 +9,8 @@ This decision authorises panel EDA only. It does not establish modelling readine
 - Canonical EPSG:3763 grid cells: 89,112.
 - Expected and actual rows: 891,120.
 - Deterministic 20 km spatial tiles, atomic Parquet batches, checksum manifests, completed-batch reuse, and overwrite protection were used.
-- Schema: 19 ordered fields with validated Arrow types; identifiers and source metadata have no missing values.
-- Panel SHA-256: `AB5E684BCC670F5BD3A91967CBD1459CE3D4BB11E4AED75DE5C2E7244779C993`.
+- Schema: 21 ordered fields with validated Arrow types; identifiers and source metadata have no missing values.
+- Panel SHA-256: `96C24EE6A4F5F6F5E06963CE97434AE22742AA6190A17DA2A161C933A5941183`.
 
 ## Target and climate completeness by year
 
@@ -38,6 +38,8 @@ This decision authorises panel EDA only. It does not establish modelling readine
 | `warm_season_mean_2m_temperature_c` | 16.23439941 | 26.70394287 | 0 |
 | `warm_season_total_precipitation_mm` | 2.72588873 | 380.67654264 | 0 |
 | `warm_season_mean_soil_water_layer1` | 0.04098511 | 0.34236145 | 0 |
+| `warm_season_max_monthly_2m_temperature_c` | 18.34780273 | 30.90981445 | 0 |
+| `warm_season_min_monthly_soil_water_layer1` | 0.02383423 | 0.34114075 | 0 |
 | `burned_share_next_year` | 0.00000000 | 1.00000000 | 0 |
 
 The validated nearest-valid-land fallback resolved all 1,506 systematic coastal cells without new acquisition. Climate missingness is now zero; maximum fallback distance was 13.962 km. No interpolation, downscaling, zero substitution, cell exclusion, or T+1 information was used.
@@ -58,10 +60,10 @@ These are minimum observed first-to-last atomic batch-publication spans, not CPU
 | icnf_geometry_repair | 26.50 |
 | slope | 129.76 |
 | clc | 519.09 |
-| era5 | 23.41 |
+| era5 | 22.91 |
 | icnf_components | 357.47 |
-| panel_batches | 25.83 |
+| panel_batches | 45.04 |
 
-Final validation, including the three-batch deterministic rerun, took 16.57 seconds.
+Final validation, including the three-batch deterministic rerun, took 47.45 seconds.
 
 Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at `data/processed/national_panel_2015_2024_validation.json`.

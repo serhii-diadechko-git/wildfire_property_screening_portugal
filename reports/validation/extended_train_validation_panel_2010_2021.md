@@ -9,7 +9,7 @@ The canonical T=2022-2024 final-test row groups were inspected only as Parquet m
 - Newly derived years: [2010, 2011, 2012, 2013, 2014].
 - Canonical regression rows: 623,784, all exact.
 - Final-test rows read: 0.
-- All three climate fields are complete after the accepted static nearest-valid-land fallback; no value was set to zero.
+- All five climate fields are complete after the accepted static nearest-valid-land fallback; no value was set to zero.
 - ICNF uses the established derived-only `make_valid` policy and annual geometry unions before share intersection.
 
 ## Target by predictor year

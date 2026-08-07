@@ -68,6 +68,8 @@ class NationalPanelTests(unittest.TestCase):
             "warm_season_mean_2m_temperature_c",
             "warm_season_total_precipitation_mm",
             "warm_season_mean_soil_water_layer1",
+            "warm_season_max_monthly_2m_temperature_c",
+            "warm_season_min_monthly_soil_water_layer1",
         )
         for group in range(self.parquet.num_row_groups):
             frame = self.parquet.read_row_group(group, columns=["cell_id", *climate]).to_pandas()

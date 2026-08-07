@@ -19,12 +19,10 @@ PREDICTOR_COLUMNS = (
     "warm_season_mean_2m_temperature_c",
     "warm_season_total_precipitation_mm",
     "warm_season_mean_soil_water_layer1",
-)
-MODEL_EXTRA_PREDICTOR_COLUMNS = (
     "warm_season_max_monthly_2m_temperature_c",
     "warm_season_min_monthly_soil_water_layer1",
 )
-MODEL_PREDICTOR_COLUMNS = PREDICTOR_COLUMNS + MODEL_EXTRA_PREDICTOR_COLUMNS
+CLIMATE_PREDICTOR_COLUMNS = PREDICTOR_COLUMNS[4:]
 TARGET_COLUMN = "burned_share_next_year"
 IDENTIFIER_COLUMNS = (
     "cell_year_id",
@@ -84,17 +82,6 @@ FIELD_CONTRACTS = {
         "float64", "m3_per_m3", 0.0, 1.0, "forbidden",
         "JJAS of T only",
     ),
-    TARGET_COLUMN: FieldContract(
-        "float64", "share_of_cell_land_area", 0.0, 1.0, "forbidden",
-        "ICNF burned-area geometry in T+1",
-    ),
-}
-
-# The national panel contains the seven foundational predictors above. The
-# final model adds these two T-only monthly ERA5-Land summaries in its bounded
-# model-matrix derivation; they are not a separate source or a future-data use.
-MODEL_FIELD_CONTRACTS = {
-    **FIELD_CONTRACTS,
     "warm_season_max_monthly_2m_temperature_c": FieldContract(
         "float64", "degrees_Celsius", -20.0, 60.0, "forbidden",
         "maximum of monthly-mean June-September 2 m temperature in T only",
@@ -103,8 +90,11 @@ MODEL_FIELD_CONTRACTS = {
         "float64", "m3_per_m3", 0.0, 1.0, "forbidden",
         "minimum of monthly-mean June-September layer-1 soil water in T only",
     ),
+    TARGET_COLUMN: FieldContract(
+        "float64", "share_of_cell_land_area", 0.0, 1.0, "forbidden",
+        "ICNF burned-area geometry in T+1",
+    ),
 }
-
 
 def source_years(
     predictor_year: int,
@@ -179,10 +169,10 @@ def validate_feature_table(
     if not np.equal(fire_values, np.floor(fire_values)).all():
         raise ValueError("Historical-fire year count must be integral")
 
-    climate = list(PREDICTOR_COLUMNS[-3:])
+    climate = list(CLIMATE_PREDICTOR_COLUMNS)
     climate_masks = table[climate].isna()
     if not climate_masks.eq(climate_masks.iloc[:, 0], axis=0).all().all():
-        raise ValueError("ERA5-Land mask must be identical across all three climate features")
+        raise ValueError("ERA5-Land mask must be identical across all climate features")
 
     return {
         "row_count": len(table),

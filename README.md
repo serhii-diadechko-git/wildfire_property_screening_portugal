@@ -138,7 +138,7 @@ They are a transparent learning, review, and controlled-orchestration path:
 - `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
 - `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
 - `04` is the model evidence notebook: saved model metadata, feature order, MAE/RMSE/capture tables, final-test plots, residuals, and binned observed-versus-estimated comparisons. It can explicitly rerun the frozen refit/final-test stages, but only after its opt-in switch is changed.
-- `05` and `06` inspect the validated historical spatial screening, QGIS outputs, tables, and presentation visuals.
+- `05` inspects the validated historical spatial screening and QGIS outputs. `06` is the final capstone narrative: data design, EDA, final-test regression diagnostics, and validated GIS/presentation visuals.
 
 Use `scripts/run_project.py` for the one-command rebuild. Use notebooks when
 you want to step through the same workflow, inspect intermediate evidence, and

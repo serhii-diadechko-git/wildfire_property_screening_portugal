@@ -30,8 +30,8 @@ from threadpoolctl import threadpool_limits
 
 from src.climate_features import era5_source_paths, jjas_total_precipitation_mm, read_grib_variable
 from src.config import OPERATIONAL_FORECAST
-from src.feature_contract import TARGET_COLUMN
-from src.modeling import HurdleHistGradientRegressor, NINE_FEATURES, RANDOM_SEED
+from src.feature_contract import CLIMATE_PREDICTOR_COLUMNS, PREDICTOR_COLUMNS, TARGET_COLUMN
+from src.modeling import HurdleHistGradientRegressor, RANDOM_SEED
 from src import national_panel as panel
 from src.source_registry import (
     CLC_2018_V2020_20U1,
@@ -126,7 +126,7 @@ def _validate_source_matrix(path: Path, expected_years: tuple[int, ...]) -> None
     if not path.is_file():
         raise FileNotFoundError(f"Required validated source matrix is missing: {path}")
     parquet = pq.ParquetFile(path)
-    required = set(NINE_FEATURES) | {TARGET_COLUMN, "cell_id", "cell_year_id", "observation_year", "outcome_year"}
+    required = set(PREDICTOR_COLUMNS) | {TARGET_COLUMN, "cell_id", "cell_year_id", "observation_year", "outcome_year"}
     missing = required.difference(parquet.schema.names)
     if missing:
         raise ValueError(f"Source matrix lacks required fields: {sorted(missing)}")
@@ -194,7 +194,7 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
         "row_count": expected_rows,
         "observation_years": list(LABELED_YEARS),
         "target": TARGET_COLUMN,
-        "feature_order": list(NINE_FEATURES),
+        "feature_order": list(PREDICTOR_COLUMNS),
         "sources": [
             {"path": path.relative_to(ROOT).as_posix(), "sha256": _sha256(path), "years": list(years)}
             for path, years in sources
@@ -208,18 +208,18 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
 def refit_operational_model() -> dict[str, Any]:
     """Refit the frozen selected specification through observed outcome 2025."""
     panel_manifest = build_labeled_nine_feature_panel()
-    columns = ["observation_year", *NINE_FEATURES, TARGET_COLUMN]
+    columns = ["observation_year", *PREDICTOR_COLUMNS, TARGET_COLUMN]
     frame = pd.read_parquet(LABELED_PANEL_PATH, columns=columns)
     if tuple(sorted(int(year) for year in frame.observation_year.unique())) != LABELED_YEARS:
         raise ValueError("Operational refit does not have exactly T=2010-2024 labels")
-    if frame[list(NINE_FEATURES) + [TARGET_COLUMN]].isna().any().any():
+    if frame[list(PREDICTOR_COLUMNS) + [TARGET_COLUMN]].isna().any().any():
         raise ValueError("Operational refit source contains missing model values")
-    if not np.isfinite(frame[list(NINE_FEATURES) + [TARGET_COLUMN]].to_numpy(dtype="float64")).all():
+    if not np.isfinite(frame[list(PREDICTOR_COLUMNS) + [TARGET_COLUMN]].to_numpy(dtype="float64")).all():
         raise ValueError("Operational refit source contains non-finite model values")
     model = HurdleHistGradientRegressor()
     with threadpool_limits(limits=1, user_api="openmp"):
-        model.fit(frame.loc[:, NINE_FEATURES], frame[TARGET_COLUMN])
-    sample = frame.loc[:999, NINE_FEATURES]
+        model.fit(frame.loc[:, PREDICTOR_COLUMNS], frame[TARGET_COLUMN])
+    sample = frame.loc[:999, PREDICTOR_COLUMNS]
     expected = model.predict(sample)
     if MODEL_PATH.exists() and MODEL_METADATA_PATH.exists():
         existing_metadata = json.loads(MODEL_METADATA_PATH.read_text(encoding="utf-8"))
@@ -227,7 +227,7 @@ def refit_operational_model() -> dict[str, Any]:
         existing_panel = existing_metadata.get("labelled_panel", {})
         same_lineage = (
             existing_panel.get("sha256") == panel_manifest.get("sha256")
-            and existing_payload.get("feature_order") == list(NINE_FEATURES)
+            and existing_payload.get("feature_order") == list(PREDICTOR_COLUMNS)
             and existing_payload.get("training_predictor_years") == list(LABELED_YEARS)
             and existing_payload.get("target") == TARGET_COLUMN
         )
@@ -242,7 +242,7 @@ def refit_operational_model() -> dict[str, Any]:
     payload = {
         "model": model,
         "model_name": "nine_feature_hurdle",
-        "feature_order": list(NINE_FEATURES),
+        "feature_order": list(PREDICTOR_COLUMNS),
         "training_predictor_years": list(LABELED_YEARS),
         "training_observed_outcome_years": list(range(2011, 2026)),
         "target": TARGET_COLUMN,
@@ -263,7 +263,7 @@ def refit_operational_model() -> dict[str, Any]:
         "row_count": len(frame),
         "training_predictor_years": list(LABELED_YEARS),
         "training_observed_outcome_years": list(range(2011, 2026)),
-        "feature_order": list(NINE_FEATURES),
+        "feature_order": list(PREDICTOR_COLUMNS),
         "target": TARGET_COLUMN,
         "selection_evidence": payload["selection_evidence"],
         "reload_sample_predictions_identical": True,
@@ -366,7 +366,7 @@ def _derive_scoring_batch(batch_id: str, predictor_year: int, climate: dict[str,
     longitudes = grid.centroid_longitude.to_numpy()
     lat_index = np.abs(climate["latitude"][:, None] - latitudes).argmin(axis=0)
     lon_index = np.abs(climate["longitude"][:, None] - longitudes).argmin(axis=0)
-    climate_columns = NINE_FEATURES[-5:]
+    climate_columns = CLIMATE_PREDICTOR_COLUMNS
     assigned = {
         name: np.asarray(climate[name])[lat_index, lon_index].astype("float64")
         for name in climate_columns
@@ -419,7 +419,7 @@ def _validate_scoring_matrix(frame: pd.DataFrame, forecast_year: int, expected_c
         raise ValueError("Scoring fire-history window is invalid")
     if not frame.climate_reference_year.eq(predictor_year).all() or not frame.land_cover_reference_year.eq(2018).all():
         raise ValueError("Scoring source years are invalid")
-    if frame[list(NINE_FEATURES)].isna().any().any() or not np.isfinite(frame[list(NINE_FEATURES)].to_numpy(dtype="float64")).all():
+    if frame[list(PREDICTOR_COLUMNS)].isna().any().any() or not np.isfinite(frame[list(PREDICTOR_COLUMNS)].to_numpy(dtype="float64")).all():
         raise ValueError("Scoring features contain missing or non-finite values")
     for column in ("built_up_share", "forest_shrub_share_2km"):
         if not frame[column].between(0.0, 1.0).all():
@@ -464,10 +464,10 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
     if paths["scores"].exists() or paths["gpkg"].exists():
         raise FileExistsError(f"Forecast {forecast_year} output already exists; inspect rather than overwrite")
     payload = joblib.load(MODEL_PATH)
-    if tuple(payload["feature_order"]) != NINE_FEATURES:
+    if tuple(payload["feature_order"]) != PREDICTOR_COLUMNS:
         raise ValueError("Saved operational model feature order differs from scoring contract")
     frame = pd.read_parquet(paths["matrix"])
-    predictions = np.asarray(payload["model"].predict(frame.loc[:, NINE_FEATURES]), dtype="float64")
+    predictions = np.asarray(payload["model"].predict(frame.loc[:, PREDICTOR_COLUMNS]), dtype="float64")
     if not np.isfinite(predictions).all() or predictions.min() < 0.0 or predictions.max() > 1.0:
         raise ValueError("Operational model produced invalid continuous burned-share estimates")
     scores = frame[["cell_id", "observation_year", "outcome_year", "climate_assignment_method"]].copy()
@@ -488,7 +488,7 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
         "feature_matrix": matrix,
         "score_table": {"path": paths["scores"].relative_to(ROOT).as_posix(), "sha256": _sha256(paths["scores"]), "row_count": len(scores)},
         "spatial_output": spatial_output,
-        "model": {"path": MODEL_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(MODEL_PATH), "feature_order": list(NINE_FEATURES)},
+        "model": {"path": MODEL_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(MODEL_PATH), "feature_order": list(PREDICTOR_COLUMNS)},
         "input_sources": {
             "era5_land": {
                 "year": forecast_year - 1,
@@ -571,7 +571,7 @@ def validate_forecast_artifacts(forecast_year: int = CURRENT_FORECAST_YEAR) -> d
         raise ValueError("Forecast percentile is outside [0, 1]")
     current_model_sha256 = _sha256(MODEL_PATH)
     payload = joblib.load(MODEL_PATH)
-    reloaded_predictions = np.asarray(payload["model"].predict(matrix.loc[:, NINE_FEATURES]), dtype="float64")
+    reloaded_predictions = np.asarray(payload["model"].predict(matrix.loc[:, PREDICTOR_COLUMNS]), dtype="float64")
     ordered_scores = scores.set_index("cell_id").loc[matrix.cell_id, "predicted_burned_share_next_year"].to_numpy(dtype="float64")
     if not np.array_equal(reloaded_predictions, ordered_scores):
         raise ValueError("Reloaded model does not reproduce the published forecast values")
