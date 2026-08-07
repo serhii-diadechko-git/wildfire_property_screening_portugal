@@ -146,7 +146,7 @@ They are a transparent learning, review, and controlled-orchestration path:
 - `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
 - `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
 - `04` is the technical model-contract notebook: saved model metadata, feature order, hurdle components, temporal safeguards, and the annual scoring lifecycle. It does not repeat held-out results or refit a model.
-- `05` inspects the validated historical spatial screening and QGIS outputs. `06` is the final capstone narrative and the single presentation of EDA, final-test regression diagnostics, and validated GIS/presentation visuals.
+- `05` audits the validated historical GIS layer and hands it off to QGIS. `06` is the final capstone narrative and the single presentation of EDA, final-test regression diagnostics, and validated GIS/presentation visuals.
 
 Use `scripts/run_project.py` for the one-command rebuild. Use notebooks when
 you want to step through the same workflow, inspect intermediate evidence, and

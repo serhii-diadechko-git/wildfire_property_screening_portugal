@@ -34,7 +34,7 @@ kernel (`ipykernel`), not the separate JupyterLab application.
 3. `02_data_preparation.ipynb` — canonical grid, nine-predictor contract, CLC assignment, and panel-validation evidence.
 4. `03_eda.ipynb` — validated panel completeness, zero inflation, target behaviour, predictor correlations, temporal drift, and extreme-value screening.
 5. `04_modelling.ipynb` — technical model contract: saved nine-feature hurdle metadata, fixed feature order, hurdle components, temporal safeguards, and annual scoring lifecycle; no tuning, retraining, or repeated final-test results.
-6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison, including verified spatial-output previews; no prediction or recommendation category.
+6. `05_evaluation_recommendations.ipynb` — historical GIS evidence audit: GeoPackage contract, independently recomputed summary checks, and QGIS hand-off; no prediction or recommendation category.
 7. `06_final_charts.ipynb` — final capstone narrative: project design, nine-predictor contract, EDA, frozen final-test regression evidence, and validated GIS/presentation outputs; it reads real artefacts without duplicate analysis.
 
 Run each notebook from a fresh kernel. They read and check validated artefacts;
@@ -58,7 +58,7 @@ spatial predictors.
 | `02` | Inspects grid, CLC, feature contract, and panel validation. | `REBUILD_NATIONAL_PANEL` / `REBUILD_EXTENDED_TRAINING_PANEL` call the bounded reusable builders. |
 | `03` | Reads saved EDA evidence and plots it. | `REGENERATE_EDA` regenerates EDA reports/figures. |
 | `04` | Verifies saved model metadata, feature order, split boundary, hurdle components, and operational lifecycle. | No notebook rebuild switch; use the project runner for a deliberate refit/reproduction. |
-| `05` | Inspects the published historical screening. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
+| `05` | Audits the published historical GeoPackage and recorded metrics. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
 | `06` | Reads and presents validated EDA, final-test diagnostics, GIS, and final-screening artefacts. | No output-writing rebuild switch; it renders live review figures from validated artefacts. |
 
 For a complete automated rebuild, use the root command rather than enabling

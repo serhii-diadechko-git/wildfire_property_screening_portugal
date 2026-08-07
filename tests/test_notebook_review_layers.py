@@ -39,6 +39,7 @@ class NotebookReviewLayerTests(unittest.TestCase):
         environment = code_sources("00_environment_test.ipynb")
         collection = code_sources("01_data_collection.ipynb")
         preparation = code_sources("02_data_preparation.ipynb")
+        screening = code_sources("05_evaluation_recommendations.ipynb")
         presentation = code_sources("06_final_charts.ipynb")
         self.assertNotIn("savefig", environment)
         self.assertIn("collection-ledger", (PROJECT_ROOT / "notebooks/01_data_collection.ipynb").read_text(encoding="utf-8"))
@@ -46,6 +47,9 @@ class NotebookReviewLayerTests(unittest.TestCase):
         self.assertIn("validate_final_visuals", presentation)
         self.assertNotIn("build_national_panel", collection + preparation + presentation)
         self.assertIn("REBUILD_NATIONAL_PANEL = False", preparation)
+        self.assertIn("VALIDATE_HISTORICAL_SCREENING = False", screening)
+        self.assertNotIn("estimated_comparative_wildfire_exposure_2026", screening)
+        self.assertNotIn("Image(", screening)
         self.assertIn("SHOW_LIVE_MODEL_DIAGNOSTICS = True", presentation)
 
     def test_eda_notebook_is_executable_artifact_review(self) -> None:
