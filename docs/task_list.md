@@ -22,7 +22,8 @@ The validated project state is a nine-feature annual continuous burned-share mod
 - [x] Consolidate reusable model, climate, evaluation, and geospatial helpers.
 - [x] Consolidate the final nine-feature feature, model, climate, and geospatial implementation.
 - [x] Move the canonical geometry lookup to `data/processed/reference/canonical_mainland_grid_1km.gpkg`.
-- [ ] Review the public-reproducibility cleanup and choose a licence before release.
+- [x] Complete the public-reproducibility, notebook, documentation, and presentation consolidation.
+- [ ] Choose a licence for the repository's own code and documentation before release.
 
 ## Next annual update (forecast year 2027)
 

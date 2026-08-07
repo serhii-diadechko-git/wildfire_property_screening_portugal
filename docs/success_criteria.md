@@ -93,7 +93,10 @@ During train/validation model selection, the primary regression evidence is repo
 - MAE and RMSE over all rows;
 - MAE and RMSE restricted to rows where `burned_share_next_year > 0`;
 - mean `predicted_burned_share_next_year` versus mean observed `burned_share_next_year`;
-- capture@20%, defined as the share of positive-target cells contained in the highest-ranked 20% of regression predictions.
+- positive-cell capture@20%, defined as the share of positive-target cells contained in the highest-ranked 20% of regression estimates;
+- burned-share-mass capture@20%, defined as the share of all observed burned-area mass contained in that same highest-ranked 20%.
+
+Ties at the 20% boundary are handled fractionally in the formal final-test report. A simpler deterministic top-row diagnostic is retained in the generated chart for reproducibility; it differs slightly for the coarse historical baseline because many cells have identical scores. Neither form is a buyer threshold.
 
 ### 2. Conditional classification evaluation
 
@@ -103,12 +106,12 @@ For any later imbalanced classification model, PR-AUC should be compared with po
 
 This condition alone does not prove that the model is useful.
 
-### 3. Top-risk capture
+### 3. Top-ranked capture
 
 Rank test cells from highest to lowest predicted exposure.
 
 ```text
-capture@20% = affected cells in the highest-risk 20% / all affected cells
+positive-cell capture@20% = affected cells in the highest-ranked 20% / all affected cells
 ```
 
 **Evaluation target:** capture at least 40% of affected cells within the highest-risk 20%.
@@ -121,7 +124,7 @@ Report:
 
 - regression MAE and RMSE overall and on positive-target rows;
 - mean predicted versus observed burned share;
-- capture@20%;
+- positive-cell and burned-share-mass capture@20%;
 - performance by test year;
 - performance by region or geographic holdout.
 

@@ -14,7 +14,6 @@ INTERIM_DATA_DIR = DATA_DIR / "interim"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
-BI_EXPORTS_DIR = REPORTS_DIR / "bi_exports"
 TABLES_DIR = REPORTS_DIR / "tables"
 VALIDATION_DIR = REPORTS_DIR / "validation"
 RUN_LOGS_DIR = REPORTS_DIR / "run_logs"
@@ -31,7 +30,6 @@ def ensure_output_directories() -> None:
         INTERIM_DATA_DIR,
         PROCESSED_DATA_DIR,
         FIGURES_DIR,
-        BI_EXPORTS_DIR,
         TABLES_DIR,
         VALIDATION_DIR,
         RUN_LOGS_DIR,

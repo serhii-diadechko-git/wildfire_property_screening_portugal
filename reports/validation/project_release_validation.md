@@ -1,6 +1,6 @@
 # Public reproducibility and release validation
 
-Validation date: 2026-08-06
+Validation date: 2026-08-07
 
 ## Purpose
 
@@ -16,9 +16,11 @@ path.
 | Portable source paths | Passed: public source, notebook, QGIS, and script text contains no known personal absolute path. |
 | Local raw-input preflight | Passed locally: 18 ICNF archives, CAOP, 3 CLC packages, 21 DEM tiles, 18 ERA5-Land GRIB records, and the ICNF structural-hazard raster were present. |
 | Immutable raw-data policy | Passed: `data/raw/` is Git-ignored; the public manifest lists official access paths and no credential is stored in the repository. |
-| Pinned environment | Passed with Python 3.13 and the versions in `requirements.txt`, including JupyterLab 4.6.2. |
-| Notebook verification | Passed: the environment notebook has valid structure and Python cells; it is not rewritten by command-line validation. |
-| Full test suite | Passed: 62 tests in 232.267 seconds, including raw-source contracts, CLC, ERA5, panel, model, operational, QGIS, presentation, and public-reproducibility checks. |
+| Pinned environment | Passed with Python 3.13 and the versions in `requirements.txt`. VS Code uses the project `ipykernel`; a separate JupyterLab workflow is not required. |
+| Notebook verification | Passed: all seven notebooks executed from fresh kernels in numeric order with zero error outputs. Their narrative roles remain separate and their code calls reusable `src/` helpers. |
+| Consolidation checks | Passed: 24 focused public-path, notebook, cleanup, diagnostics, QGIS, and presentation tests. The previously recorded full 62-test release suite remains passed; it was not repeated during this final documentation-only pass. |
+| Markdown links | Passed: 31 Markdown files checked with zero missing relative links. |
+| Presentation | Passed: all 13 slides rendered, template fidelity reported zero issues, and the official overflow test reported no overflow. |
 | Whitespace check | Passed: `git diff --check` reported no errors. |
 
 ## Public workflow

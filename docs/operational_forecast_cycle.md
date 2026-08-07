@@ -73,8 +73,9 @@ The second command safely revalidates existing published artifacts rather than o
 
 Notebooks are review layers:
 
-- `04_modelling.ipynb` explains completed historical train/validation/final evaluation; it does not retune the model.
-- `05_evaluation_recommendations.ipynb` and `06_final_charts.ipynb` inspect historical evidence and presentation artefacts.
+- `04_modelling.ipynb` verifies the saved nine-feature model contract, hurdle components, temporal safeguards, and annual scoring lifecycle; it does not refit or retune the model.
+- `05_evaluation_recommendations.ipynb` audits the validated historical GeoPackage and its QGIS handoff.
+- `06_final_charts.ipynb` is the single final narrative for EDA, held-out model evidence, the historical/official comparison, and the separate 2026 comparative estimate.
 - Open `qgis/wildfire_exposure_screening_portugal_2026.qgz` for the current annual output.
 
 After an intentional annual update, run:

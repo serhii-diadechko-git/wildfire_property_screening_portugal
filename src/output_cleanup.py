@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import shutil
 
-from src.paths import BI_EXPORTS_DIR, FIGURES_DIR, INTERIM_DATA_DIR, PROCESSED_DATA_DIR, RUN_LOGS_DIR, TABLES_DIR
+from src.paths import FIGURES_DIR, INTERIM_DATA_DIR, PROCESSED_DATA_DIR, RUN_LOGS_DIR, TABLES_DIR
 
 
 @dataclass(frozen=True)
@@ -28,7 +28,6 @@ def cleanup_targets() -> tuple[CleanupTarget, ...]:
         CleanupTarget(PROCESSED_DATA_DIR, frozenset({".gitkeep"})),
         CleanupTarget(FIGURES_DIR, frozenset({".gitkeep", "README.md"})),
         CleanupTarget(TABLES_DIR, frozenset({".gitkeep", "README.md"})),
-        CleanupTarget(BI_EXPORTS_DIR, frozenset({".gitkeep"})),
         CleanupTarget(RUN_LOGS_DIR, frozenset({".gitkeep"})),
     )
 

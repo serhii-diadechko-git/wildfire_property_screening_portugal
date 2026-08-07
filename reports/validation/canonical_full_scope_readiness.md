@@ -1,10 +1,10 @@
-# Canonical full-scope acquisition and readiness gate
+# Historical full-scope acquisition and readiness record
 
 > **Historical acquisition record:** this report documents the source gate for the original national `T=2015-2024` build. The retained project model is the later nine-feature specification, with development years extended backward to `T=2010-2014` using CLC 2006, ICNF 2000-2004 history, and ERA5-Land 2010-2014. See `final_temporal_test_protocol.md`, `final_temporal_test_2022_2024.md`, and `model_final_decision.md` for the completed model evidence.
 
 > **Operational-status addendum, 2026-08-06:** the frozen nine-feature specification is refit through labelled predictor year `T=2024` / observed outcome 2025. The ERA5-Land JJAS 2025 GRIB is now validated and registered. A 2026 unlabelled scoring matrix, Parquet score table, and 89,112-feature EPSG:3763 GeoPackage are published; see `operational_forecast_readiness.md` and `operational_forecast_2026_validation.md`.
 
-Updated 2026-08-05. This report is the authoritative gate for national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during this acquisition pass.
+Acquisition pass completed 2026-08-05. This report preserves the authoritative source gate that preceded national-panel creation. Raw inputs are immutable; no feature derivation or modelling was performed during that acquisition pass. Current analytical and operational status is recorded in `national_panel_2015_2024_validation.md`, `final_temporal_test_2022_2024.md`, `model_final_decision.md`, and `operational_forecast_2026_validation.md`.
 
 Post-gate implementation note: the national build confirmed 1,506 mainland cells whose centroid-containing ERA5-Land cell is water-masked. The validated analysis in `reports/validation/era5_coastal_fallback_analysis.md` found a stable nearest valid land-cell mapping wholly inside the acquired extent (maximum 13.963 km). The canonical derived assignment is therefore containing valid cell, otherwise nearest valid ERA5-Land land cell. No raw acquisition, interpolation or downscaling was added.
 
@@ -24,7 +24,7 @@ The 2 km context buffer applies to `forest_shrub_share_2km`, `mean_slope_2km`, a
 | Copernicus DEM GLO-30 | mainland plus outward 2 km context | 21 required land/coastal COG tiles acquired and validated; one intersecting edge tile is an official ocean/no-source case. | Ready; slope remains intentionally uncomputed. |
 | CAOP | fixed mainland boundary/reporting areas | CAOP 2025 remains the fixed grid boundary in EPSG:3763. | Ready. |
 
-**Acquisition gate closed — feature derivation may begin.** This means the canonical raw/prepared source inputs are available and validated; it does not mean that the national panel, final temporal test, or model is ready.
+**Historical acquisition gate closed.** At that point the canonical raw/prepared source inputs were available and validated; subsequent reports document the completed feature derivation, national panel, final temporal test, operational refit, and 2026 score.
 
 ## ICNF 2023 and 2025
 
@@ -117,4 +117,4 @@ The CAOP mainland boundary was buffered outward by exactly 2,000 m in EPSG:3763 
 
 None. ICNF 2005-2025, ERA5-Land T=2015-2024 including the corrected 2022/2023 precipitation files, the three governed CLC reference layers, Copernicus DEM GLO-30, and CAOP 2025 are locally registered and validated for acquisition readiness.
 
-Feature derivation may begin under the canonical gate. Slope, the combined national panel, the final temporal evaluation, and model training remain intentionally unperformed and must pass their own later validation gates.
+This source gate has been consumed successfully. Slope derivation, the national panel, the frozen final temporal evaluation, the operational refit, and the target-free 2026 score subsequently passed their own validation gates. This historical report remains the detailed provenance record; it is not the current project-status summary.

@@ -17,6 +17,7 @@ The canonical machine-learning dataset remains `data/processed/national_panel_20
 | Purpose | Path | CRS / content | Role |
 |---|---|---|---|
 | Portable QGIS presentation project | `qgis/wildfire_exposure_screening_portugal.qgz` | EPSG:3763; relative GeoPackage layer paths; historical screening, official ICNF comparison, CAOP boundary, and two off-by-default QA layers | GIS inspection and presentation project; it is not the canonical analytical table. |
+| Portable QGIS project with current annual estimate | `qgis/wildfire_exposure_screening_portugal_2026.qgz` | EPSG:3763; the historical/official context plus the separate target-free 2026 comparative-estimate layer | Current annual presentation view. Percentile display bands do not alter the continuous score and are not safety categories. |
 | Historical screening layout | `reports/figures/historical_wildfire_exposure_screening_mainland_portugal.png` and `.pdf` | 1 km mainland cells; 2016-2025 recurrence measured in a 2 km context | Presentation output; historical comparative exposure only. |
 | Historical / official comparison layout | `reports/figures/historical_exposure_and_official_icnf_structural_hazard_comparison.png` and `.pdf` | Side-by-side 1 km views of historical recurrence bands and predominant official ICNF 25 m structural-hazard classes | Descriptive comparison only; not an accuracy assessment or project prediction. |
 

@@ -104,7 +104,7 @@ and reproduce them again from the untouched raw inputs:
 # List exactly what would be removed; deletes nothing.
 python scripts/clean_project_outputs.py --dry-run
 
-# Remove only derived data, generated figures/tables, BI exports, and local run logs.
+# Remove only derived data, generated figures/tables, and local run logs.
 python scripts/clean_project_outputs.py --confirm-delete-derived
 
 # Then rebuild the project.
@@ -191,6 +191,7 @@ The reproducible run writes local outputs outside `data/raw/`:
 | `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence. |
 | `reports/figures/` and `reports/tables/` | Presentation-ready visuals and summaries. |
 | `reports/validation/` | Reproducible validation and interpretation reports. |
+| `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx` | Editable final capstone presentation built from the validated results. |
 
 Parquet is the canonical analytical format. GeoPackages provide reusable
 geometry and presentation/QA layers; they are not a duplicate cell-year panel.

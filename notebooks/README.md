@@ -110,5 +110,5 @@ python scripts/clean_project_outputs.py --confirm-delete-derived
 
 This command preserves `data/raw/`, source code, notebooks, QGIS projects, and
 tracked validation documents. It removes only reproducible derived data,
-generated figures/tables, BI exports, and local run logs. Then run the full
+generated figures/tables, and local run logs. Then run the full
 reproduction command above.

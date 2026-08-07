@@ -29,8 +29,6 @@ local_data_paths.json
 /reports/figures/*
 !/reports/figures/.gitkeep
 !/reports/figures/README.md
-/reports/bi_exports/*
-!/reports/bi_exports/.gitkeep
 /reports/tables/*
 !/reports/tables/.gitkeep
 !/reports/tables/README.md

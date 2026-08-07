@@ -390,8 +390,8 @@ def build_fallback_panel_batches(progress=print) -> dict[str, int]:
 def _archive_previous_evidence() -> dict[str, str]:
     """Archive the current direct-assignment panel for this schema version.
 
-    The earlier seven-feature evidence remains untouched as historical evidence.
-    The nine-feature contract needs its own direct-assignment snapshot because the
+    The earlier direct-assignment evidence remains untouched as historical
+    validation evidence. The current contract needs its own snapshot because
     fallback validation compares every non-climate analytical value exactly.
     """
     NINE_FEATURE_EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
@@ -470,7 +470,7 @@ def validate_fallback_panel() -> dict[str, object]:
 
     The national builder now applies the approved direct-or-nearest-valid rule
     while deriving ERA5 batches.  It no longer rewrites a separately built,
-    seven-feature panel, so validation checks the one canonical panel directly.
+    separately built interim panel, so validation checks the one canonical panel directly.
     The older pre-fallback snapshot remains historical evidence only.
     """
     new_file = pq.ParquetFile(NATIONAL_PANEL_PATH)
