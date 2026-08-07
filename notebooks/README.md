@@ -33,7 +33,7 @@ kernel (`ipykernel`), not the separate JupyterLab application.
 2. `01_data_collection.ipynb` — immutable source inventory, provenance ledger, and representative archive checks; no download.
 3. `02_data_preparation.ipynb` — canonical grid, nine-predictor contract, CLC assignment, and panel-validation evidence.
 4. `03_eda.ipynb` — validated panel completeness, zero inflation, target behaviour, predictor correlations, temporal drift, and extreme-value screening.
-5. `04_modelling.ipynb` — saved nine-feature hurdle metadata, model components, MAE/RMSE/capture tables, final-test prediction/residual plots, and annual scoring logic; no tuning or retraining.
+5. `04_modelling.ipynb` — technical model contract: saved nine-feature hurdle metadata, fixed feature order, hurdle components, temporal safeguards, and annual scoring lifecycle; no tuning, retraining, or repeated final-test results.
 6. `05_evaluation_recommendations.ipynb` — observed historical screening and official ICNF comparison, including verified spatial-output previews; no prediction or recommendation category.
 7. `06_final_charts.ipynb` — final capstone narrative: project design, nine-predictor contract, EDA, frozen final-test regression evidence, and validated GIS/presentation outputs; it reads real artefacts without duplicate analysis.
 
@@ -42,11 +42,12 @@ they render real tables/plots from them. By default, costly/rewrite-capable
 stages are disabled. Turn on a switch only when deliberately regenerating the
 corresponding derived output after raw-input preflight has passed.
 
-Notebook `04` reports regression diagnostics for the already completed frozen
-final temporal test. It distinguishes all-row MAE/RMSE, positive-target error,
-and capture@20% as a ranking diagnostic. The binned comparison is descriptive
-regression evidence, not probability calibration. It intentionally does not
-claim direct feature importance from correlated spatial predictors.
+Notebook `04` explains the governed model and its annual update mechanism.
+Notebook `06` is the single presentation of held-out final-test metrics and
+diagnostics, including all-row and positive-target error and Capture@20% as a
+technical ranking diagnostic. This avoids presenting the same final evidence
+twice. Neither notebook claims direct feature importance from correlated
+spatial predictors.
 
 ## Controlled rebuild switches
 
@@ -56,9 +57,9 @@ claim direct feature importance from correlated spatial predictors.
 | `01` | Reads provenance and runs representative archive validation. | No download or raw-data write. |
 | `02` | Inspects grid, CLC, feature contract, and panel validation. | `REBUILD_NATIONAL_PANEL` / `REBUILD_EXTENDED_TRAINING_PANEL` call the bounded reusable builders. |
 | `03` | Reads saved EDA evidence and plots it. | `REGENERATE_EDA` regenerates EDA reports/figures. |
-| `04` | Displays saved final-test model artifacts and durable diagnostics. | `REBUILD_MODEL_DIAGNOSTICS` rebuilds figures/tables; `RUN_FROZEN_MODEL_STAGES` calls the frozen refit and final test. |
+| `04` | Verifies saved model metadata, feature order, split boundary, hurdle components, and operational lifecycle. | No notebook rebuild switch; use the project runner for a deliberate refit/reproduction. |
 | `05` | Inspects the published historical screening. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
-| `06` | Reads and presents validated EDA, model-diagnostic, GIS, and final-screening artefacts. | `REGENERATE_FINAL_VISUALS` rebuilds only the code-generated historical-screening charts/tables. |
+| `06` | Reads and presents validated EDA, final-test diagnostics, GIS, and final-screening artefacts. | No output-writing rebuild switch; it renders live review figures from validated artefacts. |
 
 For a complete automated rebuild, use the root command rather than enabling
 several switches manually:

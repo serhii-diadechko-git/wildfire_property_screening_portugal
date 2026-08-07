@@ -46,7 +46,7 @@ class NotebookReviewLayerTests(unittest.TestCase):
         self.assertIn("validate_final_visuals", presentation)
         self.assertNotIn("build_national_panel", collection + preparation + presentation)
         self.assertIn("REBUILD_NATIONAL_PANEL = False", preparation)
-        self.assertIn("REGENERATE_FINAL_VISUALS = False", presentation)
+        self.assertIn("SHOW_LIVE_MODEL_DIAGNOSTICS = True", presentation)
 
     def test_eda_notebook_is_executable_artifact_review(self) -> None:
         source = code_sources("03_eda.ipynb")
@@ -62,9 +62,9 @@ class NotebookReviewLayerTests(unittest.TestCase):
         self.assertIn("nine_feature_hurdle.joblib", source)
         self.assertNotIn(".fit(", source)
         self.assertNotIn("GridSearchCV", source)
-        self.assertIn("plot_prediction_diagnostics", source)
-        self.assertIn("REBUILD_MODEL_DIAGNOSTICS = False", source)
-        self.assertIn("RUN_FROZEN_MODEL_STAGES = False", source)
+        self.assertIn("model_component_frame", source)
+        self.assertNotIn("plot_prediction_diagnostics", source)
+        self.assertNotIn("REBUILD_MODEL_DIAGNOSTICS", source)
 
 
 if __name__ == "__main__":
