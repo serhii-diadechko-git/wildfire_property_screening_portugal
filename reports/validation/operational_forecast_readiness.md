@@ -3,6 +3,7 @@
 ## Fixed model
 
 - Model: fixed nine-feature hurdle refit on predictor years T=2010-2024, with observed ICNF outcomes 2011-2025.
+- Method: `HurdleHistGradientRegressor`, combining `HistGradientBoostingClassifier` for occurrence and `HistGradientBoostingRegressor` for positive burned share; their product is the continuous comparative estimate. Histogram-based decision-tree ensembles allow non-linear predictor relationships and interactions, while the two-part structure handles the target's many zero values.
 - Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `3923A98D8921401435976530041B89F2DE128006815AA8B6607841C66EED3B0F`).
 - Model selection remains the completed frozen T=2022-2024 final temporal test; no post-test tuning occurred.
 

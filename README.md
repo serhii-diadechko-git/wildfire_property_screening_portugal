@@ -27,6 +27,14 @@ the prior ten years; JJAS mean temperature; JJAS total precipitation; JJAS mean
 layer-1 soil water; JJAS maximum monthly temperature; and JJAS minimum monthly
 soil water. Definitions and units are in [docs/data_dictionary.md](docs/data_dictionary.md).
 
+The hurdle model combines a histogram-gradient-boosting classifier for whether
+any burning occurs with a histogram-gradient-boosting regressor for burned
+share when burning occurs. Small decision-tree ensembles can represent
+non-linear relationships and interactions among history, landscape, terrain,
+and climate without imposing one fixed linear effect. The two components suit a
+target with many zero values and continuous positive burned shares. This is an
+associative predictive method, not causal evidence.
+
 ## Data access and licensing
 
 Raw source files, credentials, and generated data are deliberately excluded

@@ -13,6 +13,19 @@ continuous estimated burned share is not a probability and must not be
 presented as one. It may be published only as a cautious, year-specific
 comparative estimate after its annual scoring inputs pass validation.
 
+## Method rationale
+
+The retained `HurdleHistGradientRegressor` is a two-part scikit-learn model:
+`HistGradientBoostingClassifier` estimates whether any burning occurs, and
+`HistGradientBoostingRegressor` estimates burned share among positive outcomes.
+The final estimate is their product. Histogram gradient boosting uses many
+small decision trees and is suitable for the large tabular panel because it can
+represent non-linear relationships and interactions among the nine approved
+fire-history, landscape, terrain, and climate predictors without assuming a
+fixed linear relationship. The hurdle structure is appropriate because the
+continuous target has many exact zeros alongside positive burned shares. This
+selection establishes an associative predictive method, not a causal claim.
+
 ## Held-out evidence
 
 On the one frozen final temporal test (T=2022-2024), the nine-feature hurdle

@@ -67,8 +67,8 @@ def plot_metric_comparison(comparison: pd.DataFrame):
     labels = comparison.index.str.replace("_", " ").str.title()
     figure, axes = plt.subplots(1, 3, figsize=(14, 4.4), constrained_layout=True)
     for axis, column, title, ylabel in (
-        (axes[0], "MAE", "All-row error", "Burned-share error"),
-        (axes[1], "RMSE", "All-row squared-error sensitivity", "Burned-share error"),
+        (axes[0], "MAE", "MAE: all held-out cell-years", "Burned-share error"),
+        (axes[1], "RMSE", "RMSE: sensitivity to larger errors", "Burned-share error"),
         (axes[2], "capture_at_20_percent", "Positive cells captured in top 20%", "Share of positive cells"),
     ):
         bars = axis.bar(labels, comparison[column], color=("#4C78A8", "#F58518"))
@@ -78,7 +78,7 @@ def plot_metric_comparison(comparison: pd.DataFrame):
         for bar, value in zip(bars, comparison[column], strict=True):
             axis.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:.3f}", ha="center", va="bottom", fontsize=9)
     axes[2].set_ylim(0, 1)
-    figure.suptitle("Frozen final-temporal-test diagnostics (T=2022–2024)", fontsize=13)
+    figure.suptitle("Held-out final temporal evaluation (T=2022–2024)", fontsize=13)
     return figure
 
 
@@ -100,20 +100,20 @@ def plot_prediction_diagnostics(
     figure, axes = plt.subplots(1, 3, figsize=(16, 4.6), constrained_layout=True)
     hexbin = axes[0].hexbin(observed, estimated, gridsize=55, bins="log", mincnt=1, cmap="viridis")
     axes[0].plot([0, 1], [0, 1], color="black", linewidth=1, linestyle="--", label="equal share")
-    axes[0].set(xlabel="Observed burned share", ylabel="Estimated burned share", title="All final-test cells")
+    axes[0].set(xlabel="Observed burned share", ylabel="Estimated burned share", title="All held-out final-test cell-years")
     axes[0].legend(loc="upper left")
     figure.colorbar(hexbin, ax=axes[0], label="Cells (log scale)")
 
     positive = predictions.loc[predictions[target_column] > 0, [target_column, model_column]]
     axes[1].scatter(positive[target_column], positive[model_column], s=5, alpha=0.18, color="#F58518", rasterized=True)
     axes[1].plot([0, 1], [0, 1], color="black", linewidth=1, linestyle="--")
-    axes[1].set(xlabel="Observed burned share", ylabel="Estimated burned share", title="Positive-target cells only")
+    axes[1].set(xlabel="Observed burned share", ylabel="Estimated burned share", title="Cell-years with observed burning only")
 
     years = sorted(predictions["observation_year"].unique())
     residual_by_year = [residual[predictions["observation_year"].to_numpy() == year] for year in years]
     axes[2].boxplot(residual_by_year, tick_labels=years, showfliers=False)
     axes[2].axhline(0, color="black", linewidth=1, linestyle="--")
-    axes[2].set(xlabel="Predictor year T", ylabel="Estimated − observed share", title="Residual distribution by year")
+    axes[2].set(xlabel="Predictor year T", ylabel="Estimated − observed share", title="Estimation error by predictor year")
     return figure
 
 
@@ -155,7 +155,7 @@ def plot_binned_observed_estimated(table: pd.DataFrame):
     axis.set(
         xlabel="Mean estimated burned share in prediction bin",
         ylabel="Mean observed burned share in prediction bin",
-        title="Binned observed-versus-estimated comparison",
+        title="Held-out binned observed-versus-estimated comparison",
     )
     axis.legend()
     return figure

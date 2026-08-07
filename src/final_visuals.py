@@ -134,7 +134,7 @@ def _save_and_return(figure: plt.Figure, path: Path) -> Path:
 
 
 def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
-    """Show frozen final-test evidence for the retained model and comparator."""
+    """Show held-out final-temporal evidence for the retained model and comparator."""
     metrics = model_selection["metrics"]
     keys = ["historical_recurrence_baseline", "nine_feature_hurdle"]
     labels = ["Historical\nrecurrence", "Nine-feature\nhurdle"]
@@ -159,7 +159,7 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
             axis.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:.3f}",
                       ha="center", va="bottom", fontsize=9)
         axis.text(0.5, -0.22, note, ha="center", va="top", transform=axis.transAxes, fontsize=8.5)
-    fig.suptitle("Frozen final-temporal comparison (T=2022–2024)", fontsize=15, fontweight="bold")
+    fig.suptitle("Held-out final temporal evaluation (T=2022–2024)", fontsize=15, fontweight="bold")
     fig.text(
         0.5,
         -0.05,
