@@ -978,14 +978,22 @@ def _year_metrics(frame: pd.DataFrame, year: int) -> dict[str, object]:
 
 
 def _assert_exact_frame(component: str, batch_id: str, expected: pd.DataFrame, actual: pd.DataFrame) -> None:
-    """Require an in-memory rerun to reproduce the published analytical values."""
+    """Require a rerun to reproduce values, allowing harmless float round-off.
+
+    Spatial overlays can accumulate floating-point operations in a different
+    order across GDAL/GeoPandas versions.  Identity fields and row ordering
+    remain exact; numeric values are compared at a tighter tolerance than the
+    precision meaningful for the derived shares.
+    """
     try:
         pd.testing.assert_frame_equal(
             expected.reset_index(drop=True),
             actual.reset_index(drop=True),
-            check_exact=True,
+            check_exact=False,
             check_dtype=True,
             check_like=False,
+            rtol=1e-12,
+            atol=1e-12,
         )
     except AssertionError as error:
         raise ValueError(f"Deterministic rerun failed for {component}/{batch_id}: {error}") from error
