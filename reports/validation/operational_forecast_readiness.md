@@ -2,10 +2,6 @@
 
 ## Fixed model
 
-This is a two-part burned-share regression model. The implementation and saved
-artefact retain the technical name **hurdle model**: one component estimates
-whether burning occurs, and the other estimates the positive burned share.
-
 - Model: fixed nine-feature two-part burned-share regression model (technical term: hurdle model), refit on predictor years T=2010-2024, with observed ICNF outcomes 2011-2025.
 - Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `3923A98D8921401435976530041B89F2DE128006815AA8B6607841C66EED3B0F`).
 - Model selection remains the completed frozen T=2022-2024 final temporal test; no post-test tuning occurred.
