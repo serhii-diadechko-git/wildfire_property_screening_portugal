@@ -75,6 +75,11 @@ created by the reproducible pipeline after source preflight succeeds. Their
 published checksums, validation reports, and provenance are recorded in
 `reports/validation/` and `reports/run_logs/`.
 
+Small synthetic test fixtures or a clearly labelled tiny example subset may be
+versioned under `tests/fixtures/` or `data/examples/` when they help reviewers
+run a lightweight check. The canonical grid, provider downloads, and large
+derived GeoPackages remain local and reproducible rather than being committed.
+
 The reference-preparation stage is run automatically by
 `python scripts/run_project.py --mode reproduce --confirm-rebuild`. It creates
 the canonical 89,112-cell EPSG:3763 1 km mainland grid in

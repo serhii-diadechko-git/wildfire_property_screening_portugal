@@ -199,6 +199,8 @@ If you need to run the core stages separately instead of using `reproduce`,
 keep this order:
 
 ```text
+python scripts/prepare_reference_layers.py            # CAOP references + canonical grid
+python scripts/prepare_clc_portugal_layers.py         # Portugal CLC derivatives
 python scripts/build_national_panel.py --stage all
 python scripts/build_extended_training_panel.py --stage all
 python scripts/refit_extended_training_models.py       # actual model fit
@@ -208,10 +210,13 @@ python scripts/score_operational_forecast.py
 python scripts/build_final_visuals.py
 ```
 
-The separate commands assume that acquisition, preflight, and validation have
-already passed. The first two build labelled data; the third fits and saves the
-model; the remaining commands evaluate or apply that saved model and create
-presentation outputs.
+The separate commands assume that acquisition, preflight, and source
+validation have already passed. The first command creates/reuses the CAOP
+boundary and canonical 1 km grid; the second creates/reuses the three CLC
+derivatives. The national-panel command also checks these prerequisites, so it
+is safe to call directly after a clean checkout. The next command builds
+labelled data; the refit command fits and saves the model; the remaining
+commands evaluate or apply that saved model and create presentation outputs.
 
 The acquisition mode checks whether an ERA5 file is missing before requiring
 the local CDS credentials file. If all requested ERA5 files already exist, it

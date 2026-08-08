@@ -22,6 +22,11 @@ from src.national_panel import (  # noqa: E402
     validate_national_panel,
     write_validation_report,
 )
+from src.reference_preparation import (  # noqa: E402
+    prepare_caop_reference_layers,
+    prepare_canonical_mainland_grid,
+    prepare_portugal_clc_layers,
+)
 
 
 def validate_and_report():
@@ -48,5 +53,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=STAGES, default="all")
     arguments = parser.parse_args()
+    if arguments.stage == "all":
+        # Keep this direct entry point safe on a clean checkout as well as
+        # when it is launched by run_project.py, which has already completed
+        # these idempotent reference stages.
+        prepare_caop_reference_layers()
+        prepare_canonical_mainland_grid()
+        prepare_portugal_clc_layers()
     result = STAGES[arguments.stage]()
     print(json.dumps(result, indent=2, default=str))
