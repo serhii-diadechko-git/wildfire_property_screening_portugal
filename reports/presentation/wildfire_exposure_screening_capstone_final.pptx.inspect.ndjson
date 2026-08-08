@@ -1,0 +1,433 @@
+{"kind":"deck","id":"pr/kkqq0g","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"DEFAULT"}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"DATA SCIENCE & ML CAPSTONE","textShapes":13}
+{"kind":"shape","id":"sh/547294r6","slide":1,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/k3yl0zql","slide":1,"name":"Shape 1","bbox":[0,0,24,540]}
+{"kind":"shape","id":"sh/7qp4be9c","slide":1,"name":"Shape 2","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/65g3298r","slide":1,"name":"Shape 3","bbox":[33.6,14.4,148.8,30.72]}
+{"kind":"textbox","id":"sh/ts7md4r2","slide":1,"name":"Text 4","text":"DATA SCIENCE & ML CAPSTONE","textPreview":"DATA SCIENCE & ML CAPSTONE","textChars":26,"textLines":1,"bbox":[33.6,14.4,148.8,30.72]}
+{"kind":"shape","id":"sh/sryl4zqx","slide":1,"name":"Shape 5","bbox":[787.2,14.4,148.8,30.72]}
+{"kind":"textbox","id":"sh/fu94fe98","slide":1,"name":"Text 6","text":"2026","textPreview":"2026","textChars":4,"textLines":1,"bbox":[787.2,14.4,148.8,30.72]}
+{"kind":"textbox","id":"sh/utg3698n","slide":1,"name":"Text 7","text":"WILDFIRE EXPOSURE SCREENING","textPreview":"WILDFIRE EXPOSURE SCREENING","textChars":27,"textLines":1,"bbox":[38.4,59.52,576,33.6]}
+{"kind":"textbox","id":"sh/wn6dc7eh","slide":1,"name":"Text 8","text":"Wildfire Exposure\nScreening","textPreview":"Wildfire Exposure | Screening","textChars":27,"textLines":2,"bbox":[38.4,96,585.6,192]}
+{"kind":"textbox","id":"sh/hofulsf2","slide":1,"name":"Text 9","text":"A reproducible GIS and machine-learning workflow for broad-area location research.","textPreview":"A reproducible GIS and machine-learning workflow for broad-area location research.","textChars":82,"textLines":1,"bbox":[38.4,297.6,585.6,43.2]}
+{"kind":"shape","id":"sh/ul4vaxgb","slide":1,"name":"Shape 10","bbox":[38.4,347.52,556.8,2.4]}
+{"kind":"textbox","id":"sh/vmdcj2xw","slide":1,"name":"Text 11","text":"Serhii Diadechko","textPreview":"Serhii Diadechko","textChars":16,"textLines":1,"bbox":[38.4,355.2,556.8,33.6]}
+{"kind":"shape","id":"sh/4r6dg7et","slide":1,"name":"Shape 12","bbox":[638.4,81.6,297.6,412.8]}
+{"kind":"textbox","id":"sh/5sfepcfe","slide":1,"name":"Text 13","text":"Purpose","textPreview":"Purpose","textChars":7,"textLines":1,"bbox":[638.4,86.4,297.6,33.6]}
+{"kind":"shape","id":"sh/ipovexwn","slide":1,"name":"Shape 14","bbox":[652.8,122.88,268.8,2.4]}
+{"kind":"textbox","id":"sh/3qxwn2x8","slide":1,"name":"Text 15","text":"Observed history","textPreview":"Observed history","textChars":16,"textLines":1,"bbox":[652.8,132.48,268.8,46.08]}
+{"kind":"textbox","id":"sh/sfqdkrep","slide":1,"name":"Text 16","text":"Landscape, terrain and climate","textPreview":"Landscape, terrain and climate","textChars":30,"textLines":1,"bbox":[652.8,188.16,268.8,46.08]}
+{"kind":"textbox","id":"sh/dgzetcfa","slide":1,"name":"Text 17","text":"Comparative 2026 estimate","textPreview":"Comparative 2026 estimate","textChars":25,"textLines":1,"bbox":[652.8,243.84,268.8,46.08]}
+{"kind":"textbox","id":"sh/1cvuxc7e","slide":1,"name":"Text 18","text":"Not a property-level safety guarantee","textPreview":"Not a property-level safety guarantee","textChars":37,"textLines":1,"bbox":[652.8,299.52,268.8,46.08]}
+{"kind":"textbox","id":"sh/0bmd476t","slide":1,"name":"Text 19","text":"Not a buy / do-not-buy recommendation","textPreview":"Not a buy / do-not-buy recommendation","textChars":37,"textLines":1,"bbox":[652.8,355.2,268.8,46.08]}
+{"kind":"shape","id":"sh/zadcv2p8","slide":1,"name":"Shape 20","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/e94v2hon","slide":1,"name":"Text 21","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"Open with the decision problem. A person may need to compare broad parts of mainland Portugal before spending time on municipal, site and property-specific checks. The project offers comparative evidence, not a property recommendation.\n\n[Sources]\nProject README; docs/project_brief.md"}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"DATASET OVERVIEW","textShapes":25}
+{"kind":"shape","id":"sh/9072xkry","slide":2,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/ozy1ofad","slide":2,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/b29kza94","slide":2,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/a10jqpsj","slide":2,"name":"Text 3","text":"DATASET OVERVIEW","textPreview":"DATASET OVERVIEW","textChars":16,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/x4r21kru","slide":2,"name":"Text 4","text":"2 / 8","textPreview":"2 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/w3i1sfa9","slide":2,"name":"Text 5","text":"One 1 km mainland cell per year makes the evidence comparable","textPreview":"One 1 km mainland cell per year makes the evidence comparable","textChars":61,"textLines":1,"bbox":[28.8,84.48,902.4,49.92]}
+{"kind":"shape","id":"sh/r65knqtk","slide":2,"name":"Shape 6","bbox":[28.8,144,278.4,297.6]}
+{"kind":"shape","id":"sh/q5wjelsz","slide":2,"name":"Shape 7","bbox":[28.8,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/ove9o7yd","slide":2,"name":"Text 8","text":"OBSERVED FIRE","textPreview":"OBSERVED FIRE","textChars":13,"textLines":1,"bbox":[28.8,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/9wnqhczy","slide":2,"name":"Text 9","text":"ICNF annual burned areas","textPreview":"ICNF annual burned areas","textChars":24,"textLines":1,"bbox":[38.4,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/mtwrmxg7","slide":2,"name":"Text 10","text":"Historical occurrence and next-year burned-share outcomes. Fire recurrence is measured in a 2 km context buffer.","textPreview":"Historical occurrence and next-year burned-share outcomes. Fire recurrence is measured in a 2 km context buffer.","textChars":112,"textLines":1,"bbox":[38.4,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/nu58f2hs","slide":2,"name":"Shape 11","bbox":[38.4,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/wjy9sry9","slide":2,"name":"Text 12","text":"2000–2025 coverage","textPreview":"2000–2025 coverage","textChars":18,"textLines":1,"bbox":[43.2,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/xk7qlczu","slide":2,"name":"Text 13","text":"Use: observed history and outcome labels","textPreview":"Use: observed history and outcome labels","textChars":40,"textLines":1,"bbox":[38.4,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/ahwrqhgj","slide":2,"name":"Text 14","text":"Never used as a same-year predictor.","textPreview":"Never used as a same-year predictor.","textChars":36,"textLines":1,"bbox":[38.4,385.92,259.2,52.8]}
+{"kind":"textbox","id":"sh/bip8jmho","slide":2,"name":"Text 15","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[311.04,268.8,33.6,48]}
+{"kind":"shape","id":"sh/cnupgny5","slide":2,"name":"Shape 16","bbox":[347.52,144,278.4,297.6]}
+{"kind":"shape","id":"sh/do3q9szq","slide":2,"name":"Shape 17","bbox":[347.52,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/t8byxkn2","slide":2,"name":"Text 18","text":"PLACE CONTEXT","textPreview":"PLACE CONTEXT","textChars":13,"textLines":1,"bbox":[347.52,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/s72xofmh","slide":2,"name":"Text 19","text":"CLC and Copernicus DEM","textPreview":"CLC and Copernicus DEM","textChars":22,"textLines":1,"bbox":[357.12,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/76twva5c","slide":2,"name":"Text 20","text":"Built-up share, forest/shrub context and mean slope describe the surrounding landscape.","textPreview":"Built-up share, forest/shrub context and mean slope describe the surrounding landscape.","textChars":87,"textLines":1,"bbox":[357.12,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/65kfmpor","slide":2,"name":"Shape 21","bbox":[357.12,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/hcvy14ne","slide":2,"name":"Text 22","text":"Static or governed historical layers","textPreview":"Static or governed historical layers","textChars":36,"textLines":1,"bbox":[361.92,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/gbmxszmt","slide":2,"name":"Text 23","text":"Use: landscape and terrain predictors","textPreview":"Use: landscape and terrain predictors","textChars":37,"textLines":1,"bbox":[357.12,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/fadgzu58","slide":2,"name":"Text 24","text":"No parcel-level claim.","textPreview":"No parcel-level claim.","textChars":22,"textLines":1,"bbox":[357.12,385.92,259.2,52.8]}
+{"kind":"textbox","id":"sh/u94fqp4n","slide":2,"name":"Text 25","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[629.76,268.8,33.6,48]}
+{"kind":"shape","id":"sh/p0vy54na","slide":2,"name":"Shape 26","bbox":[666.24,144,278.4,297.6]}
+{"kind":"shape","id":"sh/4zmxwzmp","slide":2,"name":"Shape 27","bbox":[666.24,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/mlgvq147","slide":2,"name":"Text 28","text":"CLIMATE CONTEXT","textPreview":"CLIMATE CONTEXT","textChars":15,"textLines":1,"bbox":[666.24,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/nmpcj6ls","slide":2,"name":"Text 29","text":"ERA5-Land JJAS","textPreview":"ERA5-Land JJAS","textChars":14,"textLines":1,"bbox":[675.84,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/onydsbmd","slide":2,"name":"Text 30","text":"Warm-season temperature, precipitation and shallow soil-water conditions from predictor year T only.","textPreview":"Warm-season temperature, precipitation and shallow soil-water conditions from predictor year T only.","textChars":100,"textLines":1,"bbox":[675.84,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/9o7ulg3y","slide":2,"name":"Shape 31","bbox":[675.84,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/a9gvulkj","slide":2,"name":"Text 32","text":"0.1° regional climate cells","textPreview":"0.1° regional climate cells","textChars":27,"textLines":1,"bbox":[680.64,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/ba9cn6l4","slide":2,"name":"Text 33","text":"Use: predictor-year climate context","textPreview":"Use: predictor-year climate context","textChars":35,"textLines":1,"bbox":[675.84,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/wbidwb29","slide":2,"name":"Text 34","text":"No interpolation or downscaling.","textPreview":"No interpolation or downscaling.","textChars":32,"textLines":1,"bbox":[675.84,385.92,259.2,52.8]}
+{"kind":"shape","id":"sh/xcrupg3u","slide":2,"name":"Shape 35","bbox":[28.8,453.12,902.4,48]}
+{"kind":"textbox","id":"sh/id0vylkf","slide":2,"name":"Text 36","text":"89,112 mainland cells; one EPSG:3763 1 km cell × predictor year record.","textPreview":"89,112 mainland cells; one EPSG:3763 1 km cell × predictor year record.","textChars":71,"textLines":1,"bbox":[43.2,453.12,873.6,48]}
+{"kind":"shape","id":"sh/je9crql0","slide":2,"name":"Shape 37","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/ru5cbqd4","slide":2,"name":"Text 38","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"Describe what one row represents: a mainland Portugal 1 km cell in a predictor year. Explain the three source roles. The 2 km buffer is a context measurement, not a second grid.\n\n[Sources]\ndocs/data_dictionary.md; reports/validation/canonical_full_scope_readiness.md"}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":3,"title":"KEY FINDING 1","textShapes":19}
+{"kind":"shape","id":"sh/1cj2d8b6","slide":3,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/0ba143al","slide":3,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/rm1k7yt4","slide":3,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/ql8jytsj","slide":3,"name":"Text 3","text":"KEY FINDING 1","textPreview":"KEY FINDING 1","textChars":13,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/doj29oba","slide":3,"name":"Text 4","text":"3 / 8","textPreview":"3 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/sna103ap","slide":3,"name":"Text 5","text":"Historical wildfire recurrence is uneven across mainland Portugal","textPreview":"Historical wildfire recurrence is uneven across mainland Portugal","textChars":65,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/3ihk3et8","slide":3,"name":"Shape 6","bbox":[28.8,136.32,902.4,78.72]}
+{"kind":"shape","id":"sh/ih8ju9sn","slide":3,"name":"Shape 7","bbox":[28.8,136.32,13.44,78.72]}
+{"kind":"textbox","id":"sh/kbm987y5","slide":3,"name":"Text 8","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[49.92,136.32,43.2,78.72]}
+{"kind":"textbox","id":"sh/5cva1cfq","slide":3,"name":"Text 9","text":"Reading the slides out loud","textPreview":"Reading the slides out loud","textChars":27,"textLines":1,"bbox":[97.92,142.08,432,32.64]}
+{"kind":"textbox","id":"sh/i94r6xgz","slide":3,"name":"Text 10","text":"Fix: Your slides show the chart. You explain what it means. Script: \"This chart shows X — what's interesting is Y, because Z.\"","textPreview":"Fix: Your slides show the chart. You explain what it means. Script: \"This chart shows X — what's interesting is Y, because Z.\"","textChars":126,"textLines":1,"bbox":[97.92,174.72,816,36.48]}
+{"kind":"shape","id":"sh/jadsz2xk","slide":3,"name":"Shape 11","bbox":[28.8,222.72,902.4,78.72]}
+{"kind":"shape","id":"sh/w72947yt","slide":3,"name":"Shape 12","bbox":[28.8,222.72,13.44,78.72]}
+{"kind":"textbox","id":"sh/x8vaxsfe","slide":3,"name":"Text 13","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[49.92,222.72,43.2,78.72]}
+{"kind":"textbox","id":"sh/a5kr2xg3","slide":3,"name":"Text 14","text":"Too many charts, not enough story","textPreview":"Too many charts, not enough story","textChars":33,"textLines":1,"bbox":[97.92,228.48,432,32.64]}
+{"kind":"textbox","id":"sh/v6tsv2xo","slide":3,"name":"Text 15","text":"Fix: Max 1 chart per slide. Ask: does removing this chart break the argument? If not, cut it.","textPreview":"Fix: Max 1 chart per slide. Ask: does removing this chart break the argument? If not, cut it.","textChars":93,"textLines":1,"bbox":[97.92,261.12,816,36.48]}
+{"kind":"shape","id":"sh/g36tgryd","slide":3,"name":"Shape 16","bbox":[28.8,309.12,902.4,78.72]}
+{"kind":"shape","id":"sh/h4fa9wfy","slide":3,"name":"Shape 17","bbox":[28.8,309.12,13.44,78.72]}
+{"kind":"textbox","id":"sh/p0batw72","slide":3,"name":"Text 18","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[49.92,309.12,43.2,78.72]}
+{"kind":"textbox","id":"sh/oz29krqh","slide":3,"name":"Text 19","text":"Data without context","textPreview":"Data without context","textChars":20,"textLines":1,"bbox":[97.92,314.88,432,32.64]}
+{"kind":"textbox","id":"sh/3ytsrmpw","slide":3,"name":"Text 20","text":"Fix: Always say what the number means relative to something. \"€1,847 average\" means nothing. \"€1,847 — 3x higher than online courses\" means something.","textPreview":"Fix: Always say what the number means relative to something. \"€1,847 average\" means nothing. \"€1,847 — 3x higher than online courses\" mea...","textChars":150,"textLines":1,"bbox":[97.92,347.52,816,36.48]}
+{"kind":"shape","id":"sh/2xkrih8b","slide":3,"name":"Shape 21","bbox":[28.8,395.52,902.4,78.72]}
+{"kind":"shape","id":"sh/1wbapc7q","slide":3,"name":"Shape 22","bbox":[28.8,395.52,13.44,78.72]}
+{"kind":"textbox","id":"sh/gv29g7q5","slide":3,"name":"Text 23","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[49.92,395.52,43.2,78.72]}
+{"kind":"textbox","id":"sh/fu9sn2p0","slide":3,"name":"Text 24","text":"Weak conclusions","textPreview":"Weak conclusions","textChars":16,"textLines":1,"bbox":[97.92,401.28,432,32.64]}
+{"kind":"textbox","id":"sh/et0reh8f","slide":3,"name":"Text 25","text":"Fix: Ban \"in conclusion, more research may be needed.\" Replace with: \"We recommend X. The data supports this because Y.\"","textPreview":"Fix: Ban \"in conclusion, more research may be needed.\" Replace with: \"We recommend X. The data supports this because Y.\"","textChars":120,"textLines":1,"bbox":[97.92,433.92,816,36.48]}
+{"kind":"shape","id":"sh/tsrqlc7u","slide":3,"name":"Shape 26","bbox":[28.8,481.92,902.4,78.72]}
+{"kind":"shape","id":"sh/sri9s7q9","slide":3,"name":"Shape 27","bbox":[28.8,481.92,13.44,78.72]}
+{"kind":"textbox","id":"sh/ilwf69kv","slide":3,"name":"Text 28","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[49.92,481.92,43.2,78.72]}
+{"kind":"textbox","id":"sh/jm5gze1g","slide":3,"name":"Text 29","text":"Going over time","textPreview":"Going over time","textChars":15,"textLines":1,"bbox":[97.92,487.68,432,32.64]}
+{"kind":"textbox","id":"sh/knex8j21","slide":3,"name":"Text 30","text":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textPreview":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textChars":85,"textLines":1,"bbox":[97.92,520.32,816,36.48]}
+{"kind":"shape","id":"sh/5ony1oj6","slide":3,"name":"Shape 31","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/axcf29kj","slide":3,"name":"Text 32","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"shape","id":"sh/vy5gbe14","slide":3,"bbox":[28,126,904,388]}
+{"kind":"image","id":"im/fqps72l4","slide":3,"name":"","alt":"Historical wildfire exposure screening map for mainland Portugal","bbox":[52,128,856,350]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":3,"text":"This is observed historical evidence, not a prediction. The bands count distinct burned years from 2016 to 2025 in the mainland-masked 2 km context around each 1 km cell. Lower historical exposure does not mean safe.\n\n[Sources]\nreports/figures/historical_wildfire_exposure_screening_mainland_portugal.png; reports/validation/historical_exposure_screening_and_icnf_comparison.md"}
+{"kind":"slide","id":"sl/i107q5of","slide":4,"title":"KEY FINDING 2","textShapes":34}
+{"kind":"shape","id":"sh/dgbulwnm","slide":4,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/cf2tcr61","slide":4,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/z2tcnm5s","slide":4,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/yhkbe1o7","slide":4,"name":"Text 3","text":"KEY FINDING 2","textPreview":"KEY FINDING 2","textChars":13,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/l4bupwny","slide":4,"name":"Text 4","text":"4 / 8","textPreview":"4 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/032tgr6d","slide":4,"name":"Text 5","text":"Observed recurrence and official ICNF structural hazard answer different questions","textPreview":"Observed recurrence and official ICNF structural hazard answer different questions","textChars":82,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/n6dcr65o","slide":4,"name":"Shape 6","bbox":[28.8,136.32,436.8,345.6]}
+{"kind":"shape","id":"sh/m5kbi1oj","slide":4,"name":"Shape 7","bbox":[28.8,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/w32dkbuh","slide":4,"name":"Text 8","text":"Observed recurrence","textPreview":"Observed recurrence","textChars":19,"textLines":1,"bbox":[28.8,136.32,436.8,40.32]}
+{"kind":"shape","id":"sh/x4vedgvm","slide":4,"name":"Shape 9","bbox":[46.08,190.08,21.12,21.12]}
+{"kind":"textbox","id":"sh/ahkvi1cb","slide":4,"name":"Text 10","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,190.08,21.12,21.12]}
+{"kind":"textbox","id":"sh/v2twb6dw","slide":4,"name":"Text 11","text":"Counts 2016–2025 burned years in the 2 km context around each 1 km cell.","textPreview":"Counts 2016–2025 burned years in the 2 km context around each 1 km cell.","textChars":72,"textLines":1,"bbox":[74.88,186.24,379.2,36.48]}
+{"kind":"shape","id":"sh/k7mxovud","slide":4,"name":"Shape 12","bbox":[46.08,232.32,21.12,21.12]}
+{"kind":"textbox","id":"sh/58vehgvy","slide":4,"name":"Text 13","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,232.32,21.12,21.12]}
+{"kind":"textbox","id":"sh/i54fmlc7","slide":4,"name":"Text 14","text":"Official structural hazard","textPreview":"Official structural hazard","textChars":26,"textLines":1,"bbox":[74.88,228.48,379.2,36.48]}
+{"kind":"shape","id":"sh/j6dwfqds","slide":4,"name":"Shape 15","bbox":[46.08,274.56,21.12,21.12]}
+{"kind":"textbox","id":"sh/sb6xsvu9","slide":4,"name":"Text 16","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,274.56,21.12,21.12]}
+{"kind":"textbox","id":"sh/tcfel0vu","slide":4,"name":"Text 17","text":"Predominant valid official 25 m SRUP-CPIR class within the same 1 km cell.","textPreview":"Predominant valid official 25 m SRUP-CPIR class within the same 1 km cell.","textChars":74,"textLines":1,"bbox":[74.88,270.72,379.2,36.48]}
+{"kind":"shape","id":"sh/hgrmpwj2","slide":4,"name":"Shape 18","bbox":[46.08,316.8,21.12,21.12]}
+{"kind":"textbox","id":"sh/gfi5grih","slide":4,"name":"Text 19","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,316.8,21.12,21.12]}
+{"kind":"textbox","id":"sh/fe94nm1w","slide":4,"name":"Text 20","text":"Why compare both?","textPreview":"Why compare both?","textChars":17,"textLines":1,"bbox":[74.88,312.96,379.2,36.48]}
+{"kind":"shape","id":"sh/ud0ne10b","slide":4,"name":"Shape 21","bbox":[46.08,359.04,21.12,21.12]}
+{"kind":"textbox","id":"sh/pkr6tgjy","slide":4,"name":"Text 22","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,359.04,21.12,21.12]}
+{"kind":"textbox","id":"sh/4ji5kbid","slide":4,"name":"Text 23","text":"Agreement is useful context; disagreement is expected because the layers use different methods and time frames.","textPreview":"Agreement is useful context; disagreement is expected because the layers use different methods and time frames.","textChars":111,"textLines":1,"bbox":[74.88,355.2,379.2,36.48]}
+{"kind":"shape","id":"sh/3i94r61s","slide":4,"name":"Shape 24","bbox":[46.08,401.28,21.12,21.12]}
+{"kind":"textbox","id":"sh/2h0ni107","slide":4,"name":"Text 25","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,401.28,21.12,21.12]}
+{"kind":"textbox","id":"sh/5o7mhcju","slide":4,"name":"Text 26","text":"Important limit","textPreview":"Important limit","textChars":15,"textLines":1,"bbox":[74.88,397.44,379.2,36.48]}
+{"kind":"shape","id":"sh/kny587i9","slide":4,"name":"Shape 27","bbox":[46.08,443.52,21.12,21.12]}
+{"kind":"textbox","id":"sh/atcjidg7","slide":4,"name":"Text 28","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,443.52,21.12,21.12]}
+{"kind":"textbox","id":"sh/vu5kbihc","slide":4,"name":"Text 29","text":"The 2020–2030 source label is not an ICNF fire prediction for those years.","textPreview":"The 2020–2030 source label is not an ICNF fire prediction for those years.","textChars":74,"textLines":1,"bbox":[74.88,439.68,379.2,36.48]}
+{"kind":"shape","id":"sh/wve1knyx","slide":4,"name":"Shape 30","bbox":[494.4,136.32,436.8,345.6]}
+{"kind":"shape","id":"sh/xwn2dszi","slide":4,"name":"Shape 31","bbox":[494.4,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/ihw3mxg3","slide":4,"name":"Text 32","text":"Presentation guidance","textPreview":"Presentation guidance","textChars":21,"textLines":1,"bbox":[494.4,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/ji5kf2ho","slide":4,"name":"Text 33","text":"Technical","textPreview":"Technical","textChars":9,"textLines":1,"bbox":[511.68,184.32,408,26.88]}
+{"kind":"shape","id":"sh/kjelony9","slide":4,"name":"Shape 34","bbox":[511.68,219.84,17.28,17.28]}
+{"kind":"textbox","id":"sh/5kn2hszu","slide":4,"name":"Text 35","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,219.84,17.28,17.28]}
+{"kind":"textbox","id":"sh/e1sjatgz","slide":4,"name":"Text 36","text":"Show the comparison as complementary evidence, not as a model accuracy test.","textPreview":"Show the comparison as complementary evidence, not as a model accuracy test.","textChars":76,"textLines":1,"bbox":[536.64,215.04,383.04,33.6]}
+{"kind":"shape","id":"sh/zmlk3yhk","slide":4,"name":"Shape 37","bbox":[511.68,256.32,17.28,17.28]}
+{"kind":"textbox","id":"sh/fid07u98","slide":4,"name":"Text 38","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,256.32,17.28,17.28]}
+{"kind":"textbox","id":"sh/ehkzepsn","slide":4,"name":"Text 39","text":"Use the maps to explain pattern differences—not to label a property safe or unsafe.","textPreview":"Use the maps to explain pattern differences—not to label a property safe or unsafe.","textChars":83,"textLines":1,"bbox":[536.64,251.52,383.04,33.6]}
+{"kind":"shape","id":"sh/1kvi94re","slide":4,"name":"Shape 40","bbox":[511.68,292.8,17.28,17.28]}
+{"kind":"textbox","id":"sh/gjmhgzqt","slide":4,"name":"Text 41","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,292.8,17.28,17.28]}
+{"kind":"textbox","id":"sh/3md0bu94","slide":4,"name":"Text 42","text":"Historical recurrence and structural hazard remain separate GIS layers.","textPreview":"Historical recurrence and structural hazard remain separate GIS layers.","textChars":71,"textLines":1,"bbox":[536.64,288,383.04,33.6]}
+{"kind":"textbox","id":"sh/2l4zip8j","slide":4,"name":"Text 43","text":"Delivery Tips","textPreview":"Delivery Tips","textChars":13,"textLines":1,"bbox":[511.68,328.32,408,26.88]}
+{"kind":"textbox","id":"sh/povid4ra","slide":4,"name":"Text 44","text":"Talk track","textPreview":"Talk track","textChars":10,"textLines":1,"bbox":[511.68,357.12,408,24.96]}
+{"kind":"textbox","id":"sh/onmhkzqp","slide":4,"name":"Text 45","text":"The evidence layers do not compete; they add context.","textPreview":"The evidence layers do not compete; they add context.","textChars":53,"textLines":1,"bbox":[511.68,381.12,408,24.96]}
+{"kind":"textbox","id":"sh/bqx0fe9g","slide":4,"name":"Text 46","text":"Each layer has its own source and interpretation.","textPreview":"Each layer has its own source and interpretation.","textChars":49,"textLines":1,"bbox":[511.68,405.12,408,24.96]}
+{"kind":"textbox","id":"sh/qp4jm98v","slide":4,"name":"Text 47","text":"The model uses a wider predictor set for annual estimation.","textPreview":"The model uses a wider predictor set for annual estimation.","textChars":59,"textLines":1,"bbox":[511.68,429.12,408,24.96]}
+{"kind":"textbox","id":"sh/8f6hcj6t","slide":4,"name":"Text 48","text":"No layer replaces local due diligence.","textPreview":"No layer replaces local due diligence.","textChars":38,"textLines":1,"bbox":[511.68,453.12,408,24.96]}
+{"kind":"shape","id":"sh/9gfy5o7e","slide":4,"name":"Shape 49","bbox":[28.8,489.6,902.4,30.72]}
+{"kind":"textbox","id":"sh/mdoza9o3","slide":4,"name":"Text 50","text":"Official ICNF structural hazard is a reference layer; it is not this project’s ML prediction.","textPreview":"Official ICNF structural hazard is a reference layer; it is not this project’s ML prediction.","textChars":93,"textLines":1,"bbox":[43.2,489.6,873.6,30.72]}
+{"kind":"shape","id":"sh/nexg3epo","slide":4,"name":"Shape 51","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/0r6h8z6x","slide":4,"name":"Text 52","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/i107q5of","slide":4,"text":"Explain the distinction carefully. Historical recurrence is observed fire evidence over 2016–2025. The ICNF structural layer is an independent official 25 m classification summarized to the 1 km grid. Their cross-tab is descriptive, not a model accuracy metric.\n\n[Sources]\nqgis/README.md; docs/data_dictionary.md; reports/figures/historical_exposure_by_icnf_structural_hazard_crosstab.png"}
+{"kind":"slide","id":"sl/t3lldx","slide":5,"title":"KEY FINDING 3 — MODEL","textShapes":19}
+{"kind":"shape","id":"sh/2xcbqdgf","slide":5,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/nylcjih0","slide":5,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/0vuto3y9","slide":5,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/1w3ah8zu","slide":5,"name":"Text 3","text":"KEY FINDING 3 — MODEL","textPreview":"KEY FINDING 3 — MODEL","textChars":21,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/etsbmdg3","slide":5,"name":"Text 4","text":"5 / 8","textPreview":"5 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/fu1sfiho","slide":5,"name":"Text 5","text":"The nine-feature model improves comparative ranking, but remains weak for extreme fire years","textPreview":"The nine-feature model improves comparative ranking, but remains weak for extreme fire years","textChars":92,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/s7atk3yd","slide":5,"name":"Shape 6","bbox":[28.8,136.32,902.4,78.72]}
+{"kind":"shape","id":"sh/d8jad8zy","slide":5,"name":"Shape 7","bbox":[28.8,136.32,13.44,78.72]}
+{"kind":"textbox","id":"sh/h47uhgzi","slide":5,"name":"Text 8","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[49.92,136.32,43.2,78.72]}
+{"kind":"textbox","id":"sh/g3et8bix","slide":5,"name":"Text 9","text":"Reading the slides out loud","textPreview":"Reading the slides out loud","textChars":27,"textLines":1,"bbox":[97.92,142.08,432,32.64]}
+{"kind":"textbox","id":"sh/f25sf6hc","slide":5,"name":"Text 10","text":"Fix: Your slides show the chart. You explain what it means. Script: \"This chart shows X — what's interesting is Y, because Z.\"","textPreview":"Fix: Your slides show the chart. You explain what it means. Script: \"This chart shows X — what's interesting is Y, because Z.\"","textChars":126,"textLines":1,"bbox":[97.92,174.72,816,36.48]}
+{"kind":"shape","id":"sh/u1wb610r","slide":5,"name":"Shape 11","bbox":[28.8,222.72,902.4,78.72]}
+{"kind":"shape","id":"sh/t0nadwz6","slide":5,"name":"Shape 12","bbox":[28.8,222.72,13.44,78.72]}
+{"kind":"textbox","id":"sh/szet4ril","slide":5,"name":"Text 13","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[49.92,222.72,43.2,78.72]}
+{"kind":"textbox","id":"sh/7y5sbmh0","slide":5,"name":"Text 14","text":"Too many charts, not enough story","textPreview":"Too many charts, not enough story","textChars":33,"textLines":1,"bbox":[97.92,228.48,432,32.64]}
+{"kind":"textbox","id":"sh/6xwbih0f","slide":5,"name":"Text 15","text":"Fix: Max 1 chart per slide. Ask: does removing this chart break the argument? If not, cut it.","textPreview":"Fix: Max 1 chart per slide. Ask: does removing this chart break the argument? If not, cut it.","textChars":93,"textLines":1,"bbox":[97.92,261.12,816,36.48]}
+{"kind":"shape","id":"sh/5wna9wja","slide":5,"name":"Shape 16","bbox":[28.8,309.12,902.4,78.72]}
+{"kind":"shape","id":"sh/kbutgrip","slide":5,"name":"Shape 17","bbox":[28.8,309.12,13.44,78.72]}
+{"kind":"textbox","id":"sh/wfytwrql","slide":5,"name":"Text 18","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[49.92,309.12,43.2,78.72]}
+{"kind":"textbox","id":"sh/xg7upwr6","slide":5,"name":"Text 19","text":"Data without context","textPreview":"Data without context","textChars":20,"textLines":1,"bbox":[97.92,314.88,432,32.64]}
+{"kind":"textbox","id":"sh/adgbuh8f","slide":5,"name":"Text 20","text":"Fix: Always say what the number means relative to something. \"€1,847 average\" means nothing. \"€1,847 — 3x higher than online courses\" means something.","textPreview":"Fix: Always say what the number means relative to something. \"€1,847 average\" means nothing. \"€1,847 — 3x higher than online courses\" mea...","textChars":150,"textLines":1,"bbox":[97.92,347.52,816,36.48]}
+{"kind":"shape","id":"sh/bepcnm90","slide":5,"name":"Shape 21","bbox":[28.8,395.52,902.4,78.72]}
+{"kind":"shape","id":"sh/oryts7q9","slide":5,"name":"Shape 22","bbox":[28.8,395.52,13.44,78.72]}
+{"kind":"textbox","id":"sh/9c7alcru","slide":5,"name":"Text 23","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[49.92,395.52,43.2,78.72]}
+{"kind":"textbox","id":"sh/mpwbqh83","slide":5,"name":"Text 24","text":"Weak conclusions","textPreview":"Weak conclusions","textChars":16,"textLines":1,"bbox":[97.92,401.28,432,32.64]}
+{"kind":"textbox","id":"sh/nqpsjm9o","slide":5,"name":"Text 25","text":"Fix: Ban \"in conclusion, more research may be needed.\" Replace with: \"We recommend X. The data supports this because Y.\"","textPreview":"Fix: Ban \"in conclusion, more research may be needed.\" Replace with: \"We recommend X. The data supports this because Y.\"","textChars":120,"textLines":1,"bbox":[97.92,433.92,816,36.48]}
+{"kind":"shape","id":"sh/8nit4bqt","slide":5,"name":"Shape 26","bbox":[28.8,481.92,902.4,78.72]}
+{"kind":"shape","id":"sh/t8ruxg7y","slide":5,"name":"Shape 27","bbox":[28.8,481.92,13.44,78.72]}
+{"kind":"textbox","id":"sh/3exojexc","slide":5,"name":"Text 28","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[49.92,481.92,43.2,78.72]}
+{"kind":"textbox","id":"sh/2d4na9w7","slide":5,"name":"Text 29","text":"Going over time","textPreview":"Going over time","textChars":15,"textLines":1,"bbox":[97.92,487.68,432,32.64]}
+{"kind":"textbox","id":"sh/pgf6l4fi","slide":5,"name":"Text 30","text":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textPreview":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textChars":85,"textLines":1,"bbox":[97.92,520.32,816,36.48]}
+{"kind":"shape","id":"sh/of65czex","slide":5,"name":"Shape 31","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/bixonedo","slide":5,"name":"Text 32","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"shape","id":"sh/qhone9w3","slide":5,"bbox":[28,126,904,388]}
+{"kind":"shape","id":"sh/cj65gje9","slide":5,"bbox":[28,126,904,388]}
+{"kind":"image","id":"im/y10fm9kb","slide":5,"name":"","bbox":[232.55,128,494.89,350]}
+{"kind":"image","id":"im/4zmxk32l","slide":5,"name":"","alt":"Frozen final temporal model comparison","bbox":[42,132,876,330]}
+{"kind":"notes","id":"nt/t3lldx","slide":5,"text":"Introduce the two models. The transparent baseline maps prior ten-year recurrence to expected next-year burned share. The nine-feature two-part regression first estimates whether burning occurs, then estimates burned share when burning occurs. On the frozen final test, it lowered all-row MAE and improved ranking capture, while RMSE was similar and the high-burn 2025 outcome was underpredicted.\n\n[Sources]\nreports/validation/model_final_decision.md; reports/figures/model_final_test_metric_comparison.png"}
+{"kind":"slide","id":"sl/qc9fud","slide":6,"title":"RECOMMENDED USE","textShapes":29}
+{"kind":"shape","id":"sh/jatgb6ho","slide":6,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/i9kz2l03","slide":6,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/tgvyh0zq","slide":6,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/sfmh8vi5","slide":6,"name":"Text 3","text":"RECOMMENDED USE","textPreview":"RECOMMENDED USE","textChars":15,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/7edgfqhk","slide":6,"name":"Text 4","text":"6 / 8","textPreview":"6 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/6d4z6l0z","slide":6,"name":"Text 5","text":"Use the 2026 estimate to prioritise broad areas for further research","textPreview":"Use the 2026 estimate to prioritise broad areas for further research","textChars":68,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/h4fyl0zm","slide":6,"name":"Shape 6","bbox":[21.12,136.32,436.8,103.68]}
+{"kind":"shape","id":"sh/g36hcvi1","slide":6,"name":"Shape 7","bbox":[21.12,136.32,11.52,103.68]}
+{"kind":"textbox","id":"sh/ilwrux03","slide":6,"name":"Text 8","text":"START WITH","textPreview":"START WITH","textChars":10,"textLines":1,"bbox":[40.32,140.16,408,28.8]}
+{"kind":"textbox","id":"sh/3m5sni1o","slide":6,"name":"Text 9","text":"2026 comparative estimate","textPreview":"2026 comparative estimate","textChars":25,"textLines":1,"bbox":[40.32,168.96,384,46.08]}
+{"kind":"textbox","id":"sh/4ny9wnit","slide":6,"name":"Text 10","text":"A target-free estimate from 2025 predictor inputs, displayed as relative percentiles across mainland Portugal.","textPreview":"A target-free estimate from 2025 predictor inputs, displayed as relative percentiles across mainland Portugal.","textChars":110,"textLines":1,"bbox":[373.44,207.36,78.72,23.04]}
+{"kind":"shape","id":"sh/5o7apsje","slide":6,"name":"Shape 11","bbox":[500.16,136.32,436.8,103.68]}
+{"kind":"shape","id":"sh/qpgryx0z","slide":6,"name":"Shape 12","bbox":[500.16,136.32,11.52,103.68]}
+{"kind":"textbox","id":"sh/rqpsr2hk","slide":6,"name":"Text 13","text":"THEN CHECK","textPreview":"THEN CHECK","textChars":10,"textLines":1,"bbox":[519.36,140.16,408,28.8]}
+{"kind":"textbox","id":"sh/sry907i5","slide":6,"name":"Text 14","text":"Historical and official context","textPreview":"Historical and official context","textChars":31,"textLines":1,"bbox":[519.36,168.96,384,46.08]}
+{"kind":"textbox","id":"sh/dc7atczq","slide":6,"name":"Text 15","text":"Read the 2016–2025 recurrence layer and the official ICNF structural-hazard class beside the estimate.","textPreview":"Read the 2016–2025 recurrence layer and the official ICNF structural-hazard class beside the estimate.","textChars":102,"textLines":1,"bbox":[852.48,207.36,78.72,23.04]}
+{"kind":"shape","id":"sh/6tcrmd0v","slide":6,"name":"Shape 16","bbox":[21.12,249.6,436.8,103.68]}
+{"kind":"shape","id":"sh/7ul8fy1g","slide":6,"name":"Shape 17","bbox":[21.12,249.6,11.52,103.68]}
+{"kind":"textbox","id":"sh/by1oneh8","slide":6,"name":"Text 18","text":"NEXT ACTION","textPreview":"NEXT ACTION","textChars":11,"textLines":1,"bbox":[40.32,253.44,408,28.8]}
+{"kind":"textbox","id":"sh/axs7u9gn","slide":6,"name":"Text 19","text":"Investigate locally","textPreview":"Investigate locally","textChars":19,"textLines":1,"bbox":[40.32,282.24,384,46.08]}
+{"kind":"textbox","id":"sh/x0j6p4zy","slide":6,"name":"Text 20","text":"Use municipal, legal, insurance, access, vegetation and site-specific evidence before a property decision.","textPreview":"Use municipal, legal, insurance, access, vegetation and site-specific evidence before a property decision.","textChars":106,"textLines":1,"bbox":[373.44,320.64,78.72,23.04]}
+{"kind":"shape","id":"sh/wzapwzyd","slide":6,"name":"Shape 21","bbox":[500.16,249.6,436.8,103.68]}
+{"kind":"shape","id":"sh/nuhojuhw","slide":6,"name":"Shape 22","bbox":[500.16,249.6,11.52,103.68]}
+{"kind":"textbox","id":"sh/mt8nqpgb","slide":6,"name":"Text 23","text":"DO NOT USE AS","textPreview":"DO NOT USE AS","textChars":13,"textLines":1,"bbox":[519.36,253.44,408,28.8]}
+{"kind":"textbox","id":"sh/9wj6l4z2","slide":6,"name":"Text 24","text":"A probability or safety rating","textPreview":"A probability or safety rating","textChars":30,"textLines":1,"bbox":[519.36,282.24,384,46.08]}
+{"kind":"textbox","id":"sh/ovqpszyh","slide":6,"name":"Text 25","text":"It is not an individual-fire forecast, safety guarantee, or buy / do-not-buy recommendation.","textPreview":"It is not an individual-fire forecast, safety guarantee, or buy / do-not-buy recommendation.","textChars":92,"textLines":1,"bbox":[852.48,320.64,78.72,23.04]}
+{"kind":"shape","id":"sh/7qlovyhg","slide":6,"name":"Shape 26","bbox":[21.12,362.88,436.8,103.68]}
+{"kind":"shape","id":"sh/6pc72tgv","slide":6,"name":"Shape 27","bbox":[21.12,362.88,11.52,103.68]}
+{"kind":"textbox","id":"sh/4z2d0ra1","slide":6,"name":"Text 28","text":"GIS OUTPUT","textPreview":"GIS OUTPUT","textChars":10,"textLines":1,"bbox":[40.32,366.72,408,28.8]}
+{"kind":"textbox","id":"sh/50vu9wbm","slide":6,"name":"Text 29","text":"QGIS project available","textPreview":"QGIS project available","textChars":22,"textLines":1,"bbox":[40.32,395.52,384,46.08]}
+{"kind":"textbox","id":"sh/ixkvyhsv","slide":6,"name":"Text 30","text":"wildfire_exposure_screening_portugal_2026.qgz contains the separate 2026 estimate alongside historical and official context.","textPreview":"wildfire_exposure_screening_portugal_2026.qgz contains the separate 2026 estimate alongside historical and official context.","textChars":124,"textLines":1,"bbox":[373.44,433.92,78.72,23.04]}
+{"kind":"shape","id":"sh/jytc7mtg","slide":6,"name":"Shape 31","bbox":[500.16,362.88,436.8,103.68]}
+{"kind":"shape","id":"sh/snmd4rax","slide":6,"name":"Shape 32","bbox":[500.16,362.88,11.52,103.68]}
+{"kind":"textbox","id":"sh/dovudwbi","slide":6,"name":"Text 33","text":"WHY THIS IS USEFUL","textPreview":"WHY THIS IS USEFUL","textChars":18,"textLines":1,"bbox":[519.36,366.72,408,28.8]}
+{"kind":"textbox","id":"sh/6l4v21s7","slide":6,"name":"Text 34","text":"It turns a national search into a smaller set of areas that deserve careful follow-up.","textPreview":"It turns a national search into a smaller set of areas that deserve careful follow-up.","textChars":86,"textLines":1,"bbox":[519.36,395.52,384,46.08]}
+{"kind":"textbox","id":"sh/rmdcb6tc","slide":6,"name":"Text 35","text":"It does not replace the follow-up.","textPreview":"It does not replace the follow-up.","textChars":34,"textLines":1,"bbox":[852.48,433.92,78.72,23.04]}
+{"kind":"shape","id":"sh/0r6d8ba9","slide":6,"name":"Shape 36","bbox":[21.12,476.16,436.8,103.68]}
+{"kind":"shape","id":"sh/1sfehgbu","slide":6,"name":"Shape 37","bbox":[21.12,476.16,11.52,103.68]}
+{"kind":"textbox","id":"sh/l0nuhwfu","slide":6,"name":"Text 38","text":"EVIDENCE STATUS","textPreview":"EVIDENCE STATUS","textChars":15,"textLines":1,"bbox":[40.32,480,408,28.8]}
+{"kind":"textbox","id":"sh/0zedore9","slide":6,"name":"Text 39","text":"2026 has no observed outcome yet.","textPreview":"2026 has no observed outcome yet.","textChars":33,"textLines":1,"bbox":[40.32,508.8,384,46.08]}
+{"kind":"textbox","id":"sh/zy5cf6xo","slide":6,"name":"Text 40","text":"Its future accuracy must be assessed only when the next ICNF outcome becomes available.","textPreview":"Its future accuracy must be assessed only when the next ICNF outcome becomes available.","textChars":87,"textLines":1,"bbox":[373.44,547.2,78.72,23.04]}
+{"kind":"shape","id":"sh/yxwvm1w3","slide":6,"name":"Shape 41","bbox":[500.16,476.16,436.8,103.68]}
+{"kind":"shape","id":"sh/dwnudwfy","slide":6,"name":"Shape 42","bbox":[500.16,476.16,11.52,103.68]}
+{"kind":"textbox","id":"sh/cvedkred","slide":6,"name":"Text 43","text":"Annual use cycle","textPreview":"Annual use cycle","textChars":16,"textLines":1,"bbox":[519.36,480,408,28.8]}
+{"kind":"textbox","id":"sh/bu5cbmxs","slide":6,"name":"Text 44","text":"1. Refresh completed-year sources","textPreview":"1. Refresh completed-year sources","textChars":33,"textLines":1,"bbox":[519.36,508.8,384,46.08]}
+{"kind":"textbox","id":"sh/qtcvihw7","slide":6,"name":"Text 45","text":"2. Refit the fixed pipeline","textPreview":"2. Refit the fixed pipeline","textChars":27,"textLines":1,"bbox":[852.48,547.2,78.72,23.04]}
+{"kind":"textbox","id":"sh/xs7epgf2","slide":6,"name":"Text 46","text":"3. Publish the next comparative estimate","textPreview":"3. Publish the next comparative estimate","textChars":40,"textLines":1,"bbox":[28.8,501.12,902.4,21.12]}
+{"kind":"shape","id":"sh/wrydwbeh","slide":6,"name":"Shape 47","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/udsbqdcz","slide":6,"name":"Text 48","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/qc9fud","slide":6,"text":"This is the practical use of the project. The 2026 QGIS layer is a comparative, target-free model estimate. It helps prioritise broad areas for more detailed investigation. It cannot answer whether a specific property is safe or should be purchased.\n\n[Sources]\nqgis/wildfire_exposure_screening_portugal_2026.qgz; reports/validation/operational_forecast_2026_validation.md"}
+{"kind":"slide","id":"sl/o9v9g0","slide":7,"title":"RESPONSIBLE DECISION PATH","textShapes":34}
+{"kind":"shape","id":"sh/fqpcfexs","slide":7,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/epgb69g7","slide":7,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/do7adofm","slide":7,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/snyt4jy1","slide":7,"name":"Text 3","text":"RESPONSIBLE DECISION PATH","textPreview":"RESPONSIBLE DECISION PATH","textChars":25,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/r25sbexw","slide":7,"name":"Text 4","text":"7 / 8","textPreview":"7 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/q1wb29gb","slide":7,"name":"Text 5","text":"Use three evidence layers together, then verify locally","textPreview":"Use three evidence layers together, then verify locally","textChars":55,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/xkru98f6","slide":7,"name":"Shape 6","bbox":[28.8,136.32,436.8,345.6]}
+{"kind":"shape","id":"sh/cjitg3yl","slide":7,"name":"Shape 7","bbox":[28.8,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/ix0nyh4n","slide":7,"name":"Text 8","text":"Recommended actions","textPreview":"Recommended actions","textChars":19,"textLines":1,"bbox":[28.8,136.32,436.8,40.32]}
+{"kind":"shape","id":"sh/jy9orm58","slide":7,"name":"Shape 9","bbox":[46.08,190.08,21.12,21.12]}
+{"kind":"textbox","id":"sh/4zi50rmt","slide":7,"name":"Text 10","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,190.08,21.12,21.12]}
+{"kind":"textbox","id":"sh/50r6twne","slide":7,"name":"Text 11","text":"Use the 2026 comparative estimate to narrow broad-area research.","textPreview":"Use the 2026 comparative estimate to narrow broad-area research.","textChars":64,"textLines":1,"bbox":[74.88,186.24,379.2,36.48]}
+{"kind":"shape","id":"sh/u9gnuh4r","slide":7,"name":"Shape 12","bbox":[46.08,232.32,21.12,21.12]}
+{"kind":"textbox","id":"sh/vaponm5c","slide":7,"name":"Text 13","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,232.32,21.12,21.12]}
+{"kind":"textbox","id":"sh/wby5wrmh","slide":7,"name":"Text 14","text":"Check 2016–2025 observed recurrence in the 2 km context.","textPreview":"Check 2016–2025 observed recurrence in the 2 km context.","textChars":56,"textLines":1,"bbox":[74.88,228.48,379.2,36.48]}
+{"kind":"shape","id":"sh/hwr6pwn2","slide":7,"name":"Shape 15","bbox":[46.08,274.56,21.12,21.12]}
+{"kind":"textbox","id":"sh/e5kn6l4v","slide":7,"name":"Text 16","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,274.56,21.12,21.12]}
+{"kind":"textbox","id":"sh/f6toz65g","slide":7,"name":"Text 17","text":"Compare the separate official ICNF structural-hazard class.","textPreview":"Compare the separate official ICNF structural-hazard class.","textChars":59,"textLines":1,"bbox":[74.88,270.72,379.2,36.48]}
+{"kind":"shape","id":"sh/by1cbehg","slide":7,"name":"Shape 18","bbox":[46.08,316.8,21.12,21.12]}
+{"kind":"textbox","id":"sh/qxsb29gb","slide":7,"name":"Text 19","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,316.8,21.12,21.12]}
+{"kind":"textbox","id":"sh/d03udozm","slide":7,"name":"Text 20","text":"Investigate municipal plans, access, vegetation, insurance and site conditions.","textPreview":"Investigate municipal plans, access, vegetation, insurance and site conditions.","textChars":79,"textLines":1,"bbox":[74.88,312.96,379.2,36.48]}
+{"kind":"shape","id":"sh/czat4jy1","slide":7,"name":"Shape 21","bbox":[46.08,359.04,21.12,21.12]}
+{"kind":"textbox","id":"sh/z2lcfehs","slide":7,"name":"Text 22","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,359.04,21.12,21.12]}
+{"kind":"textbox","id":"sh/y1cb6tg7","slide":7,"name":"Text 23","text":"Rebuild annually when new labelled outcomes and completed-year inputs are available.","textPreview":"Rebuild annually when new labelled outcomes and completed-year inputs are available.","textChars":84,"textLines":1,"bbox":[74.88,355.2,379.2,36.48]}
+{"kind":"shape","id":"sh/l43uhozy","slide":7,"name":"Shape 24","bbox":[46.08,401.28,21.12,21.12]}
+{"kind":"textbox","id":"sh/03ut8jyd","slide":7,"name":"Text 25","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,401.28,21.12,21.12]}
+{"kind":"textbox","id":"sh/n6lcjyho","slide":7,"name":"Text 26","text":"Keep source files, model version and forecast year traceable.","textPreview":"Keep source files, model version and forecast year traceable.","textChars":61,"textLines":1,"bbox":[74.88,397.44,379.2,36.48]}
+{"kind":"shape","id":"sh/m5cbatg3","slide":7,"name":"Shape 27","bbox":[46.08,443.52,21.12,21.12]}
+{"kind":"textbox","id":"sh/kvet03eh","slide":7,"name":"Text 28","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[46.08,443.52,21.12,21.12]}
+{"kind":"textbox","id":"sh/5wnat8v2","slide":7,"name":"Text 29","text":"Do not treat a lower score as a safety guarantee.","textPreview":"Do not treat a lower score as a safety guarantee.","textChars":49,"textLines":1,"bbox":[74.88,439.68,379.2,36.48]}
+{"kind":"shape","id":"sh/itwbytwb","slide":7,"name":"Shape 30","bbox":[494.4,136.32,436.8,345.6]}
+{"kind":"shape","id":"sh/ju5srydw","slide":7,"name":"Shape 31","bbox":[494.4,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/w7etwje5","slide":7,"name":"Text 32","text":"Why this matters","textPreview":"Why this matters","textChars":16,"textLines":1,"bbox":[494.4,136.32,436.8,40.32]}
+{"kind":"textbox","id":"sh/x8napovq","slide":7,"name":"Text 33","text":"Technical","textPreview":"Technical","textChars":9,"textLines":1,"bbox":[511.68,184.32,408,26.88]}
+{"kind":"shape","id":"sh/a5cbutwf","slide":7,"name":"Shape 34","bbox":[511.68,219.84,17.28,17.28]}
+{"kind":"textbox","id":"sh/v6lsnyd0","slide":7,"name":"Text 35","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,219.84,17.28,17.28]}
+{"kind":"textbox","id":"sh/83utsje9","slide":7,"name":"Text 36","text":"The project gives a reproducible first screen. A real property decision needs evidence that a national 1 km model cannot provide.","textPreview":"The project gives a reproducible first screen. A real property decision needs evidence that a national 1 km model cannot provide.","textChars":129,"textLines":1,"bbox":[536.64,215.04,383.04,33.6]}
+{"kind":"shape","id":"sh/943alofu","slide":7,"name":"Shape 37","bbox":[511.68,256.32,17.28,17.28]}
+{"kind":"textbox","id":"sh/d8jqtkbm","slide":7,"name":"Text 38","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,256.32,17.28,17.28]}
+{"kind":"textbox","id":"sh/c7qp0fu1","slide":7,"name":"Text 39","text":"The workflow is designed to make uncertainty visible rather than hide it.","textPreview":"The workflow is designed to make uncertainty visible rather than hide it.","textChars":73,"textLines":1,"bbox":[536.64,251.52,383.04,33.6]}
+{"kind":"shape","id":"sh/b6h8ratg","slide":7,"name":"Shape 40","bbox":[511.68,292.8,17.28,17.28]}
+{"kind":"textbox","id":"sh/q587y5cv","slide":7,"name":"Text 41","text":"v","textPreview":"v","textChars":1,"textLines":1,"bbox":[511.68,292.8,17.28,17.28]}
+{"kind":"textbox","id":"sh/lcjqxkbi","slide":7,"name":"Text 42","text":"The annual update process keeps the evidence current without changing the project’s scientific contract.","textPreview":"The annual update process keeps the evidence current without changing the project’s scientific contract.","textChars":104,"textLines":1,"bbox":[536.64,288,383.04,33.6]}
+{"kind":"textbox","id":"sh/0bap4zux","slide":7,"name":"Text 43","text":"Delivery Tips","textPreview":"Delivery Tips","textChars":13,"textLines":1,"bbox":[511.68,328.32,408,26.88]}
+{"kind":"textbox","id":"sh/za18vuts","slide":7,"name":"Text 44","text":"Talk track","textPreview":"Talk track","textChars":10,"textLines":1,"bbox":[511.68,357.12,408,24.96]}
+{"kind":"textbox","id":"sh/y9s72pc7","slide":7,"name":"Text 45","text":"Start broad.","textPreview":"Start broad.","textChars":12,"textLines":1,"bbox":[511.68,381.12,408,24.96]}
+{"kind":"textbox","id":"sh/1gzql0ve","slide":7,"name":"Text 46","text":"Compare multiple layers.","textPreview":"Compare multiple layers.","textChars":24,"textLines":1,"bbox":[511.68,405.12,408,24.96]}
+{"kind":"textbox","id":"sh/gf6psvut","slide":7,"name":"Text 47","text":"Verify locally.","textPreview":"Verify locally.","textChars":15,"textLines":1,"bbox":[511.68,429.12,408,24.96]}
+{"kind":"textbox","id":"sh/6l4n21sr","slide":7,"name":"Text 48","text":"Make no unsupported safety claim.","textPreview":"Make no unsupported safety claim.","textChars":33,"textLines":1,"bbox":[511.68,453.12,408,24.96]}
+{"kind":"shape","id":"sh/rmd4v6tc","slide":7,"name":"Shape 49","bbox":[28.8,489.6,902.4,30.72]}
+{"kind":"textbox","id":"sh/snm54bax","slide":7,"name":"Text 50","text":"The recommended decision is not ‘buy’ or ‘do not buy’: it is ‘which areas deserve deeper investigation first?’","textPreview":"The recommended decision is not ‘buy’ or ‘do not buy’: it is ‘which areas deserve deeper investigation first?’","textChars":110,"textLines":1,"bbox":[43.2,489.6,873.6,30.72]}
+{"kind":"shape","id":"sh/tofmxwr2","slide":7,"name":"Shape 51","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/e9on61sn","slide":7,"name":"Text 52","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/o9v9g0","slide":7,"text":"This slide replaces a conventional business recommendation with a scientifically responsible use recommendation. The project’s contribution is prioritisation and transparency, not property certification.\n\n[Sources]\nREADME.md; docs/operational_forecast_cycle.md"}
+{"kind":"slide","id":"sl/e5sm3x","slide":8,"title":"CONCLUSION","textShapes":25}
+{"kind":"shape","id":"sh/edo3m103","slide":8,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/fex4f6ho","slide":8,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/o3qlsvi5","slide":8,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/p4zmlgzq","slide":8,"name":"Text 3","text":"CONCLUSION","textPreview":"CONCLUSION","textChars":10,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/2ho3ql0z","slide":8,"name":"Text 4","text":"8 / 8","textPreview":"8 / 8","textChars":5,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/nih4jqhk","slide":8,"name":"Text 5","text":"The project delivers reproducible comparative evidence—not a property recommendation","textPreview":"The project delivers reproducible comparative evidence—not a property recommendation","textChars":84,"textLines":1,"bbox":[28.8,84.48,902.4,49.92]}
+{"kind":"shape","id":"sh/c7qlwvi1","slide":8,"name":"Shape 6","bbox":[28.8,144,278.4,297.6]}
+{"kind":"shape","id":"sh/x8zmp0zm","slide":8,"name":"Shape 7","bbox":[28.8,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/dc3uhgzm","slide":8,"name":"Text 8","text":"DELIVERED","textPreview":"DELIVERED","textChars":9,"textLines":1,"bbox":[28.8,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/cbud8by1","slide":8,"name":"Text 9","text":"Reproducible national workflow","textPreview":"Reproducible national workflow","textChars":30,"textLines":1,"bbox":[38.4,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/balcf6hg","slide":8,"name":"Text 10","text":"Validated source checks, one consistent 1 km grid, QGIS layers, and an annual update path.","textPreview":"Validated source checks, one consistent 1 km grid, QGIS layers, and an annual update path.","textChars":90,"textLines":1,"bbox":[38.4,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/q9cv61gb","slide":8,"name":"Shape 11","bbox":[38.4,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/l0nulgzy","slide":8,"name":"Text 12","text":"Historical evidence + GIS context","textPreview":"Historical evidence + GIS context","textChars":33,"textLines":1,"bbox":[43.2,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/0zedcbyd","slide":8,"name":"Text 13","text":"A separate 2016–2025 recurrence screen and official ICNF structural-hazard comparison.","textPreview":"A separate 2016–2025 recurrence screen and official ICNF structural-hazard comparison.","textChars":86,"textLines":1,"bbox":[38.4,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/ze5cj6hs","slide":8,"name":"Text 14","text":"Transparent source roles and limitations.","textPreview":"Transparent source roles and limitations.","textChars":41,"textLines":1,"bbox":[38.4,385.92,259.2,52.8]}
+{"kind":"textbox","id":"sh/ydcva1g7","slide":8,"name":"Text 15","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[311.04,268.8,33.6,48]}
+{"kind":"shape","id":"sh/h4ju9wze","slide":8,"name":"Shape 16","bbox":[347.52,144,278.4,297.6]}
+{"kind":"shape","id":"sh/gjad0ryt","slide":8,"name":"Shape 17","bbox":[347.52,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/szylcbu1","slide":8,"name":"Text 18","text":"MODEL RESULT","textPreview":"MODEL RESULT","textChars":12,"textLines":1,"bbox":[347.52,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/t07m5gbm","slide":8,"name":"Text 19","text":"Hypothesis partially supported","textPreview":"Hypothesis partially supported","textChars":30,"textLines":1,"bbox":[357.12,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/6xw3alcv","slide":8,"name":"Text 20","text":"The nine-feature model improves selected comparative diagnostics, but does not solve extreme-event underprediction.","textPreview":"The nine-feature model improves selected comparative diagnostics, but does not solve extreme-event underprediction.","textChars":115,"textLines":1,"bbox":[357.12,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/7yp43qtg","slide":8,"name":"Shape 21","bbox":[357.12,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/g3ylgvud","slide":8,"name":"Text 22","text":"2026 is target-free","textPreview":"2026 is target-free","textChars":19,"textLines":1,"bbox":[361.92,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/147m90bi","slide":8,"name":"Text 23","text":"Its future performance must be evaluated only after observed outcome data are available.","textPreview":"Its future performance must be evaluated only after observed outcome data are available.","textChars":88,"textLines":1,"bbox":[357.12,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/u1g3elc7","slide":8,"name":"Text 24","text":"No retrospective claim about unknown outcomes.","textPreview":"No retrospective claim about unknown outcomes.","textChars":46,"textLines":1,"bbox":[357.12,385.92,259.2,52.8]}
+{"kind":"textbox","id":"sh/f2p47qts","slide":8,"name":"Text 25","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[629.76,268.8,33.6,48]}
+{"kind":"shape","id":"sh/ori5kva9","slide":8,"name":"Shape 26","bbox":[666.24,144,278.4,297.6]}
+{"kind":"shape","id":"sh/psrmd0bu","slide":8,"name":"Shape 27","bbox":[666.24,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/zmtojedw","slide":8,"name":"Text 28","text":"NEXT STEPS FOR THIS PROJECT","textPreview":"NEXT STEPS FOR THIS PROJECT","textChars":27,"textLines":1,"bbox":[666.24,144,278.4,40.32]}
+{"kind":"textbox","id":"sh/ylk7a9wb","slide":8,"name":"Text 29","text":"Refresh, rebuild, validate","textPreview":"Refresh, rebuild, validate","textChars":26,"textLines":1,"bbox":[675.84,188.16,259.2,26.88]}
+{"kind":"textbox","id":"sh/lov6l4v2","slide":8,"name":"Text 30","text":"1. Add the latest completed-year sources. 2. Rebuild the target-free estimate and QGIS layer. 3. When outcomes arrive, evaluate the estimate and update the evidence. 4. Repeat annually.","textPreview":"1. Add the latest completed-year sources. 2. Rebuild the target-free estimate and QGIS layer. 3. When outcomes arrive, evaluate the estim...","textChars":185,"textLines":1,"bbox":[675.84,215.04,259.2,52.8]}
+{"kind":"shape","id":"sh/0n2pczuh","slide":8,"name":"Shape 31","bbox":[675.84,270.72,259.2,52.8]}
+{"kind":"textbox","id":"sh/bytofud0","slide":8,"name":"Text 32","text":"WHAT THE USER DOES NEXT","textPreview":"WHAT THE USER DOES NEXT","textChars":23,"textLines":1,"bbox":[680.64,270.72,249.6,52.8]}
+{"kind":"textbox","id":"sh/qxk76pwf","slide":8,"name":"Text 33","text":"Use the maps to narrow broad areas, then check local site, planning, insurance and property evidence.","textPreview":"Use the maps to narrow broad areas, then check local site, planning, insurance and property evidence.","textChars":101,"textLines":1,"bbox":[675.84,330.24,259.2,52.8]}
+{"kind":"textbox","id":"sh/dkb6h4vq","slide":8,"name":"Text 34","text":"The outputs support screening—not a safety guarantee or a buy/do-not-buy decision.","textPreview":"The outputs support screening—not a safety guarantee or a buy/do-not-buy decision.","textChars":82,"textLines":1,"bbox":[675.84,385.92,259.2,52.8]}
+{"kind":"shape","id":"sh/cz2p8zel","slide":8,"name":"Shape 35","bbox":[28.8,453.12,902.4,48]}
+{"kind":"textbox","id":"sh/vud8byd4","slide":8,"name":"Text 36","text":"Next milestone: the next completed-year rebuild and its later outcome validation.","textPreview":"Next milestone: the next completed-year rebuild and its later outcome validation.","textChars":81,"textLines":1,"bbox":[43.2,453.12,873.6,48]}
+{"kind":"shape","id":"sh/at47itcj","slide":8,"name":"Shape 37","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/i1kb6ds3","slide":8,"name":"Text 38","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/e5sm3x","slide":8,"text":"Close by explaining the project cycle: refresh completed-year inputs, rebuild the target-free estimate, use the maps for broad-area screening, and evaluate the prior estimate when the next observed outcome becomes available. The output remains comparative evidence, not a property recommendation.\n\n[Sources]\nREADME.md; reports/validation/model_final_decision.md; reports/validation/operational_forecast_readiness.md"}
+{"kind":"slide","id":"sl/fkftq9","slide":9,"title":"APPENDIX A — MODEL CONTRACT","textShapes":29}
+{"kind":"shape","id":"sh/4re5kbix","slide":9,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/5snmdgzi","slide":9,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/u1c3e10v","slide":9,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/vml476h0","slide":9,"name":"Text 3","text":"APPENDIX A — MODEL CONTRACT","textPreview":"APPENDIX A — MODEL CONTRACT","textChars":27,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/wnu5gbil","slide":9,"name":"Text 4","text":"A1","textPreview":"A1","textChars":2,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/ho3m9gz6","slide":9,"name":"Text 5","text":"Nine predictors and a leakage-safe temporal evaluation","textPreview":"Nine predictors and a leakage-safe temporal evaluation","textChars":54,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/ehgnq50z","slide":9,"name":"Shape 6","bbox":[21.12,136.32,436.8,103.68]}
+{"kind":"shape","id":"sh/fip4jqhk","slide":9,"name":"Shape 7","bbox":[21.12,136.32,11.52,103.68]}
+{"kind":"textbox","id":"sh/nqpw3u54","slide":9,"name":"Text 8","text":"LANDSCAPE","textPreview":"LANDSCAPE","textChars":9,"textLines":1,"bbox":[40.32,140.16,408,28.8]}
+{"kind":"textbox","id":"sh/mpgfapoj","slide":9,"name":"Text 9","text":"Built-up share; forest/shrub share in the 2 km context","textPreview":"Built-up share; forest/shrub share in the 2 km context","textChars":54,"textLines":1,"bbox":[40.32,168.96,384,46.08]}
+{"kind":"textbox","id":"sh/9s7e54na","slide":9,"name":"Text 10","text":"Governed CLC reference layer, never later than predictor year T.","textPreview":"Governed CLC reference layer, never later than predictor year T.","textChars":64,"textLines":1,"bbox":[373.44,207.36,78.72,23.04]}
+{"kind":"shape","id":"sh/8ryxcz6p","slide":9,"name":"Shape 11","bbox":[500.16,136.32,436.8,103.68]}
+{"kind":"shape","id":"sh/vu9w7e50","slide":9,"name":"Shape 12","bbox":[500.16,136.32,11.52,103.68]}
+{"kind":"textbox","id":"sh/at0fe9ov","slide":9,"name":"Text 13","text":"TERRAIN","textPreview":"TERRAIN","textChars":7,"textLines":1,"bbox":[519.36,140.16,408,28.8]}
+{"kind":"textbox","id":"sh/xwre9on6","slide":9,"name":"Text 14","text":"Mean slope in the 2 km context","textPreview":"Mean slope in the 2 km context","textChars":30,"textLines":1,"bbox":[519.36,168.96,384,46.08]}
+{"kind":"textbox","id":"sh/wvixgj6l","slide":9,"name":"Text 15","text":"Static Copernicus DEM GLO-30 context.","textPreview":"Static Copernicus DEM GLO-30 context.","textChars":37,"textLines":1,"bbox":[852.48,207.36,78.72,23.04]}
+{"kind":"shape","id":"sh/jy9gbe5c","slide":9,"name":"Shape 16","bbox":[21.12,249.6,436.8,103.68]}
+{"kind":"shape","id":"sh/ix0fitor","slide":9,"name":"Shape 17","bbox":[21.12,249.6,11.52,103.68]}
+{"kind":"textbox","id":"sh/eporqhcb","slide":9,"name":"Text 18","text":"FIRE HISTORY","textPreview":"FIRE HISTORY","textChars":12,"textLines":1,"bbox":[40.32,253.44,408,28.8]}
+{"kind":"textbox","id":"sh/fqx8zmtw","slide":9,"name":"Text 19","text":"Prior ten-year distinct burned years in the 2 km context","textPreview":"Prior ten-year distinct burned years in the 2 km context","textChars":56,"textLines":1,"bbox":[40.32,282.24,384,46.08]}
+{"kind":"textbox","id":"sh/0r69sru1","slide":9,"name":"Text 20","text":"Strictly T−10 through T−1; never same-year or future ICNF data.","textPreview":"Strictly T−10 through T−1; never same-year or future ICNF data.","textChars":63,"textLines":1,"bbox":[373.44,320.64,78.72,23.04]}
+{"kind":"shape","id":"sh/1sfq1wbm","slide":9,"name":"Shape 21","bbox":[500.16,249.6,436.8,103.68]}
+{"kind":"shape","id":"sh/q14rmxcz","slide":9,"name":"Shape 22","bbox":[500.16,249.6,11.52,103.68]}
+{"kind":"textbox","id":"sh/r2d8v2tk","slide":9,"name":"Text 23","text":"CLIMATE","textPreview":"CLIMATE","textChars":7,"textLines":1,"bbox":[519.36,253.44,408,28.8]}
+{"kind":"textbox","id":"sh/s3m9o7u5","slide":9,"name":"Text 24","text":"Five JJAS ERA5-Land temperature, precipitation and soil-water features","textPreview":"Five JJAS ERA5-Land temperature, precipitation and soil-water features","textChars":70,"textLines":1,"bbox":[519.36,282.24,384,46.08]}
+{"kind":"textbox","id":"sh/dovqxcbq","slide":9,"name":"Text 25","text":"Predictor year T only; containing cell or validated nearest land fallback.","textPreview":"Predictor year T only; containing cell or validated nearest land fallback.","textChars":74,"textLines":1,"bbox":[852.48,320.64,78.72,23.04]}
+{"kind":"shape","id":"sh/ax8ry1cj","slide":9,"name":"Shape 26","bbox":[21.12,362.88,436.8,103.68]}
+{"kind":"shape","id":"sh/byhs76to","slide":9,"name":"Shape 27","bbox":[21.12,362.88,11.52,103.68]}
+{"kind":"textbox","id":"sh/lsjux0v6","slide":9,"name":"Text 28","text":"TIME SPLIT","textPreview":"TIME SPLIT","textChars":10,"textLines":1,"bbox":[40.32,366.72,408,28.8]}
+{"kind":"textbox","id":"sh/kratovel","slide":9,"name":"Text 29","text":"Fit: T=2010–2019 | Validation: T=2020–2021 | Frozen final test: T=2022–2024","textPreview":"Fit: T=2010–2019 | Validation: T=2020–2021 | Frozen final test: T=2022–2024","textChars":75,"textLines":1,"bbox":[40.32,395.52,384,46.08]}
+{"kind":"textbox","id":"sh/zq1cvqd0","slide":9,"name":"Text 30","text":"Observed target is burned share in T+1.","textPreview":"Observed target is burned share in T+1.","textChars":39,"textLines":1,"bbox":[373.44,433.92,78.72,23.04]}
+{"kind":"shape","id":"sh/ypsbmlwf","slide":9,"name":"Shape 31","bbox":[500.16,362.88,436.8,103.68]}
+{"kind":"shape","id":"sh/xozut0vu","slide":9,"name":"Shape 32","bbox":[500.16,362.88,11.52,103.68]}
+{"kind":"textbox","id":"sh/cnqtkve9","slide":9,"name":"Text 33","text":"TARGET","textPreview":"TARGET","textChars":6,"textLines":1,"bbox":[519.36,366.72,408,28.8]}
+{"kind":"textbox","id":"sh/bmhcrqd4","slide":9,"name":"Text 34","text":"Continuous burned_share_next_year","textPreview":"Continuous burned_share_next_year","textChars":33,"textLines":1,"bbox":[519.36,395.52,384,46.08]}
+{"kind":"textbox","id":"sh/al8bilwj","slide":9,"name":"Text 35","text":"Share of mainland cell land burned in the observed outcome year.","textPreview":"Share of mainland cell land burned in the observed outcome year.","textChars":64,"textLines":1,"bbox":[852.48,433.92,78.72,23.04]}
+{"kind":"shape","id":"sh/hk3u5kve","slide":9,"name":"Shape 36","bbox":[21.12,476.16,436.8,103.68]}
+{"kind":"shape","id":"sh/wjutwfut","slide":9,"name":"Shape 37","bbox":[21.12,476.16,11.52,103.68]}
+{"kind":"textbox","id":"sh/4bytgvad","slide":9,"name":"Text 38","text":"MODEL","textPreview":"MODEL","textChars":5,"textLines":1,"bbox":[40.32,480,408,28.8]}
+{"kind":"textbox","id":"sh/pc7a90ri","slide":9,"name":"Text 39","text":"Two-part HistGradientBoosting regression","textPreview":"Two-part HistGradientBoosting regression","textChars":40,"textLines":1,"bbox":[40.32,508.8,384,46.08]}
+{"kind":"textbox","id":"sh/2pgbels7","slide":9,"name":"Text 40","text":"Occurrence component plus positive-share component for the zero-heavy target.","textPreview":"Occurrence component plus positive-share component for the zero-heavy target.","textChars":77,"textLines":1,"bbox":[373.44,547.2,78.72,23.04]}
+{"kind":"shape","id":"sh/3aps7q9s","slide":9,"name":"Shape 41","bbox":[500.16,476.16,436.8,103.68]}
+{"kind":"shape","id":"sh/cfitkvq9","slide":9,"name":"Shape 42","bbox":[500.16,476.16,11.52,103.68]}
+{"kind":"textbox","id":"sh/dgrud0ru","slide":9,"name":"Text 43","text":"WHY IT MATTERS","textPreview":"WHY IT MATTERS","textChars":14,"textLines":1,"bbox":[519.36,480,408,28.8]}
+{"kind":"textbox","id":"sh/qdgbils3","slide":9,"name":"Text 44","text":"Temporal rules prevent future information from entering predictors.","textPreview":"Temporal rules prevent future information from entering predictors.","textChars":67,"textLines":1,"bbox":[519.36,508.8,384,46.08]}
+{"kind":"textbox","id":"sh/re9cbq9o","slide":9,"name":"Text 45","text":"The final test was held back until model selection was complete.","textPreview":"The final test was held back until model selection was complete.","textChars":64,"textLines":1,"bbox":[852.48,547.2,78.72,23.04]}
+{"kind":"textbox","id":"sh/0jitofq5","slide":9,"name":"Text 46","text":"The model is associative, not causal.","textPreview":"The model is associative, not causal.","textChars":37,"textLines":1,"bbox":[28.8,501.12,902.4,21.12]}
+{"kind":"shape","id":"sh/1kruhkrq","slide":9,"name":"Shape 47","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/vqd43yx4","slide":9,"name":"Text 48","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"notes","id":"nt/fkftq9","slide":9,"text":"Appendix only. Use this if asked about the nine features, the two-part model, or leakage prevention.\n\n[Sources]\ndocs/data_dictionary.md; src/feature_contract.py; reports/validation/final_temporal_test_protocol.md"}
+{"kind":"slide","id":"sl/otg36l","slide":10,"title":"APPENDIX B — EVALUATION TERMS","textShapes":19}
+{"kind":"shape","id":"sh/obqpwr25","slide":10,"name":"Shape 0","bbox":[0,0,960,540]}
+{"kind":"shape","id":"sh/pczq5wja","slide":10,"name":"Shape 1","bbox":[0,0,960,6.72]}
+{"kind":"shape","id":"sh/qds7yhkv","slide":10,"name":"Shape 2","bbox":[0,6.72,960,69.12]}
+{"kind":"textbox","id":"sh/be187m1g","slide":10,"name":"Text 3","text":"APPENDIX B — EVALUATION TERMS","textPreview":"APPENDIX B — EVALUATION TERMS","textChars":29,"textLines":1,"bbox":[28.8,6.72,768,69.12]}
+{"kind":"textbox","id":"sh/cfap0r21","slide":10,"name":"Text 4","text":"A2","textPreview":"A2","textChars":2,"textLines":1,"bbox":[720,6.72,211.2,69.12]}
+{"kind":"textbox","id":"sh/xgjq9wjm","slide":10,"name":"Text 5","text":"How final-test evidence was interpreted","textPreview":"How final-test evidence was interpreted","textChars":39,"textLines":1,"bbox":[28.8,84.48,902.4,43.2]}
+{"kind":"shape","id":"sh/6ho7mxkr","slide":10,"name":"Shape 6","bbox":[28.8,136.32,902.4,78.72]}
+{"kind":"shape","id":"sh/rixov2lc","slide":10,"name":"Shape 7","bbox":[28.8,136.32,13.44,78.72]}
+{"kind":"textbox","id":"sh/7e98f6ls","slide":10,"name":"Text 8","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[49.92,136.32,43.2,78.72]}
+{"kind":"textbox","id":"sh/6d0r61k7","slide":10,"name":"Text 9","text":"MAE — average absolute burned-share error","textPreview":"MAE — average absolute burned-share error","textChars":41,"textLines":1,"bbox":[97.92,142.08,432,32.64]}
+{"kind":"textbox","id":"sh/tgrqhgjy","slide":10,"name":"Text 10","text":"Lower is better. It improved for the nine-feature model over all held-out rows.","textPreview":"Lower is better. It improved for the nine-feature model over all held-out rows.","textChars":79,"textLines":1,"bbox":[97.92,174.72,816,36.48]}
+{"kind":"shape","id":"sh/8fi98b2d","slide":10,"name":"Shape 11","bbox":[28.8,222.72,902.4,78.72]}
+{"kind":"shape","id":"sh/jqp8bmlw","slide":10,"name":"Shape 12","bbox":[28.8,222.72,13.44,78.72]}
+{"kind":"textbox","id":"sh/ypgr2hkb","slide":10,"name":"Text 13","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[49.92,222.72,43.2,78.72]}
+{"kind":"textbox","id":"sh/lsrqdw3m","slide":10,"name":"Text 14","text":"RMSE — error that gives more weight to larger mistakes","textPreview":"RMSE — error that gives more weight to larger mistakes","textChars":54,"textLines":1,"bbox":[97.92,228.48,432,32.64]}
+{"kind":"textbox","id":"sh/kry94r21","slide":10,"name":"Text 15","text":"It was similar between models; high-burn outcomes remain difficult.","textPreview":"It was similar between models; high-burn outcomes remain difficult.","textChars":67,"textLines":1,"bbox":[97.92,261.12,816,36.48]}
+{"kind":"shape","id":"sh/bmp87mlk","slide":10,"name":"Shape 16","bbox":[28.8,309.12,902.4,78.72]}
+{"kind":"shape","id":"sh/alg7yhkz","slide":10,"name":"Shape 17","bbox":[28.8,309.12,13.44,78.72]}
+{"kind":"textbox","id":"sh/ehwrah4r","slide":10,"name":"Text 18","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[49.92,309.12,43.2,78.72]}
+{"kind":"textbox","id":"sh/zi5sjm5c","slide":10,"name":"Text 19","text":"Positive-target error — error where some burning actually occurred","textPreview":"Positive-target error — error where some burning actually occurred","textChars":66,"textLines":1,"bbox":[97.92,314.88,432,32.64]}
+{"kind":"textbox","id":"sh/0je9crmx","slide":10,"name":"Text 20","text":"The nine-feature model did not improve this measure, so its limitation must remain visible.","textPreview":"The nine-feature model did not improve this measure, so its limitation must remain visible.","textChars":91,"textLines":1,"bbox":[97.92,347.52,816,36.48]}
+{"kind":"shape","id":"sh/1knalcni","slide":10,"name":"Shape 21","bbox":[28.8,395.52,902.4,78.72]}
+{"kind":"shape","id":"sh/mlgreh43","slide":10,"name":"Shape 22","bbox":[28.8,395.52,13.44,78.72]}
+{"kind":"textbox","id":"sh/nmpsnm5o","slide":10,"name":"Text 23","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[49.92,395.52,43.2,78.72]}
+{"kind":"textbox","id":"sh/ony9grm9","slide":10,"name":"Text 24","text":"Capture@20% — technical ranking diagnostic","textPreview":"Capture@20% — technical ranking diagnostic","textChars":42,"textLines":1,"bbox":[97.92,401.28,432,32.64]}
+{"kind":"textbox","id":"sh/9o7apwnu","slide":10,"name":"Text 25","text":"It asks how much observed burned share lies among the highest-ranked 20% of cells. It is not a buyer threshold.","textPreview":"It asks how much observed burned share lies among the highest-ranked 20% of cells. It is not a buyer threshold.","textChars":111,"textLines":1,"bbox":[97.92,433.92,816,36.48]}
+{"kind":"shape","id":"sh/apgri14z","slide":10,"name":"Shape 26","bbox":[28.8,481.92,902.4,78.72]}
+{"kind":"shape","id":"sh/bqpsr65k","slide":10,"name":"Shape 27","bbox":[28.8,481.92,13.44,78.72]}
+{"kind":"textbox","id":"sh/lkbuh072","slide":10,"name":"Text 28","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[49.92,481.92,43.2,78.72]}
+{"kind":"textbox","id":"sh/kjid8v6h","slide":10,"name":"Text 29","text":"Going over time","textPreview":"Going over time","textChars":15,"textLines":1,"bbox":[97.92,487.68,432,32.64]}
+{"kind":"textbox","id":"sh/ji9cfqpw","slide":10,"name":"Text 30","text":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textPreview":"Fix: Practice out loud with a timer. 8 slides x 1.5 min = 12 min. That's your target.","textChars":85,"textLines":1,"bbox":[97.92,520.32,816,36.48]}
+{"kind":"shape","id":"sh/yh0b6lob","slide":10,"name":"Shape 31","bbox":[0,516.48,960,23.52]}
+{"kind":"textbox","id":"sh/t8bul07y","slide":10,"name":"Text 32","text":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textPreview":"Serhii Diadechko  |  Data Science & Machine Learning Capstone","textChars":61,"textLines":1,"bbox":[28.8,516.48,902.4,23.52]}
+{"kind":"shape","id":"sh/872dcv6d","slide":10,"bbox":[28,478,904,37]}
+{"kind":"notes","id":"nt/otg36l","slide":10,"text":"Appendix only. Use this when asked why the final conclusion is partial support rather than a simple success/failure statement.\n\n[Sources]\nreports/validation/final_temporal_test_2022_2024.md; reports/validation/model_final_decision.md"}
