@@ -47,6 +47,17 @@ def require_cds_credentials() -> Path:
     return path
 
 
+def requested_targets(*, include_corrected_precipitation: bool) -> tuple[Path, ...]:
+    """Return every local target that this invocation may retrieve."""
+    targets = [output_path(ROOT, year) for year in YEARS]
+    if include_corrected_precipitation:
+        targets.extend(
+            output_path(ROOT, year, corrected_precipitation=True)
+            for year in CORRECTED_PRECIPITATION_YEARS
+        )
+    return tuple(targets)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -70,7 +81,17 @@ def main() -> None:
         print("Dry run only. Add --download to retrieve missing immutable GRIBs.")
         return
 
-    require_cds_credentials()
+    missing_targets = tuple(
+        target
+        for target in requested_targets(
+            include_corrected_precipitation=args.include_corrected_precipitation
+        )
+        if not target.exists()
+    )
+    if missing_targets:
+        require_cds_credentials()
+    else:
+        print("All requested ERA5-Land files already exist; CDS credentials are not required.", flush=True)
 
     for year in YEARS:
         target = output_path(ROOT, year)

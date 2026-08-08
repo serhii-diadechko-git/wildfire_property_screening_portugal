@@ -213,8 +213,11 @@ already passed. The first two build labelled data; the third fits and saves the
 model; the remaining commands evaluate or apply that saved model and create
 presentation outputs.
 
-The acquisition mode uses the local CDS credentials file without printing or
-copying its contents. It also calls the registered ICNF WCS download. Run
+The acquisition mode checks whether an ERA5 file is missing before requiring
+the local CDS credentials file. If all requested ERA5 files already exist, it
+validates/reuses them without requiring `.cdsapirc`. When a download is needed,
+the credentials file is used without printing or copying its contents. The
+mode also calls the registered ICNF WCS download. Run
 `--mode preflight` again after acquisition; do not use `acquire-api` as an
 implicit preflight.
 
