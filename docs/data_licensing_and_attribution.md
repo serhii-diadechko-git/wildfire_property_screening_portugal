@@ -31,19 +31,8 @@ metadata.
   each user under the provider's current terms.
 - These are data terms, not software licences. GPL is not applicable to the
   external datasets unless a provider explicitly states it.
-- The project owner must choose a separate licence for this repository's own
-  code, notebooks, documentation, and original figures. Until then, no broad
-  reuse licence should be assumed for those project-owned materials.
-
-## Maintainer checklist before release
-
-1. Review the linked official terms and the layer metadata for every new source
-   or version.
-2. Confirm that raw files, credentials, private URLs, and local paths are not
-   staged.
-3. Preserve provider attribution in reports, maps, QGIS projects, and any
-   distributed derivative.
-4. Record the exact source version, access date, checksum, and adaptation in
-   the source registry.
-5. Choose and add a licence for the repository's own code and documentation.
-
+- The repository's own code, notebooks, documentation, and original figures
+  are released under the [MIT License](../LICENSE). This grants broad reuse,
+  modification, and redistribution rights while preserving the copyright and
+  licence notice. It does not grant rights to redistribute or relicense the
+  external provider datasets, which remain subject to their own terms.

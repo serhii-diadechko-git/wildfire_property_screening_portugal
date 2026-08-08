@@ -69,6 +69,11 @@ files in the paths described by [data/README.md](data/README.md) and
 [data/source_manifest.json](data/source_manifest.json). The manifest records
 the official URLs, access requirements, terms links, and local path patterns.
 
+The project-owned code, notebooks, documentation, and original figures are
+released under the [MIT License](LICENSE). This permissive licence allows reuse,
+modification, and redistribution with the copyright and licence notice. It
+does not override the separate licences or access terms of the external data.
+
 The source-specific rules are:
 
 | Source | Access category | Licence / terms identified from official source |
