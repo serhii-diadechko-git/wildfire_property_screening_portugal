@@ -121,6 +121,32 @@ This command validates existing immutable files and downloads only missing
 API-backed files. It never overwrites raw data. If you prefer manual
 acquisition, place the files first and skip this command.
 
+#### If one ERA5-Land year fails
+
+CDS jobs are submitted one year at a time. A temporary CDS failure can occur
+after earlier years have already completed. Rerun the same command safely:
+
+```text
+python scripts/run_project.py --mode acquire-api
+```
+
+Existing files are preserved and validated; only missing years are retried. To
+retry one standard annual GRIB directly, use its year:
+
+```text
+python scripts/download_era5_land_year.py 2013 --download
+```
+
+To retry one corrected precipitation-only request, add the explicit workaround
+switch:
+
+```text
+python scripts/download_era5_land_year.py 2023 --corrected-precipitation --download
+```
+
+After a successful retry, run `python scripts/run_project.py --mode preflight`
+again. Never delete or overwrite earlier successful raw downloads.
+
 ### 2. Check raw-data readiness
 
 Run preflight after manual/API acquisition:
