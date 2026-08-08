@@ -59,6 +59,7 @@ POST_BUILD_VALIDATION_MODULES = (
     "tests.test_model_diagnostics",
     "tests.test_operational_forecast",
     "tests.test_historical_exposure_screening",
+    "tests.test_spatial_qa_outputs",
 )
 
 STANDARD_VALIDATION_MODULES = (
@@ -144,6 +145,7 @@ def default_reproduction_stages(*, include_qgis: bool) -> tuple[RunStage, ...]:
         RunStage("CLC preparation", (python, "scripts/prepare_clc_portugal_layers.py"), "Create/reuse Portugal-clipped governed CLC reference layers from immutable ZIPs."),
         RunStage("source validation", (python, "-m", "unittest", *SOURCE_VALIDATION_MODULES, "-v"), "Validate registered raw source contracts."),
         RunStage("national panel", (python, "scripts/build_national_panel.py", "--stage", "all"), "Build/reuse bounded national feature components and panel."),
+        RunStage("spatial QA outputs", (python, "scripts/build_spatial_qa_outputs.py"), "Create the ERA5 coastal QA and retrospective 2024 snapshot GeoPackages referenced by QGIS."),
         RunStage("training panel", (python, "scripts/build_extended_training_panel.py", "--stage", "all"), "Build/reuse the labelled 2010-2021 development panel."),
         RunStage("model refit", (python, "scripts/refit_extended_training_models.py"), "Refit the frozen nine-feature candidate and validate only 2020-2021."),
         RunStage("final temporal evaluation", (python, "scripts/run_extended_final_temporal_test.py"), "Run the frozen 2022-2024 temporal comparison."),

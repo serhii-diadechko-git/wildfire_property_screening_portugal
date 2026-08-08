@@ -19,6 +19,9 @@ set "QGIS_ARGUMENTS="
 if /I "%~1"=="--validate-existing" (
   set "QGIS_SCRIPT=%~dp0build_qgis_presentation_project.py"
   set "QGIS_ARGUMENTS=--validate-existing"
+) else if /I "%~1"=="--validate-operational" (
+  set "QGIS_SCRIPT=%~dp0build_operational_forecast_qgis_project.py"
+  set "QGIS_ARGUMENTS=--validate-existing"
 ) else if "%~1"=="" (
   "%~dp0..\.venv\Scripts\python.exe" "%~dp0build_qgis_presentation_assets.py"
   if errorlevel 1 exit /b %errorlevel%

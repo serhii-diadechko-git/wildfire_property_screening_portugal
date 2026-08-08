@@ -8,7 +8,13 @@ EPSG:3763 and store project-relative paths where QGIS can resolve them from
 the repository root. They read existing GeoPackages only; they do not
 duplicate or alter them.
 
-For a read-only package/layer/layout-path check, run `python -m unittest tests.test_presentation_outputs -v` from the repository root. On Windows, `scripts\run_qgis_presentation_project.bat --validate-existing` provides an optional QGIS helper. On Linux/macOS, open the project directly or invoke the build script from a PyQGIS-enabled environment. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
+After `python scripts/run_project.py --mode reproduce --confirm-rebuild`, both
+projects have their required derived QA inputs: `ERA5 coastal fallback QA` and
+`National 2024 snapshot — retrospective EDA only`. The snapshot is recreated
+by `scripts/build_spatial_qa_outputs.py`; it is a QGIS inspection layer, not a
+second analytical panel or a model result.
+
+For a read-only package/layer/layout-path check, run `python -m unittest tests.test_presentation_outputs -v` from the repository root. On Windows, use `scripts\run_qgis_presentation_project.bat --validate-existing` for the historical project and `scripts\run_qgis_presentation_project.bat --validate-operational` for the 2026 project. On Linux/macOS, open the projects directly or invoke the build scripts from a PyQGIS-enabled environment. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
 
 ## Layer tree
 

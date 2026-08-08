@@ -7,17 +7,30 @@ rewrites the historical presentation project or any GeoPackage data.
 
 from __future__ import annotations
 
+import argparse
 import os
 import shutil
 import sys
-import zipfile
 from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+# Keep the DLL-directory handles alive while importing the QGIS/Qt bindings.
+# This matches the historical-project builder and is needed by the standalone
+# QGIS Python runtime on Windows.
+_QGIS_DLL_HANDLES = []
+if os.name == "nt" and os.environ.get("OSGEO4W_ROOT"):
+    qgis_root = Path(os.environ["OSGEO4W_ROOT"])
+    for relative_path in ("bin", "apps/qt5/bin", "apps/qgis-ltr/bin"):
+        dll_path = qgis_root / relative_path
+        if dll_path.is_dir():
+            _QGIS_DLL_HANDLES.append(os.add_dll_directory(dll_path))
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+from src.qgis_portability import normalise_qgz_paths
 
 from qgis.PyQt.QtGui import QColor
 from qgis.core import (
@@ -58,29 +71,6 @@ def _validate(project: QgsProject) -> None:
     group = project.layerTreeRoot().findGroup("00 Annual comparative estimate — 2026")
     if group is None:
         raise ValueError("Operational estimate layer group is missing")
-
-
-def _make_project_paths_relative() -> None:
-    """Remove inherited absolute paths from copied layout layer sets.
-
-    QGIS writes active layer sources relatively but preserves older layout
-    sources verbatim when a project is copied.  Replace only the known project
-    root prefix inside the compressed project definition, leaving all data
-    untouched.  QGIS resolves ``../data`` from the ``qgis`` directory.
-    """
-    prefix_forward = ROOT.as_posix() + "/"
-    prefix_backslash = str(ROOT) + "\\"
-    temporary = PROJECT_PATH.with_suffix(".qgz.tmp")
-    with zipfile.ZipFile(PROJECT_PATH, "r") as source, zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as target:
-        for entry in source.infolist():
-            payload = source.read(entry.filename)
-            if entry.filename.endswith(".qgs"):
-                text = payload.decode("utf-8")
-                text = text.replace(prefix_forward, "../").replace(prefix_backslash, "..\\")
-                text = text.replace(f'<homePath path="{ROOT}"/>', '<homePath path="."/>')
-                payload = text.encode("utf-8")
-            target.writestr(entry, payload)
-    os.replace(temporary, PROJECT_PATH)
 
 
 def build() -> None:
@@ -139,7 +129,7 @@ def build() -> None:
     group.addLayer(layer)
     if not project.write(str(PROJECT_PATH)):
         raise RuntimeError("Could not write portable 2026 QGIS project")
-    _make_project_paths_relative()
+    normalise_qgz_paths(PROJECT_PATH, ROOT)
     reopened = QgsProject()
     if not reopened.read(str(PROJECT_PATH)):
         raise ValueError("QGIS could not reopen the portable 2026 project")
@@ -148,10 +138,24 @@ def build() -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--validate-existing",
+        action="store_true",
+        help="Open and validate the existing portable 2026 project without modifying it.",
+    )
+    arguments = parser.parse_args()
     QgsApplication.setPrefixPath(os.environ.get("QGIS_PREFIX_PATH", ""), True)
     application = QgsApplication([], False)
     application.initQgis()
     try:
-        build()
+        if arguments.validate_existing:
+            project = QgsProject()
+            if not project.read(str(PROJECT_PATH)):
+                raise ValueError("Could not open the portable 2026 QGIS project")
+            _validate(project)
+            print(f"Validated {PROJECT_PATH.relative_to(ROOT)} with {LAYER_NAME}")
+        else:
+            build()
     finally:
         application.exitQgis()

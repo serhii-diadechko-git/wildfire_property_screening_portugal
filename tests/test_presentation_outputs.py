@@ -61,6 +61,10 @@ class PresentationOutputTests(unittest.TestCase):
             "Cell ID",
         ):
             self.assertIn(text, project_xml)
+        self.assertIn('<homePath path="."/>', project_xml)
+        self.assertNotIn("C:/Personal/", project_xml)
+        self.assertNotIn("C:\\Personal\\", project_xml)
+        self.assertNotIn("sdyadechko", project_xml.lower())
 
     def test_operational_qgis_project_adds_the_separate_2026_layer_by_relative_path(self) -> None:
         self.assertTrue(OPERATIONAL_PROJECT_PATH.exists())
@@ -77,6 +81,7 @@ class PresentationOutputTests(unittest.TestCase):
             self.assertIn(text, project_xml)
         self.assertNotIn("C:/Personal/", project_xml)
         self.assertNotIn("C:\\Personal\\", project_xml)
+        self.assertNotIn("sdyadechko", project_xml.lower())
 
     def test_consolidated_notebooks_link_real_presentation_outputs(self) -> None:
         combined = "\n".join(path.read_text(encoding="utf-8") for path in NOTEBOOK_PATHS)

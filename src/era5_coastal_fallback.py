@@ -529,6 +529,44 @@ def create_2024_snapshot() -> dict[str, object]:
     }
 
 
+def ensure_spatial_qa_outputs() -> dict[str, object]:
+    """Create/reuse the spatial QA layers referenced by both tracked QGIS projects.
+
+    The mapping and the snapshot are derived artifacts, not input data.  This
+    function makes their production explicit after the national panel exists,
+    so a clean reproduction leaves every QGIS datasource resolvable even when
+    PyQGIS itself is not installed.
+    """
+    if not MAPPING_PATH.exists() or not ANALYSIS_JSON_PATH.exists():
+        metrics = run_analysis()
+        mapping_status = "created"
+    else:
+        mapping = pd.read_parquet(MAPPING_PATH)
+        metrics = json.loads(ANALYSIS_JSON_PATH.read_text(encoding="utf-8"))
+        if not QA_GPKG_PATH.exists():
+            publish_analysis(mapping, metrics)
+            mapping_status = "re-published_qa_layer"
+        else:
+            mapping_status = "reused"
+
+    qa_info = pyogrio.read_info(QA_GPKG_PATH, layer=QA_LAYER)
+    if qa_info["features"] != 1_506 or str(qa_info["crs"]) != "EPSG:3763":
+        raise ValueError("ERA5 coastal fallback QA layer failed feature-count/CRS validation")
+
+    snapshot = create_2024_snapshot()
+    return {
+        "mapping_status": mapping_status,
+        "affected_cell_count": int(metrics["affected_cell_count"]),
+        "qa_layer": {
+            "path": str(QA_GPKG_PATH.relative_to(ROOT)).replace("\\", "/"),
+            "layer": QA_LAYER,
+            "feature_count": int(qa_info["features"]),
+            "crs": str(qa_info["crs"]),
+        },
+        "snapshot": snapshot,
+    }
+
+
 def apply_fallback(progress=print) -> dict[str, object]:
     analysis = json.loads(ANALYSIS_JSON_PATH.read_text(encoding="utf-8"))
     if analysis["new_acquisition_required"] or analysis["distance_km"]["maximum"] >= 20:

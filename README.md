@@ -229,6 +229,7 @@ keep this order:
 python scripts/prepare_reference_layers.py            # CAOP references + canonical grid
 python scripts/prepare_clc_portugal_layers.py         # Portugal CLC derivatives
 python scripts/build_national_panel.py --stage all
+python scripts/build_spatial_qa_outputs.py            # QGIS-referenced ERA5 QA + 2024 snapshot
 python scripts/build_extended_training_panel.py --stage all
 python scripts/refit_extended_training_models.py       # actual model fit
 python scripts/run_extended_final_temporal_test.py
@@ -241,9 +242,11 @@ The separate commands assume that acquisition, preflight, and source
 validation have already passed. The first command creates/reuses the CAOP
 boundary and canonical 1 km grid; the second creates/reuses the three CLC
 derivatives. The national-panel command also checks these prerequisites, so it
-is safe to call directly after a clean checkout. The next command builds
-labelled data; the refit command fits and saves the model; the remaining
-commands evaluate or apply that saved model and create presentation outputs.
+is safe to call directly after a clean checkout. The next command creates the
+two derived QA GeoPackages referenced by both tracked QGIS projects. The
+training-panel command then builds labelled data; the refit command fits and
+saves the model; the remaining commands evaluate or apply that saved model and
+create presentation outputs.
 
 The acquisition mode checks whether an ERA5 file is missing before requiring
 the local CDS credentials file. If all requested ERA5 files already exist, it

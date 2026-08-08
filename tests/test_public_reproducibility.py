@@ -66,6 +66,8 @@ class PublicReproducibilityTests(unittest.TestCase):
         names = [stage.name for stage in stages]
         self.assertLess(names.index("CAOP references"), names.index("CLC preparation"))
         self.assertLess(names.index("CLC preparation"), names.index("source validation"))
+        self.assertLess(names.index("national panel"), names.index("spatial QA outputs"))
+        self.assertLess(names.index("spatial QA outputs"), names.index("training panel"))
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))

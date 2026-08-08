@@ -29,6 +29,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.qgis_portability import normalise_qgz_paths
+
 from qgis.PyQt.QtGui import QColor
 from qgis.core import (
     QgsApplication,
@@ -377,6 +379,7 @@ def build_project() -> dict[str, object]:
     _build_layouts(project, historical, hazard, boundary)
     if not project.write(str(PROJECT_PATH)):
         raise RuntimeError(f"Could not write QGIS project: {PROJECT_PATH}")
+    normalise_qgz_paths(PROJECT_PATH, ROOT)
     record = _validate_project()
     _write_validation(record)
     return record
