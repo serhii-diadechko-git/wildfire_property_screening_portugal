@@ -137,7 +137,7 @@ def _save_model(name: str, model: Any, predictions: np.ndarray) -> dict[str, obj
 
 
 def refit_extended_models() -> dict[str, object]:
-    """Fit the frozen historical baseline and nine-feature hurdle, then validate only T=2020-2021."""
+    """Fit the frozen historical baseline and nine-feature two-part regression model, then validate only T=2020-2021."""
     if not FEATURE_MATRIX_PATH.exists():
         raise FileNotFoundError("Build the extended nine-feature matrix first")
     frame = pd.read_parquet(FEATURE_MATRIX_PATH)
@@ -213,7 +213,7 @@ def write_report(result: dict[str, object]) -> None:
         "| Model | Validation MAE | Validation RMSE | Positive-row MAE | Positive-cell capture at 20% | Burned-share mass capture at 20% |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for name, label in (("historical_recurrence_baseline", "Historical recurrence baseline"), ("nine_feature_hurdle", "Nine-feature hurdle")):
+    for name, label in (("historical_recurrence_baseline", "Historical recurrence baseline"), ("nine_feature_hurdle", "Nine-feature two-part regression")):
         overall = metrics[name]["overall"]
         rank = result["tie_aware_ranking_diagnostics"][name]["overall"]["top_20_percent"]
         lines.append(
@@ -227,7 +227,7 @@ def write_report(result: dict[str, object]) -> None:
         "|---:|---|---:|---:|---:|---:|",
     ])
     for year in VALIDATION_YEARS:
-        for name, label in (("historical_recurrence_baseline", "Historical recurrence baseline"), ("nine_feature_hurdle", "Nine-feature hurdle")):
+        for name, label in (("historical_recurrence_baseline", "Historical recurrence baseline"), ("nine_feature_hurdle", "Nine-feature two-part regression")):
             current = metrics[name]["by_validation_year"][str(year)]
             lines.append(
                 f"| {year} | {label} | {current['mae_all']:.8f} | {current['rmse_all']:.8f} | {current['mae_positive']:.8f} | {current['capture_at_20_percent']:.4f} |"
@@ -237,7 +237,7 @@ def write_report(result: dict[str, object]) -> None:
         "## Guardrails",
         "",
         "- The historical baseline is a training-only empirical mapping from the strict T-10 through T-1 recurrence count to expected next-year burned share.",
-        "- The hurdle output is a continuous expected burned share, not a buyer-facing probability or decision threshold.",
+        "- The two-part regression output is a continuous expected burned share, not a buyer-facing probability or decision threshold.",
         "- This report is validation evidence only; it contains no final-temporal-test result.",
     ])
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")

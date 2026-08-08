@@ -73,7 +73,7 @@ The retained final model is a continuous comparative estimate, not a probability
 
 | Column | Type | Meaning |
 |---|---|---|
-| `predicted_burned_share_next_year` | float, 0-1 | Fixed nine-feature hurdle output: estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
+| `predicted_burned_share_next_year` | float, 0-1 | Fixed nine-feature two-part burned-share regression output (technical term: hurdle model): estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
 | `forecast_year` | integer | Calendar year estimated by an operational scoring output; equal to `observation_year + 1`. |
 | `prediction_input_year` | integer | Completed predictor year used for all dynamic inputs; equal to `forecast_year - 1`. |
 | `model_sha256` | string | Checksum of the exact serialized nine-feature model used for scoring. |

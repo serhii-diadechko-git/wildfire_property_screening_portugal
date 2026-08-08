@@ -171,7 +171,7 @@ def plot_historical_and_icnf_maps(
         forecast_year = int(operational_scores.forecast_year.iloc[0])
         axes[2].set_title(
             f"{forecast_year} estimated comparative wildfire exposure\n"
-            f"Fixed nine-feature hurdle model; {input_year} predictor inputs; percentile bands"
+            f"Fixed nine-feature two-part regression model; {input_year} predictor inputs; percentile bands"
         )
         axes[2].axis("off")
         axes[2].legend(

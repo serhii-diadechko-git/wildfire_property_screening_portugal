@@ -27,4 +27,4 @@ T=2009 is not feasible under the existing ten-year historical-fire definition be
 
 The isolated panel contains 1,069,344 rows: 89,112 canonical cells for each T=2010-2021. T=2015-2021 are exact copies of the validated canonical panel. Final-test row groups were inspected as Parquet metadata only; final-test rows read = 0.
 
-The frozen historical-recurrence baseline and nine-feature hurdle were refit on T=2010-2019 and validated only on T=2020-2021. See `extended_train_validation_panel_2010_2021.md` and `extended_training_model_refit.md` for the validation evidence. No change to the final-test years is proposed.
+The frozen historical-recurrence baseline and nine-feature two-part burned-share regression model were refit on T=2010-2019 and validated only on T=2020-2021. See `extended_train_validation_panel_2010_2021.md` and `extended_training_model_refit.md` for the validation evidence. No change to the final-test years is proposed.

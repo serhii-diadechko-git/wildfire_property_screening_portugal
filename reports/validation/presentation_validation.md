@@ -12,9 +12,9 @@ The retained 13-slide, 16:9 presentation was refreshed after the final temporal 
 
 1. observed 2016-2025 historical recurrence screening for broad location comparison;
 2. official ICNF structural-hazard context at the common 1 km comparison resolution; and
-3. the frozen nine-feature hurdle model used for the target-free 2026 comparative estimate.
+3. the frozen nine-feature two-part burned-share regression model (technical term: hurdle model) used for the target-free 2026 comparative estimate.
 
-The deck no longer contains the superseded conclusion that no model advanced. It records the frozen `T=2022-2024` comparison: the hurdle improved all-row MAE and Capture@20% versus the historical-recurrence baseline, while RMSE was similar and the unusually high-burn `T=2024` outcome was underpredicted. The published 2026 output remains a target-free comparative estimate, not a probability, property-level safety guarantee, insurance estimate, or purchase recommendation.
+The deck no longer contains the superseded conclusion that no model advanced. It records the frozen `T=2022-2024` comparison: the two-part regression model improved all-row MAE and Capture@20% versus the historical-recurrence baseline, while RMSE was similar and the unusually high-burn `T=2024` outcome was underpredicted. The published 2026 output remains a target-free comparative estimate, not a probability, property-level safety guarantee, insurance estimate, or purchase recommendation.
 
 ## Updated slide evidence
 
@@ -37,7 +37,7 @@ Slides 2, 7-9, and 11 retain the validated historical-screening, QGIS and ICNF-c
 - Historical-screening evidence window: 2016-2025.
 - Frozen model fit years: `T=2010-2019`; validation years: `T=2020-2021`; final temporal test: `T=2022-2024`.
 - Final-test historical-recurrence baseline: MAE 0.0292, RMSE 0.1106, deterministic positive-cell Capture@20% 48.2% (tie-aware 49.3%), burned-share-mass capture 40.2%.
-- Final-test nine-feature hurdle: MAE 0.0214, RMSE 0.1107, deterministic and tie-aware positive-cell Capture@20% 50.0%, burned-share-mass capture 60.0%.
+- Final-test nine-feature two-part regression: MAE 0.0214, RMSE 0.1107, deterministic and tie-aware positive-cell Capture@20% 50.0%, burned-share-mass capture 60.0%.
 - Historical exposure remains observed evidence, separate from annual model estimates.
 - ICNF structural hazard remains an independent official comparison layer, not a model target or accuracy benchmark.
 - The deck consistently distinguishes 1 km analytical cells from recurrence measured in a 2 km context.

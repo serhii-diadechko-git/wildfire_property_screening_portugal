@@ -84,6 +84,11 @@ The published 2026 output contains all 89,112 canonical cells. Future annual out
 
 ### 1. Baseline comparison
 
+The retained model is described here as a **two-part burned-share regression
+model**. Its technical name, used by the implementation and saved artefact, is
+a hurdle model: one component models whether any burning occurs and the second
+models the positive burned share.
+
 Compare the regression candidates with a training-fitted historical-fire baseline using `fire_years_previous_10y_2km`. A zero-prediction baseline is reported only as an error reference; it is not an acceptable predictive model.
 
 The comparison must use future-year test data. A complex model is not accepted because of training performance alone.

@@ -21,5 +21,5 @@ This controlled refit uses T=2010-2019 for fitting and T=2020-2021 for validatio
 ## Guardrails
 
 - The historical baseline is a training-only empirical mapping from the strict T-10 through T-1 recurrence count to expected next-year burned share.
-- The hurdle output is a continuous expected burned share, not a buyer-facing probability or decision threshold.
+- The two-part regression output (technical term: hurdle model) is a continuous expected burned share, not a buyer-facing probability or decision threshold.
 - This report is validation evidence only; it contains no final-temporal-test result.

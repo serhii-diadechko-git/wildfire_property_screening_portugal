@@ -10,7 +10,7 @@ The validated project state is a nine-feature annual continuous burned-share mod
 - [x] Build and validate the bounded national spatial components used by the final nine-feature model.
 - [x] Resolve systematic ERA5-Land coastal masking with the validated nearest-valid-land-cell fallback.
 - [x] Extend model training backward to `T=2010` using the governed source rules.
-- [x] Freeze and evaluate the historical-recurrence baseline and nine-feature hurdle model.
+- [x] Freeze and evaluate the historical-recurrence baseline and nine-feature two-part burned-share regression model.
 - [x] Run the frozen final temporal evaluation once on `T=2022-2024`.
 - [x] Refit the unchanged nine-feature specification through observed outcome 2025.
 - [x] Publish the target-free 2026 comparative estimate and QGIS-ready layer.

@@ -36,7 +36,7 @@ def model_comparison_frame(metrics: Mapping[str, object]) -> pd.DataFrame:
 
 
 def model_component_frame(model_payload: Mapping[str, object]) -> pd.DataFrame:
-    """Describe the saved hurdle estimator without inferring feature importance."""
+    """Describe the saved two-part regression estimator without inferring feature importance."""
 
     model = model_payload["model"]
     components = (

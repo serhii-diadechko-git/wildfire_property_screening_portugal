@@ -137,7 +137,7 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
     """Show held-out final-temporal evidence for the retained model and comparator."""
     metrics = model_selection["metrics"]
     keys = ["historical_recurrence_baseline", "nine_feature_hurdle"]
-    labels = ["Historical\nrecurrence", "Nine-feature\nhurdle"]
+    labels = ["Historical\nrecurrence", "Nine-feature\ntwo-part regression"]
     maes = [metrics[key]["overall"]["mae_all"] for key in keys]
     rmses = [metrics[key]["overall"]["rmse_all"] for key in keys]
     captures = [metrics[key]["overall"]["capture_at_20_percent"] for key in keys]
@@ -163,7 +163,7 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
     fig.text(
         0.5,
         -0.05,
-        "The hurdle lowers all-row MAE and improves capture@20%, while RMSE is similar and high-burn years are underpredicted. "
+        "The two-part regression lowers all-row MAE and improves capture@20%, while RMSE is similar and high-burn years are underpredicted. "
         "It is retained for cautious annual comparative estimates; historical recurrence remains descriptive context.",
         ha="center", va="top", fontsize=9.5,
     )

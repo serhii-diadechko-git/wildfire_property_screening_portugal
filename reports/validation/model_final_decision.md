@@ -2,7 +2,8 @@
 
 ## Decision
 
-The frozen nine-feature hurdle regressor is retained as the project's
+The frozen nine-feature two-part burned-share regression model (technical term:
+hurdle model) is retained as the project's
 reproducible **continuous comparative burned-share model**. The historical
 recurrence baseline remains the required transparent comparator.
 
@@ -15,20 +16,22 @@ comparative estimate after its annual scoring inputs pass validation.
 
 ## Method rationale
 
-The retained `HurdleHistGradientRegressor` is a two-part scikit-learn model:
+The retained `HurdleHistGradientRegressor` is the project's two-part
+scikit-learn regression model:
 `HistGradientBoostingClassifier` estimates whether any burning occurs, and
 `HistGradientBoostingRegressor` estimates burned share among positive outcomes.
 The final estimate is their product. Histogram gradient boosting uses many
 small decision trees and is suitable for the large tabular panel because it can
 represent non-linear relationships and interactions among the nine approved
 fire-history, landscape, terrain, and climate predictors without assuming a
-fixed linear relationship. The hurdle structure is appropriate because the
+fixed linear relationship. The two-part structure is appropriate because the
 continuous target has many exact zeros alongside positive burned shares. This
 selection establishes an associative predictive method, not a causal claim.
 
 ## Held-out evidence
 
-On the one frozen final temporal test (T=2022-2024), the nine-feature hurdle
+On the one frozen final temporal test (T=2022-2024), the nine-feature two-part
+regression model
 had lower all-row MAE than the historical baseline (0.02140 vs 0.02919) and
 higher tie-aware top-20% burned-share-mass capture (0.6003 vs 0.4017). Its RMSE
 was effectively tied but marginally higher (0.11070 vs 0.11059), and its

@@ -166,7 +166,7 @@ def write_report(result: dict[str, object]) -> None:
         "| Model | MAE | RMSE | Positive-row MAE | Positive-cell capture at 20% | Burned-share mass capture at 20% |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    labels = {"historical_recurrence_baseline": "Historical recurrence baseline", "nine_feature_hurdle": "Nine-feature hurdle"}
+    labels = {"historical_recurrence_baseline": "Historical recurrence baseline", "nine_feature_hurdle": "Nine-feature two-part regression"}
     for name, label in labels.items():
         overall = result["metrics"][name]["overall"]
         rank = result["tie_aware_ranking_diagnostics"][name]["overall"]["top_20_percent"]
@@ -175,13 +175,13 @@ def write_report(result: dict[str, object]) -> None:
     for year in FINAL_TEST_YEARS:
         for name, label in labels.items():
             item = result["metrics"][name]["by_final_test_year"][str(year)]
-            lines.append(f"| {year} | {label} | {item['mae_all']:.8f} | {item['rmse_all']:.8f} | {item['mae_positive']:.8f} | {item['capture_at_20_percent']:.4f} |")
-    lines.extend(["", "## Mean-prediction check", "", "| T | Observed mean burned share | Baseline mean prediction | Hurdle mean prediction |", "|---:|---:|---:|---:|"])
+        lines.append(f"| {year} | {label} | {item['mae_all']:.8f} | {item['rmse_all']:.8f} | {item['mae_positive']:.8f} | {item['capture_at_20_percent']:.4f} |")
+    lines.extend(["", "## Mean-prediction check", "", "| T | Observed mean burned share | Baseline mean prediction | Two-part regression mean prediction |", "|---:|---:|---:|---:|"])
     for year in FINAL_TEST_YEARS:
         baseline = result["metrics"]["historical_recurrence_baseline"]["by_final_test_year"][str(year)]
         hurdle = result["metrics"]["nine_feature_hurdle"]["by_final_test_year"][str(year)]
         lines.append(f"| {year} | {hurdle['mean_observed']:.8f} | {baseline['mean_predicted']:.8f} | {hurdle['mean_predicted']:.8f} |")
-    lines.extend(["", "## Scope limitation", "", "The hurdle has lower overall MAE and stronger burned-share-mass ranking than the baseline, but it materially underpredicts the high-burned T=2024 outcome. The model estimates comparative next-year burned share for 1 km mainland cells; it is not a probability, safety guarantee, property-level forecast, or purchase recommendation."])
+    lines.extend(["", "## Scope limitation", "", "The two-part regression model (technical term: hurdle model) has lower overall MAE and stronger burned-share-mass ranking than the baseline, but it materially underpredicts the high-burned T=2024 outcome. The model estimates comparative next-year burned share for 1 km mainland cells; it is not a probability, safety guarantee, property-level forecast, or purchase recommendation."])
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

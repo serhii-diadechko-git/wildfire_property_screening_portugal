@@ -13,7 +13,8 @@ method visible and lets a reviewer examine patterns in QGIS.
 
 ## What the project contains
 
-- A reproducible nine-feature continuous hurdle model, selected using
+- A reproducible nine-feature two-part burned-share regression model (the
+  technical term is hurdle model), selected using
   historical data and then refit through the latest labelled outcome.
 - A target-free annual comparative estimate for 2026 using 2025 predictors.
 - A separate historical recurrence screening layer: **1 km mainland grid cells
@@ -27,7 +28,7 @@ the prior ten years; JJAS mean temperature; JJAS total precipitation; JJAS mean
 layer-1 soil water; JJAS maximum monthly temperature; and JJAS minimum monthly
 soil water. Definitions and units are in [docs/data_dictionary.md](docs/data_dictionary.md).
 
-The hurdle model combines a histogram-gradient-boosting classifier for whether
+The two-part regression model combines a histogram-gradient-boosting classifier for whether
 any burning occurs with a histogram-gradient-boosting regressor for burned
 share when burning occurs. Small decision-tree ensembles can represent
 non-linear relationships and interactions among history, landscape, terrain,
@@ -145,7 +146,7 @@ They are a transparent learning, review, and controlled-orchestration path:
 - `00` checks the portable Python, GIS, and machine-learning environment using synthetic in-memory examples.
 - `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
 - `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
-- `04` is the technical model-contract notebook: saved model metadata, feature order, hurdle components, temporal safeguards, and the annual scoring lifecycle. It does not repeat held-out results or refit a model.
+- `04` is the technical model-contract notebook: saved model metadata, feature order, two-part regression components, temporal safeguards, and the annual scoring lifecycle. It does not repeat held-out results or refit a model.
 - `05` audits the validated historical GIS layer and hands it off to QGIS. `06` is the final capstone narrative and the single presentation of EDA, final-test regression diagnostics, and validated GIS/presentation visuals.
 
 Use `scripts/run_project.py` for the one-command rebuild. Use notebooks when
