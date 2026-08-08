@@ -70,7 +70,7 @@ class HistoricalExposureScreeningTests(unittest.TestCase):
             "01_data_collection.ipynb": "Source inventory and provenance only",
             "02_data_preparation.ipynb": "Preparation and validation",
             "03_eda.ipynb": "Descriptive and spatial-temporal EDA",
-            "04_modelling.ipynb": "retained hurdle is a continuous comparative research artifact",
+            "04_modelling.ipynb": "continuous comparative research artifact",
             "05_evaluation_recommendations.ipynb": "Historical exposure screening",
             "06_final_charts.ipynb": "Final presentation charts",
         }
