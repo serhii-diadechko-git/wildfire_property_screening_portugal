@@ -69,9 +69,24 @@ files in the paths described by [data/README.md](data/README.md) and
 [data/source_manifest.json](data/source_manifest.json). The manifest records
 the official URLs, access requirements, terms links, and local path patterns.
 
-Do not publish a personal Google Drive copy of the raw data as a project mirror.
-Some providers require accounts or acceptance of terms. Review each provider's
-current terms before redistributing any source file; never commit a CDS token.
+The source-specific rules are:
+
+| Source | Access category | Licence / terms identified from official source |
+|---|---|---|
+| [ICNF burned areas and structural-hazard catalogue](https://geocatalogo.icnf.pt/) | Free/open by default; a layer-specific exception may apply | ICNF open-data conditions; ICNF retains intellectual property and requires `ICNF, [layer name], [download URL], [download date]`. No GPL/Creative Commons identifier is stated on the catalogue page. |
+| [DGT CAOP](https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop) | Open public access; redistribution status not established | DGT/SNIG identifies CAOP as an open/high-value public dataset, but the CAOP page does not state a project-specific permissive licence. Verify current DGT/SNIG metadata before redistribution. |
+| [Copernicus CLC](https://land.copernicus.eu/en/products/corine-land-cover) | Free, full and open | Copernicus Land Monitoring data policy (not GPL): source attribution, adaptation disclosure, and no implication of EU endorsement. Commercial use is allowed under the CLC terms. |
+| [Copernicus DEM GLO-30](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM) | Free licence for GLO-30/GLO-90 | Copernicus DEM/ESA user-licence conditions; prescribed WorldDEM/Copernicus attribution is required when communicated or adapted. DOI: [10.5270/ESA-c5d3d65](https://doi.org/10.5270/ESA-c5d3d65). No GPL licence applies. |
+| [ERA5-Land monthly means](https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means) | Free with account and terms acceptance | The CDS dataset page identifies a [CC-BY licence](https://cds.climate.copernicus.eu/terms) and DOI [10.24381/cds.68d2bb30](https://doi.org/10.24381/cds.68d2bb30). Each user must accept CDS terms and retrieve files with their own account. |
+
+These are data-access conditions, not software licences: GPL is not applicable
+to these datasets unless a provider explicitly says so. The statements describe
+access and attribution, not ownership transfer. A
+provider may update a licence, access category, or required notice after this
+repository is released, so review the linked official terms on every new
+acquisition or redistribution. The project does not redistribute provider
+downloads, does not publish a personal Google Drive mirror, and never commits a
+CDS token.
 
 ## Quick start (Windows, Linux, or macOS)
 
