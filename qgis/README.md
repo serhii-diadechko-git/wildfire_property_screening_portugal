@@ -1,10 +1,48 @@
 # Wildfire exposure screening — QGIS presentation project
 
-Open `wildfire_exposure_screening_portugal.qgz` in QGIS 3.44 or later. The project uses EPSG:3763 and stores project-relative paths where QGIS can resolve them from the repository root. It reads existing GeoPackages only; it does not duplicate or alter them.
+Open `wildfire_exposure_screening_portugal.qgz` in QGIS 3.44 or later for the
+historical/official comparison. Open
+`wildfire_exposure_screening_portugal_2026.qgz` for the same presentation with
+the separate target-free 2026 comparative-estimate layer. Both projects use
+EPSG:3763 and store project-relative paths where QGIS can resolve them from
+the repository root. They read existing GeoPackages only; they do not
+duplicate or alter them.
 
 For a read-only package/layer/layout-path check, run `python -m unittest tests.test_presentation_outputs -v` from the repository root. On Windows, `scripts\run_qgis_presentation_project.bat --validate-existing` provides an optional QGIS helper. On Linux/macOS, open the project directly or invoke the build script from a PyQGIS-enabled environment. Regeneration creates only the project, annotation assets, and presentation exports; it does not rebuild the screening layer.
 
 ## Layer tree
+
+The standard project `wildfire_exposure_screening_portugal.qgz` contains these
+groups and layers:
+
+- **01 Historical exposure screening** — **Historical exposure bands — 1 km
+  cells**: observed 2016–2025 recurrence measured in a 2 km context.
+- **02 Official ICNF comparison** — **ICNF structural hazard class —
+  predominant class per 1 km cell**: predominant valid class from the official
+  25 m SRUP-CPIR 2020–2030 source. The 2020–2030 label identifies the source,
+  version, or planning period; it is not a prediction of fires in those years.
+- **03 Context** — **Mainland Portugal boundary**: CAOP 2025 reference
+  boundary.
+- **04 QA reference — off by default** — **ERA5 coastal fallback QA** and
+  **National 2024 snapshot — retrospective EDA only**.
+
+The 2026 project `wildfire_exposure_screening_portugal_2026.qgz` contains the
+same four groups and layers, plus this additional group at the top:
+
+- **00 Annual comparative estimate — 2026**
+  - **2026 estimated comparative wildfire exposure — 1 km cells**: target-free
+    comparative estimates from 2025 predictor inputs, displayed as lower
+    (0–50%), intermediate (50–80%), and higher (80–100%) estimated percentiles.
+
+Both projects are presentation views of validated GeoPackages, not separate
+analytical workflows. The 2026 estimate is not a calibrated probability,
+property-level forecast, safety guarantee, insurance estimate, or purchase
+recommendation.
+
+The 2026 project adds a separate top-level group, **00 Annual comparative
+estimate — 2026**, above the shared historical and official comparison groups.
+The two projects are presentation views of validated GeoPackages, not separate
+analytical workflows.
 
 - **01 Historical exposure screening** — `Historical exposure bands — 1 km cells` is the validated descriptive layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context** for 2016–2025. Lower historical exposure does not mean safe.
 - **02 Official ICNF comparison** — `ICNF structural hazard class — predominant class per 1 km cell` is a second styled view of the same screening GeoPackage. It displays the predominant valid class from the official ICNF 25 m SRUP-CPIR 2020-2030 structural-hazard source. The 2020-2030 label identifies the official source/version or planning period; it is not a prediction of fires in those years and is not this project’s prediction.
