@@ -15,6 +15,11 @@ ignored by Git.
 5. Run `python scripts/run_project.py --mode preflight` from the repository
    root. It reports missing files before any derived processing starts.
 
+For CLC, provide the three original Europe-wide ZIP packages under
+`data/raw/clc/`. Do **not** manually copy or create the Portugal-clipped
+GeoPackages under `data/processed/clc/`: the rebuild creates them from the raw
+packages and the CAOP mainland boundary.
+
 The runner validates registered filenames and checksums where a project
 checksum is available. It never downloads a gated dataset, writes into
 `data/raw/`, renames a raw file, or treats a missing annual file as a no-fire
@@ -69,3 +74,9 @@ raw files. Run `python scripts/run_project.py --mode preflight` afterwards.
 created by the reproducible pipeline after source preflight succeeds. Their
 published checksums, validation reports, and provenance are recorded in
 `reports/validation/` and `reports/run_logs/`.
+
+The CLC preparation step is run automatically by
+`python scripts/run_project.py --mode reproduce --confirm-rebuild`. It creates
+the three mainland Portugal GeoPackages in `data/processed/clc/` before CLC
+source validation and feature derivation. They are intentionally local derived
+artifacts (about 120–150 MB each), not files distributed with the repository.

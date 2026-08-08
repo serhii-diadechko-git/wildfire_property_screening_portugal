@@ -111,6 +111,8 @@ def default_reproduction_stages(*, include_qgis: bool) -> tuple[RunStage, ...]:
     python = "{python}"
     stages = [
         RunStage("environment", (python, "tests/validate_environment.py"), "Validate pinned packages and the environment notebook."),
+        RunStage("CAOP references", (python, "scripts/prepare_reference_layers.py"), "Create/reuse mainland boundary and municipality reference GeoPackages from CAOP."),
+        RunStage("CLC preparation", (python, "scripts/prepare_clc_portugal_layers.py"), "Create/reuse Portugal-clipped governed CLC reference layers from immutable ZIPs."),
         RunStage("source validation", (python, "-m", "unittest", "tests.test_collection_validation", "tests.test_clc_validation", "tests.test_era5_land_validation", "-v"), "Validate registered raw source contracts."),
         RunStage("national panel", (python, "scripts/build_national_panel.py", "--stage", "all"), "Build/reuse bounded national feature components and panel."),
         RunStage("training panel", (python, "scripts/build_extended_training_panel.py", "--stage", "all"), "Build/reuse the labelled 2010-2021 development panel."),

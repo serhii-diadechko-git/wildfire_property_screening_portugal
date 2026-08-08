@@ -63,6 +63,9 @@ class PublicReproducibilityTests(unittest.TestCase):
         self.assertEqual(stages[0].name, "environment")
         self.assertEqual(stages[-1].name, "full test suite")
         self.assertIn("model diagnostics", [stage.name for stage in stages])
+        names = [stage.name for stage in stages]
+        self.assertLess(names.index("CAOP references"), names.index("CLC preparation"))
+        self.assertLess(names.index("CLC preparation"), names.index("source validation"))
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))

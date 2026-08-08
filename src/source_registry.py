@@ -613,10 +613,11 @@ def _prepared_clc_record(
         coverage="CAOP 2025 mainland analytical boundary; zero measured coverage gap or outside area",
         analytical_boundary_path="data/processed/reference/mainland_boundary_caop2025.gpkg",
         preparation_method=(
-            "Portugal clip supplied by the user. The exact clipping command/tool and original "
-            "boundary input are not embedded in the GeoPackage and remain unverified; read-only "
-            "validation confirms that the prepared footprint exactly covers the canonical CAOP "
-            "2025 mainland boundary."
+            "Reproducibly created by scripts/prepare_clc_portugal_layers.py from the immutable "
+            "Europe-wide CLC ZIP: extract the GeoPackage only to a system temporary directory, "
+            "read only the CAOP-mainland bounding-box candidates, intersect them with the "
+            "canonical CAOP 2025 mainland boundary in EPSG:3035, and write the Portugal "
+            "GeoPackage under data/processed/clc/."
         ),
         registered_date="2026-08-05",
         validation_facts=ClcPreparedValidationFacts(

@@ -110,6 +110,11 @@ ERA5-Land, accept the CDS terms and create the local credentials file in the
 normal home-directory location (`%USERPROFILE%\\.cdsapirc` on Windows or
 `~/.cdsapirc` on Linux/macOS). Never put credentials in the repository.
 
+For CLC, download the three original Europe-wide ZIP packages into
+`data/raw/clc/`. The 120–150 MB Portugal-clipped GeoPackages under
+`data/processed/clc/` are generated automatically during reproduction; do not
+copy manually clipped files from another machine.
+
 The project can retrieve the approved API-backed ERA5-Land and ICNF
 structural-hazard inputs for you:
 
