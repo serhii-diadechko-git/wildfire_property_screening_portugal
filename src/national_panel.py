@@ -657,7 +657,12 @@ def load_era5_grids() -> dict[int, dict[str, object]]:
 
 def _load_era5_fallback_mapping() -> pd.DataFrame:
     if not ERA5_FALLBACK_MAPPING_PATH.exists():
-        raise FileNotFoundError("Accepted ERA5 coastal fallback mapping is missing")
+        # The mapping is a deterministic derived prerequisite.  A fresh
+        # checkout has the validated raw GRIBs and grid inputs, but not
+        # generated interim files, so create it on first ERA5-stage use.
+        from src.era5_coastal_fallback import run_analysis
+
+        run_analysis()
     mapping = pd.read_parquet(
         ERA5_FALLBACK_MAPPING_PATH,
         columns=["cell_id", "fallback_flat_index"],
