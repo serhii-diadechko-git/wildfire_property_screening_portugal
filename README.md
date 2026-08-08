@@ -71,7 +71,9 @@ current terms before redistributing any source file; never commit a CDS token.
 
 ## Quick start (Windows, Linux, or macOS)
 
-Use Python 3.13 and run commands from the cloned repository root.
+Use Python 3.13 and run commands from the cloned repository root. The project
+uses relative paths, so it does not depend on a particular operating-system
+folder or editor.
 
 ```text
 python -m venv .venv
@@ -96,6 +98,13 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python scripts/run_project.py --mode preflight
 ```
+
+Before preflight, obtain the required source files from the official providers
+listed in `data/source_manifest.json` and copy each untouched file to its
+documented `data/raw/` path. Some providers require an account or acceptance
+of dataset terms. Do not place credentials in the repository. The CDS API
+credential file, when ERA5-Land acquisition is needed, belongs in the user's
+normal home-directory location rather than under `data/`.
 
 `preflight` does not download or alter data. It lists any missing official raw
 files and writes a local, Git-ignored run summary under `reports/run_logs/`.
@@ -153,10 +162,11 @@ Notebooks are reusable, controlled data-science walkthroughs: they run real
 source checks, display artifacts/plots/tables, and can call the same reusable
 functions as the scripts when an explicit rebuild switch is enabled. Production
 calculations remain in `src/`; notebooks do not duplicate their implementation.
-See [notebooks/README.md](notebooks/README.md). In VS Code, install the
-Microsoft **Python** and **Jupyter** extensions, open the repository folder,
-select the project's `.venv` interpreter, then select that same environment as
-the notebook kernel. JupyterLab is not required.
+See [notebooks/README.md](notebooks/README.md). They can be opened in VS Code,
+Jupyter Notebook, PyCharm, or another Jupyter-compatible tool. In VS Code,
+install the Microsoft **Python** and **Jupyter** extensions, open the repository
+folder, select the project's `.venv` interpreter, then select that same
+environment as the notebook kernel. JupyterLab is not required.
 
 ### What the notebooks are for
 
