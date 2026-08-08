@@ -52,7 +52,7 @@ _use_project_venv_if_available()
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.project_run import raw_data_preflight, run_api_acquisition, run_reproduction, write_run_summary
+from src.project_run import raw_data_preflight, run_api_acquisition, run_reproduction, validation_command, write_run_summary
 
 
 def _parse_args() -> argparse.Namespace:
@@ -97,7 +97,9 @@ def main() -> None:
             raise SystemExit(f"Validation blocked by missing raw inputs. See {report.relative_to(ROOT).as_posix()}.")
         import subprocess
 
-        command = (sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v")
+        test_args, scope = validation_command()
+        command = (sys.executable, *test_args)
+        print(f"Running {scope}.")
         result = subprocess.run(command, cwd=ROOT, check=False)
         report = write_run_summary(mode="validate", preflight=preflight)
         print(f"\nWrote user-friendly summary: {report.relative_to(ROOT).as_posix()}")

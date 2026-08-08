@@ -170,8 +170,10 @@ After preflight reports `ready`:
 python scripts/run_project.py --mode validate
 ```
 
-This runs the pinned-environment and repository test suite without rebuilding
-data.
+Before derived outputs exist, this runs the portable bootstrap/source tests and
+does not require a generated model or forecast. After a successful reproduction
+run has created the derived output inventory, the same command automatically
+runs the full repository test suite.
 
 ### 4. Build the data, fit the model, and generate outputs
 

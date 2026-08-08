@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import unittest
 
-from src.project_run import default_reproduction_stages, load_source_manifest, raw_data_preflight
+from src.project_run import default_reproduction_stages, load_source_manifest, raw_data_preflight, validation_command
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,6 +66,11 @@ class PublicReproducibilityTests(unittest.TestCase):
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))
+
+    def test_fresh_checkout_validation_has_a_bootstrap_scope(self) -> None:
+        command, scope = validation_command()
+        self.assertIn("unittest", command)
+        self.assertIn("bootstrap" if scope.startswith("bootstrap") else "full", scope)
 
     def test_public_launcher_bootstraps_the_repository_virtual_environment(self) -> None:
         launcher = (ROOT / "scripts" / "run_project.py").read_text(encoding="utf-8")

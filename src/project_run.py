@@ -31,6 +31,11 @@ from src.source_registry import (
 
 
 MANIFEST_PATH = PROJECT_ROOT / "data" / "source_manifest.json"
+BOOTSTRAP_VALIDATION_MODULES = (
+    "tests.test_public_reproducibility",
+    "tests.test_era5_land_cds",
+    "tests.test_era5_land_extended_acquisition",
+)
 
 
 @dataclass(frozen=True)
@@ -169,6 +174,21 @@ def _output_inventory() -> list[dict[str, object]]:
         {"name": name, "path": project_relative(path), "exists": path.is_file(), "bytes": path.stat().st_size if path.is_file() else None}
         for name, path in candidates
     ]
+
+
+def validation_command() -> tuple[tuple[str, ...], str]:
+    """Choose validation scope from the actual checkout state.
+
+    A fresh clone can validate its portable source/environment contract before
+    generated model outputs exist. Once the full output inventory is present,
+    the same command escalates to the complete test suite.
+    """
+    if all(item["exists"] for item in _output_inventory()):
+        return ("-m", "unittest", "discover", "-s", "tests", "-v"), "full repository test suite"
+    return (
+        ("-m", "unittest", *BOOTSTRAP_VALIDATION_MODULES, "-v"),
+        "bootstrap/source validation (derived outputs are not built yet)",
+    )
 
 
 def write_run_summary(*, mode: str, preflight: dict[str, object], stages: Iterable[dict[str, object]] = ()) -> Path:
