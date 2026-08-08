@@ -88,6 +88,9 @@ acquisition or redistribution. The project does not redistribute provider
 downloads, does not publish a personal Google Drive mirror, and never commits a
 CDS token.
 
+For the complete source-by-source attribution, redistribution, and maintainer
+checklist, see [docs/data_licensing_and_attribution.md](docs/data_licensing_and_attribution.md).
+
 ## Quick start (Windows, Linux, or macOS)
 
 Use Python 3.13 and run commands from the cloned repository root. The project
