@@ -20,6 +20,8 @@ The 2 km buffer is not a second grid resolution. It is an initial modelling para
 
 In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
 
+For ERA5-Land soil water, `layer 1` means the shallowest soil layer, approximately the top 0–7 cm. It is a volumetric water-content measurement (`m³/m³`), not a GIS layer. ERA5-Land also provides deeper soil layers, but this project uses only layer 1 to represent shallow warm-season soil moisture.
+
 The labelled nine-feature model panel covers predictor years `T=2010-2024`. Model development used `T=2010-2019`, validation used `T=2020-2021`, and the completed frozen final temporal test used `T=2022-2024`. The ICNF archive range is `2000-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
@@ -54,9 +56,9 @@ This table matches the minimum schema in the completed Capstone Kickoff Workbook
 | `fire_years_previous_10y_2km` | integer | count | Number of years from `T-10` through `T-1` inclusive in which the 2 km buffer intersected an ICNF burned-area polygon. This is strictly pre-`T` information. | ICNF burned-area intersections |
 | `warm_season_mean_2m_temperature_c` | float | degrees Celsius | Mean ERA5-Land 2 m temperature for June–September (`JJAS`) in predictor year `T`. | ERA5-Land `2m_temperature` |
 | `warm_season_total_precipitation_mm` | float | millimetres | Total ERA5-Land precipitation for `JJAS` in predictor year `T`. | ERA5-Land `total_precipitation` |
-| `warm_season_mean_soil_water_layer1` | float | m³/m³ | Mean ERA5-Land volumetric soil water in layer 1 for `JJAS` in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1` |
+| `warm_season_mean_soil_water_layer1` | float | m³/m³ | Mean ERA5-Land volumetric soil water in the shallow layer 1 (approximately 0–7 cm below the surface) for `JJAS` in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1` |
 | `warm_season_max_monthly_2m_temperature_c` | float | degrees Celsius | Maximum of the four monthly mean 2 m temperatures for June-September in predictor year `T`. | ERA5-Land `2m_temperature`; T-only JJAS GRIB |
-| `warm_season_min_monthly_soil_water_layer1` | float | m³/m³ | Minimum of the four monthly mean layer-1 volumetric soil-water values for June-September in predictor year `T`. | ERA5-Land `volumetric_soil_water_layer_1`; T-only JJAS GRIB |
+| `warm_season_min_monthly_soil_water_layer1` | float | m³/m³ | Minimum of the four monthly mean layer-1 (approximately 0–7 cm) volumetric soil-water values for June-September in predictor year `T`; a shallow-soil dryness extreme. | ERA5-Land `volumetric_soil_water_layer_1`; T-only JJAS GRIB |
 | `burned_share_next_year` | float | 0-1 | Share of the mainland-land portion of the 1 km cell intersected by the dissolved burned-area geometry in observed outcome year `T+1`. This is the main continuous target. | ICNF burned-area intersections after derived-only geometry repair and annual union |
 
 ## Derived classification target
