@@ -225,6 +225,34 @@ The full rebuild can take substantial time and memory. It never modifies
 `data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
 otherwise open the tracked QGIS projects directly.
 
+## Important: first-run data preparation can be slow
+
+> [!IMPORTANT]
+> **The initial reproduction may take substantial time and temporary disk space.**
+> It processes large geospatial datasets, including multi-gigabyte Copernicus
+> CLC archives, ICNF burned-area layers, DEM tiles, and ERA5-Land grids. CLC
+> preparation extracts each archive temporarily, clips it to mainland Portugal,
+> and creates these three local GeoPackages of approximately 120–150 MB each:
+>
+> - `data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg` from
+>   `data/raw/clc/u2012_clc2006_v2020_20u1_geoPackage.zip`;
+> - `data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg` from
+>   `data/raw/clc/u2018_clc2012_v2020_20u1_geoPackage.zip`;
+> - `data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg` from
+>   `data/raw/clc/u2018_clc2018_v2020_20u1_geoPackage.zip`.
+>
+> This
+> is expected GIS processing, not a stuck command.
+
+If another project user can provide the already validated files, the setup can
+be faster: copy untouched raw sources into the exact `data/raw/` paths listed
+in `data/source_manifest.json`, and copy validated CLC derivatives into
+`data/processed/clc/` using their exact registered filenames. Then run
+`python scripts/run_project.py --mode preflight` and the relevant validation
+tests. Raw files must remain unchanged, and copied processed artifacts must be
+validated against the project contract before they are reused. Do not copy
+credentials or use unverified files from an unknown source.
+
 ### Start from a clean derived-output state
 
 Use this only when you deliberately want to remove locally generated artefacts
