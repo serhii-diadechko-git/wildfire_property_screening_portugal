@@ -95,20 +95,39 @@ Activate it with one of the following commands:
 source .venv/bin/activate
 ```
 
-Then install pinned dependencies and inspect the required local inputs:
+Then install pinned dependencies:
 
 ```text
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python scripts/run_project.py --mode preflight
 ```
 
-Before preflight, obtain the required source files from the official providers
-listed in `data/source_manifest.json` and copy each untouched file to its
-documented `data/raw/` path. Some providers require an account or acceptance
-of dataset terms. Do not place credentials in the repository. The CDS API
-credential file, when ERA5-Land acquisition is needed, belongs in the user's
-normal home-directory location rather than under `data/`.
+### 1. Acquire raw inputs
+
+Read `data/source_manifest.json`. Obtain the non-API files from their official
+providers and copy each untouched file to its documented `data/raw/` path. For
+ERA5-Land, accept the CDS terms and create the local credentials file in the
+normal home-directory location (`%USERPROFILE%\\.cdsapirc` on Windows or
+`~/.cdsapirc` on Linux/macOS). Never put credentials in the repository.
+
+The project can retrieve the approved API-backed ERA5-Land and ICNF
+structural-hazard inputs for you:
+
+```text
+python scripts/run_project.py --mode acquire-api
+```
+
+This command validates existing immutable files and downloads only missing
+API-backed files. It never overwrites raw data. If you prefer manual
+acquisition, place the files first and skip this command.
+
+### 2. Check raw-data readiness
+
+Run preflight after manual/API acquisition:
+
+```text
+python scripts/run_project.py --mode preflight
+```
 
 `preflight` does not download or alter data. It lists any missing official raw
 files and writes a local, Git-ignored run summary under `reports/run_logs/`.
@@ -116,28 +135,55 @@ The launcher automatically switches to the repository `.venv` when it exists,
 so the commands remain correct if VS Code or a terminal accidentally starts
 them with a global Python installation.
 
-After preflight passes:
+### 3. Validate the environment and source contracts
+
+After preflight reports `ready`:
 
 ```text
 # Run reproducibility tests only
 python scripts/run_project.py --mode validate
+```
+
+This runs the pinned-environment and repository test suite without rebuilding
+data.
+
+### 4. Build the data, fit the model, and generate outputs
+
+After validation passes, run the deliberate full workflow:
+
+```text
 
 # Deliberately regenerate derived outputs, reports, model artefacts and figures
 python scripts/run_project.py --mode reproduce --confirm-rebuild
 ```
 
-If API-backed raw inputs are missing, acquire only the approved ERA5-Land and
-ICNF structural-hazard sources with the explicit acquisition mode:
+Within this workflow, the model-training step is the `model refit` stage. It
+fits the retained nine-feature model on the labelled development data and
+writes the versioned model artefact. The later stages score the operational
+2026 estimate and build reports/figures; they do not silently retrain it.
+
+If you need to run the core stages separately instead of using `reproduce`,
+keep this order:
 
 ```text
-python scripts/run_project.py --mode acquire-api
+python scripts/build_national_panel.py --stage all
+python scripts/build_extended_training_panel.py --stage all
+python scripts/refit_extended_training_models.py       # actual model fit
+python scripts/run_extended_final_temporal_test.py
+python scripts/prepare_operational_forecast.py
+python scripts/score_operational_forecast.py
+python scripts/build_final_visuals.py
 ```
 
-This mode uses the local CDS credentials file (`%USERPROFILE%\\.cdsapirc` on
-Windows or `~/.cdsapirc` on Linux/macOS) without printing or copying its
-contents. It also calls the registered ICNF WCS download. Existing raw files
-are validated or preserved and are never overwritten. Run `--mode preflight`
-again after acquisition; do not use `acquire-api` as an implicit preflight.
+The separate commands assume that acquisition, preflight, and validation have
+already passed. The first two build labelled data; the third fits and saves the
+model; the remaining commands evaluate or apply that saved model and create
+presentation outputs.
+
+The acquisition mode uses the local CDS credentials file without printing or
+copying its contents. It also calls the registered ICNF WCS download. Run
+`--mode preflight` again after acquisition; do not use `acquire-api` as an
+implicit preflight.
 
 The full rebuild can take substantial time and memory. It never modifies
 `data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
@@ -240,7 +286,7 @@ The reproducible run writes local outputs outside `data/raw/`:
 | `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence. |
 | `reports/figures/` and `reports/tables/` | Presentation-ready visuals and summaries. |
 | `reports/validation/` | Reproducible validation and interpretation reports. |
-| `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx` | Editable final capstone presentation built from the validated results. |
+| `reports/presentation/wildfire_exposure_screening_capstone_final.pptx` | Editable final capstone presentation built from the validated results. |
 
 Parquet is the canonical analytical format. GeoPackages provide reusable
 geometry and presentation/QA layers; they are not a duplicate cell-year panel.
