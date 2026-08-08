@@ -9,15 +9,20 @@ European source layer is never loaded into memory.
 from __future__ import annotations
 
 import os
+import math
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import zipfile
 
 import geopandas as gpd
+import numpy as np
 import pyogrio
 from pyproj import CRS
+import shapely
 from shapely.geometry import MultiPolygon
 
+from src.config import SPATIAL
+from src.geospatial_utils import GRID_PATH
 from src.source_registry import CAOP_2025, CLC_PREPARED_PORTUGAL_LAYERS
 
 
@@ -25,6 +30,8 @@ ROOT = Path(__file__).resolve().parents[1]
 REFERENCE_DIR = ROOT / "data/processed/reference"
 BOUNDARY_PATH = REFERENCE_DIR / "mainland_boundary_caop2025.gpkg"
 MUNICIPALITIES_PATH = REFERENCE_DIR / "municipalities_caop2025.gpkg"
+CANONICAL_GRID_LAYER = "canonical_mainland_grid_1km"
+EXPECTED_CANONICAL_GRID_CELLS = 89_112
 
 
 def _extract_single_gpkg(archive_path: Path, temporary_directory: Path) -> Path:
@@ -75,6 +82,81 @@ def prepare_caop_reference_layers() -> dict[str, object]:
     _write_gpkg(boundary, BOUNDARY_PATH, "mainland_boundary_caop2025")
     _write_gpkg(municipalities, MUNICIPALITIES_PATH, "municipalities_caop2025")
     return {"status": "created", "boundary": str(BOUNDARY_PATH.relative_to(ROOT)), "municipalities": str(MUNICIPALITIES_PATH.relative_to(ROOT))}
+
+
+def _validate_canonical_grid() -> dict[str, object]:
+    """Validate the deterministic grid contract before it is reused."""
+    info = pyogrio.read_info(GRID_PATH, layer=CANONICAL_GRID_LAYER)
+    if str(info["crs"]) != SPATIAL.analysis_crs:
+        raise ValueError("Canonical grid must use EPSG:3763")
+    if info["geometry_type"] != "Polygon" or info["features"] != EXPECTED_CANONICAL_GRID_CELLS:
+        raise ValueError("Canonical grid does not satisfy the 89,112-cell Polygon contract")
+    frame = pyogrio.read_dataframe(GRID_PATH, layer=CANONICAL_GRID_LAYER, columns=["cell_id"])
+    if (
+        frame.cell_id.isna().any()
+        or not frame.cell_id.is_unique
+        or frame.geometry.isna().any()
+        or frame.geometry.is_empty.any()
+        or not frame.geometry.is_valid.all()
+    ):
+        raise ValueError("Canonical grid contains invalid identifiers or geometry")
+    return {
+        "path": str(GRID_PATH.relative_to(ROOT)),
+        "layer": CANONICAL_GRID_LAYER,
+        "cell_count": len(frame),
+    }
+
+
+def _canonical_grid_geometries(boundary) -> np.ndarray:
+    """Return canonical grid squares in stable west-to-east/south-to-north order."""
+    minx, miny, maxx, maxy = boundary.bounds
+    size = SPATIAL.grid_size_metres
+    x_values = np.arange(math.floor(minx / size) * size, math.ceil(maxx / size) * size, size)
+    y_values = np.arange(math.floor(miny / size) * size, math.ceil(maxy / size) * size, size)
+    x_coordinates = np.repeat(x_values, len(y_values))
+    y_coordinates = np.tile(y_values, len(x_values))
+    candidates = shapely.box(
+        x_coordinates, y_coordinates, x_coordinates + size, y_coordinates + size,
+    )
+    centres = shapely.points(x_coordinates + size / 2, y_coordinates + size / 2)
+    # STRtree avoids evaluating the detailed CAOP boundary against every square
+    # one at a time. Sorting restores the stable west-to-east/south-to-north
+    # candidate order after spatial filtering.
+    selected = np.sort(shapely.STRtree(centres).query(boundary, predicate="contains"))
+    return candidates[selected]
+
+
+def prepare_canonical_mainland_grid() -> dict[str, object]:
+    """Create/reuse the stable 1 km EPSG:3763 grid from the CAOP boundary.
+
+    A full 1 km square is retained when its centre lies within mainland
+    Portugal. Downstream processing derives coastal land area and
+    mainland-masked 2 km context separately. IDs are assigned in deterministic
+    west-to-east, south-to-north order.
+    """
+    if GRID_PATH.is_file():
+        return {"status": "validated_reused", **_validate_canonical_grid()}
+    if GRID_PATH.exists():
+        raise FileExistsError(f"Incomplete canonical grid output requires inspection: {GRID_PATH}")
+    if not BOUNDARY_PATH.is_file():
+        raise FileNotFoundError("Prepare the CAOP mainland boundary before creating the canonical grid")
+
+    boundary_frame = pyogrio.read_dataframe(BOUNDARY_PATH, columns=[])
+    if len(boundary_frame) != 1 or str(boundary_frame.crs) != SPATIAL.analysis_crs:
+        raise ValueError("Expected one EPSG:3763 CAOP mainland boundary")
+    boundary = boundary_frame.geometry.iloc[0]
+    geometries = _canonical_grid_geometries(boundary)
+    if len(geometries) != EXPECTED_CANONICAL_GRID_CELLS:
+        raise ValueError(
+            f"Grid centre selection produced {len(geometries)} cells, expected {EXPECTED_CANONICAL_GRID_CELLS}"
+        )
+    grid = gpd.GeoDataFrame(
+        {"cell_id": [f"PT3763_{index:06d}" for index in range(len(geometries))]},
+        geometry=geometries,
+        crs=SPATIAL.analysis_crs,
+    )
+    _write_gpkg(grid, GRID_PATH, CANONICAL_GRID_LAYER)
+    return {"status": "created", **_validate_canonical_grid()}
 
 
 def _raw_clc_layer(gpkg: Path, class_code_field: str) -> str:

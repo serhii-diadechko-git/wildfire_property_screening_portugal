@@ -75,7 +75,13 @@ created by the reproducible pipeline after source preflight succeeds. Their
 published checksums, validation reports, and provenance are recorded in
 `reports/validation/` and `reports/run_logs/`.
 
-The CLC preparation step is run automatically by
+The reference-preparation stage is run automatically by
+`python scripts/run_project.py --mode reproduce --confirm-rebuild`. It creates
+the canonical 89,112-cell EPSG:3763 1 km mainland grid in
+`data/processed/reference/` from the CAOP boundary whenever that derived grid
+is absent.
+
+The CLC preparation step is also run automatically by
 `python scripts/run_project.py --mode reproduce --confirm-rebuild`. It creates
 the three mainland Portugal GeoPackages in `data/processed/clc/` before CLC
 source validation and feature derivation. They are intentionally local derived
