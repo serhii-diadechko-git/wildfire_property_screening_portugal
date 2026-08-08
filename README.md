@@ -126,6 +126,19 @@ python scripts/run_project.py --mode validate
 python scripts/run_project.py --mode reproduce --confirm-rebuild
 ```
 
+If API-backed raw inputs are missing, acquire only the approved ERA5-Land and
+ICNF structural-hazard sources with the explicit acquisition mode:
+
+```text
+python scripts/run_project.py --mode acquire-api
+```
+
+This mode uses the local CDS credentials file (`%USERPROFILE%\\.cdsapirc` on
+Windows or `~/.cdsapirc` on Linux/macOS) without printing or copying its
+contents. It also calls the registered ICNF WCS download. Existing raw files
+are validated or preserved and are never overwritten. Run `--mode preflight`
+again after acquisition; do not use `acquire-api` as an implicit preflight.
+
 The full rebuild can take substantial time and memory. It never modifies
 `data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
 otherwise open the tracked QGIS projects directly.

@@ -20,6 +20,18 @@ then run the preflight check:
 python scripts/run_project.py --mode preflight
 ```
 
+If the preflight report lists missing API-backed inputs, acquire them before
+opening the notebooks:
+
+```text
+python scripts/run_project.py --mode acquire-api
+python scripts/run_project.py --mode preflight
+```
+
+The acquisition mode uses only the local CDS credential file for ERA5-Land and
+never prints or copies its token. It also retrieves the registered ICNF WCS
+raster. Existing raw files remain immutable.
+
 In VS Code, install the Microsoft **Python** and **Jupyter** extensions, open
 the repository folder, choose **Python: Select Interpreter**, and select the
 project environment: `.venv\Scripts\python.exe` on Windows or

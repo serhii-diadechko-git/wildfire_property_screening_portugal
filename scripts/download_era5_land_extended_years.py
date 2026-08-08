@@ -27,6 +27,26 @@ YEARS = tuple(range(2010, 2026))
 CORRECTED_PRECIPITATION_YEARS = (2022, 2023)
 
 
+def cds_credentials_path() -> Path:
+    """Return the conventional CDS credentials path without reading it."""
+    return Path.home() / ".cdsapirc"
+
+
+def require_cds_credentials() -> Path:
+    """Fail clearly when the local CDS credential file is absent.
+
+    Only file existence is checked.  The file is never opened, parsed, printed,
+    copied, or included in a repository output.
+    """
+    path = cds_credentials_path()
+    if not path.is_file():
+        raise RuntimeError(
+            f"CDS credentials not found at {path}. Create the provider-supported "
+            "local .cdsapirc file before using --download."
+        )
+    return path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -49,6 +69,8 @@ def main() -> None:
                 print(json.dumps({"year": year, "corrected_precipitation": True, "request": build_request(year, corrected_precipitation=True), "target": str(output_path(ROOT, year, corrected_precipitation=True))}))
         print("Dry run only. Add --download to retrieve missing immutable GRIBs.")
         return
+
+    require_cds_credentials()
 
     for year in YEARS:
         target = output_path(ROOT, year)

@@ -52,6 +52,17 @@ For CDS, place credentials in the provider-supported local file (for example
 place credentials inside this repository. The ERA5 downloader defaults to a
 dry run and requires an explicit `--download` flag.
 
+The public acquisition wrapper for the API-backed inputs is:
+
+```text
+python scripts/run_project.py --mode acquire-api
+```
+
+It retrieves missing ERA5-Land annual JJAS files (including the corrected
+2022/2023 precipitation files) through CDS and the registered ICNF
+structural-hazard raster through WCS. It does not overwrite existing immutable
+raw files. Run `python scripts/run_project.py --mode preflight` afterwards.
+
 ## Derived data
 
 `data/interim/` and `data/processed/` are derived and Git-ignored. They are

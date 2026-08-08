@@ -227,3 +227,35 @@ def run_reproduction(*, include_qgis: bool = False) -> tuple[Path, tuple[dict[st
             completed.append(_run_stage(stage, log))
     report = write_run_summary(mode="reproduce", preflight=preflight, stages=completed)
     return report, tuple(completed)
+
+
+def run_api_acquisition() -> tuple[Path, tuple[dict[str, object], ...]]:
+    """Acquire approved API-backed raw sources, then write a fresh preflight summary.
+
+    This mode is deliberately explicit and separate from preflight.  It may
+    access the CDS API through the user's local credentials and the official
+    ICNF WCS service; it never modifies existing immutable raw files.
+    """
+    RUN_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    detail_log = RUN_LOGS_DIR / f"project_acquire_api_{timestamp}.log"
+    stages = (
+        RunStage(
+            "ERA5-Land CDS acquisition",
+            ("{python}", "scripts/download_era5_land_extended_years.py", "--download", "--include-corrected-precipitation"),
+            "Retrieve and validate missing ERA5-Land annual and corrected precipitation GRIBs using local CDS credentials.",
+        ),
+        RunStage(
+            "ICNF structural-hazard WCS acquisition",
+            ("{python}", "scripts/download_icnf_structural_hazard.py", "--download"),
+            "Retrieve the official ICNF structural-hazard raster through its registered WCS service.",
+        ),
+    )
+    completed: list[dict[str, object]] = []
+    with detail_log.open("w", encoding="utf-8") as log:
+        log.write("# API-backed raw-source acquisition log\n")
+        for stage in stages:
+            completed.append(_run_stage(stage, log))
+    preflight = raw_data_preflight()
+    report = write_run_summary(mode="acquire-api", preflight=preflight, stages=completed)
+    return report, tuple(completed)

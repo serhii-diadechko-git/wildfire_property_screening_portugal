@@ -3,6 +3,7 @@
 Examples
 --------
 python scripts/run_project.py --mode preflight
+python scripts/run_project.py --mode acquire-api
 python scripts/run_project.py --mode validate
 python scripts/run_project.py --mode reproduce --confirm-rebuild
 """
@@ -51,16 +52,16 @@ _use_project_venv_if_available()
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.project_run import raw_data_preflight, run_reproduction, write_run_summary
+from src.project_run import raw_data_preflight, run_api_acquisition, run_reproduction, write_run_summary
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--mode",
-        choices=("preflight", "validate", "reproduce"),
+        choices=("preflight", "acquire-api", "validate", "reproduce"),
         default="preflight",
-        help="preflight checks inputs only; validate runs the test suite; reproduce rebuilds derived outputs.",
+        help="preflight checks inputs only; acquire-api downloads approved API sources; validate runs tests; reproduce rebuilds outputs.",
     )
     parser.add_argument(
         "--confirm-rebuild",
@@ -85,6 +86,10 @@ def main() -> None:
         if preflight["status"] != "ready":
             raise SystemExit("Preflight blocked: place official raw data as described in data/README.md.")
         print("Preflight passed. Run --mode validate for checks or --mode reproduce --confirm-rebuild to regenerate outputs.")
+        return
+    if args.mode == "acquire-api":
+        report, completed = run_api_acquisition()
+        print(json.dumps({"report": report.relative_to(ROOT).as_posix(), "completed_stages": completed}, indent=2))
         return
     if args.mode == "validate":
         if preflight["status"] != "ready":

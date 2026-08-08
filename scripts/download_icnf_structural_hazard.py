@@ -36,7 +36,11 @@ def main() -> None:
         print({"url": RECORD.service_url, "request": request, "target": str(target)})
         return
     if target.exists():
-        raise FileExistsError(f"Refusing to overwrite immutable raw file: {target}")
+        digest = hashlib.sha256(target.read_bytes()).hexdigest().upper()
+        if digest != RECORD.sha256:
+            raise ValueError(f"Existing raw file checksum differs from registry: {digest}")
+        print({"status": "already_present_validated", "path": str(target), "bytes": target.stat().st_size, "sha256": digest})
+        return
     target.parent.mkdir(parents=True, exist_ok=True)
     response = requests.get(RECORD.service_url, params=request, stream=True, timeout=600)
     response.raise_for_status()
