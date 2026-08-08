@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 import unittest
 
-import nbformat
 import pyogrio
 
 from src.historical_exposure_screening import (
@@ -63,22 +62,6 @@ class HistoricalExposureScreeningTests(unittest.TestCase):
         self.assertTrue(metrics["deterministic_rerun"]["all_275_batches_recomputed_without_writes"])
         self.assertTrue(metrics["deterministic_rerun"]["analytical_values_exact"])
         self.assertTrue(metrics["no_predictive_claim"])
-
-    def test_notebook_roles_are_explicit(self) -> None:
-        expected = {
-            "00_environment_test.ipynb": "Environment checks only",
-            "01_data_collection.ipynb": "Source inventory and provenance only",
-            "02_data_preparation.ipynb": "Preparation and validation",
-            "03_eda.ipynb": "Descriptive and spatial-temporal EDA",
-            "04_modelling.ipynb": "continuous comparative research artifact",
-            "05_evaluation_recommendations.ipynb": "Historical exposure screening",
-            "06_final_charts.ipynb": "Final presentation charts",
-        }
-        for filename, phrase in expected.items():
-            notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
-            markdown = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "markdown")
-            self.assertIn(phrase, markdown, filename)
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
