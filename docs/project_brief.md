@@ -91,25 +91,27 @@ The frozen nine-feature two-part burned-share regression model (technical term: 
 4. How reliable is the model in future years and held-out geographic areas?
 5. Which locations should be shortlisted, reviewed with caution, deprioritised, or marked as insufficient evidence?
 
-## Initial hypothesis
+## Research hypothesis and final evidence
 
-Residential areas with less surrounding forest and shrubland, fewer previous fires, gentler terrain, and less severe heat and dryness may have lower expected next-year burned share. A combined model may provide a more useful comparative ranking than a baseline based only on historical fire frequency.
+The project tests whether recent wildfire recurrence, landscape context,
+terrain, and predictor-year climate conditions can estimate the comparative
+next-year burned share of mainland Portugal 1 km cells better than a
+transparent historical-recurrence baseline. The target is the continuous
+`burned_share_next_year`; it is not a property-level probability or a safety
+classification.
 
-## Evidence that supports the hypothesis
+The hypothesis received partial support on the one frozen temporal evaluation.
+The nine-feature two-part regression model achieved lower all-row MAE and
+stronger burned-share-mass capture than the historical-recurrence baseline,
+but did not improve every diagnostic: RMSE was effectively unchanged and
+positive-target error was slightly worse. It also underpredicted the unusually
+high-burn outcome associated with predictor year 2024 (outcome year 2025).
 
-- lower predicted groups have lower observed fire occurrence in held-out years;
-- the combined model outperforms the historical baseline;
-- rankings are reasonably stable across years;
-- performance remains useful across different regions;
-- relationships are not driven by one exceptional fire year.
-
-## Evidence that refutes the hypothesis
-
-- the combined model does not outperform the baseline;
-- lower-ranked areas are frequently affected in future-year tests;
-- rankings change substantially between years;
-- performance fails in held-out regions;
-- uncertainty is too high for responsible recommendations.
+The conclusion is therefore limited and comparative. The model may help narrow
+broad-area location research, but it is not sufficiently stable or calibrated
+to support a safety guarantee, an individual-property forecast, or a
+buy/do-not-buy recommendation. The detailed metric evidence is recorded in
+`reports/validation/model_final_decision.md`.
 
 ## Recommendation frame
 

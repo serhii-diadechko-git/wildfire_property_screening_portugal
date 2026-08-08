@@ -36,6 +36,27 @@ and climate without imposing one fixed linear effect. The two components suit a
 target with many zero values and continuous positive burned shares. This is an
 associative predictive method, not causal evidence.
 
+## Research hypothesis and conclusion
+
+The project tests whether recent wildfire recurrence, landscape context,
+terrain, and predictor-year climate conditions can estimate the comparative
+next-year burned share of mainland Portugal 1 km cells better than a
+transparent historical-recurrence baseline. The outcome is continuous
+`burned_share_next_year`; it is not a property-level probability or a safety
+classification.
+
+The hypothesis received partial support on the frozen temporal evaluation.
+The nine-feature two-part regression model achieved lower all-row MAE and
+stronger burned-share-mass capture than the historical-recurrence baseline,
+but did not improve every diagnostic: RMSE was effectively unchanged and
+positive-target error was slightly worse. It also underpredicted the unusually
+high-burn outcome associated with predictor year 2024 (outcome year 2025).
+
+The defensible conclusion is therefore comparative and limited: the model can
+help narrow broad-area location research, but it is not sufficiently stable or
+calibrated to support a safety guarantee, an individual-property forecast, or
+a buy/do-not-buy recommendation.
+
 ## Data access and licensing
 
 Raw source files, credentials, and generated data are deliberately excluded
