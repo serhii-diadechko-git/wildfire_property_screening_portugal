@@ -19,6 +19,10 @@ method visible and lets a reviewer examine patterns in QGIS.
 - A target-free annual comparative estimate for 2026 using 2025 predictors.
 - A separate historical recurrence screening layer: **1 km mainland grid cells
   with fire recurrence measured in a 2 km context**.
+- A separate official ICNF structural-hazard comparison layer. It comes from
+  the official 25 m SRUP-CPIR 2020-2030 source, is summarized to the
+  predominant valid class in each 1 km cell, and is not an ICNF prediction or
+  this project's model output.
 - QGIS projects, figures, notebooks, source-validation code, and concise
   validation reports.
 

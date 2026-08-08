@@ -7,7 +7,7 @@ For a read-only package/layer/layout-path check, run `python -m unittest tests.t
 ## Layer tree
 
 - **01 Historical exposure screening** — `Historical exposure bands — 1 km cells` is the validated descriptive layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context** for 2016–2025. Lower historical exposure does not mean safe.
-- **02 Official ICNF comparison** — `ICNF structural hazard class — predominant class per 1 km cell` is a second styled view of the same screening GeoPackage. It displays the predominant valid class from the official ICNF 25 m structural wildfire-hazard map; it is not this project’s prediction.
+- **02 Official ICNF comparison** — `ICNF structural hazard class — predominant class per 1 km cell` is a second styled view of the same screening GeoPackage. It displays the predominant valid class from the official ICNF 25 m SRUP-CPIR 2020-2030 structural-hazard source. The 2020-2030 label identifies the official source/version or planning period; it is not a prediction of fires in those years and is not this project’s prediction.
 - **03 Context** — CAOP 2025 mainland Portugal boundary.
 - **04 QA reference — off by default** — ERA5 coastal-fallback QA and the national 2024 snapshot. The latter is explicitly retrospective EDA only.
 
@@ -24,7 +24,7 @@ The two map exports and four validated chart/table visuals are indexed and check
 
 ## Provenance and limitations
 
-The screening GeoPackage is `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening` (89,112 features). It combines annual ICNF burned-area evidence for 2016–2025 with the separate official ICNF structural-hazard class, summarized to the canonical 1 km cell by predominant valid 25 m class. See `reports/validation/historical_exposure_screening_and_icnf_comparison.md` and `reports/validation/qgis_presentation_project_validation.md`.
+The screening GeoPackage is `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg`, layer `historical_exposure_screening` (89,112 features). It combines annual ICNF burned-area evidence for 2016–2025 with the separate official ICNF structural-hazard class, summarized from valid 25 m pixels to the predominant class in the canonical 1 km cell. This aggregation is a comparison/preparation step; it does not recalculate the official hazard or create a forecast. See `reports/validation/historical_exposure_screening_and_icnf_comparison.md` and `reports/validation/qgis_presentation_project_validation.md`.
 
 This output is historical comparative exposure only. It is not a next-year forecast, property-level safety guarantee, or purchase recommendation. Use it for broad comparison and shortlisting, alongside site-specific and official information.
 

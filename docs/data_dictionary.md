@@ -102,7 +102,7 @@ These fields exist in `data/processed/spatial_outputs/historical_residential_wil
 | `icnf_hazard_coverage_share` | float, 0-1 | Share of rasterized mainland-cell pixels with a valid official class. |
 | `icnf_modal_class_share` | float, 0-1 | Share of valid official pixels belonging to the assigned predominant class. |
 | `icnf_modal_tie` | boolean | Whether multiple official classes tied for the largest pixel count; exact ties select the higher class. |
-| `icnf_source_version` | string | Registered official SRUP-CPIR 2020-2030 source version. |
+| `icnf_source_version` | string | Registered official SRUP-CPIR 2020-2030 source/version label. This is an official structural-hazard reference, not a fire prediction. |
 | `evidence_status` | string | `complete_descriptive_evidence` or `official_hazard_unmatched`. |
 
 Lower historical exposure does not mean safe, zero recorded fire years does not mean zero wildfire risk, and this layer is not a property-level guarantee or purchase recommendation.

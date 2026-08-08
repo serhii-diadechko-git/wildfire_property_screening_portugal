@@ -113,6 +113,14 @@ to support a safety guarantee, an individual-property forecast, or a
 buy/do-not-buy recommendation. The detailed metric evidence is recorded in
 `reports/validation/model_final_decision.md`.
 
+The project also displays a separate official ICNF structural-hazard reference
+layer. The source is the official 25 m SRUP-CPIR 2020-2030 classification; the
+2020-2030 label identifies that source/version or planning period, not a
+prediction of fires during those years. The project summarizes the predominant
+valid official class within each 1 km mainland cell for comparison with the
+observed historical recurrence layer. It is not an ML prediction, target, or
+accuracy label for the project model.
+
 ## Recommendation frame
 
 The completed evidence supports a future annual comparative exposure layer for broad location comparison once its source gate is complete. Its retained model is not a buyer recommendation. Each published forecast must carry its forecast year, input cutoff, model version, and calibration limitation.
