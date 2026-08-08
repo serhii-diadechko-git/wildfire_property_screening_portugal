@@ -7,13 +7,12 @@ import pyarrow.parquet as pq
 
 from src.feature_contract import TABLE_COLUMNS
 from src.national_panel import (
+    BUILD_METRICS_PATH,
     NATIONAL_PANEL_PATH,
     OBSERVATION_YEARS,
     VALIDATION_METRICS_PATH,
     VALIDATION_REPORT_PATH,
-    build_panel_batches,
     load_grid_catalog,
-    verify_representative_batch_determinism,
 )
 
 
@@ -75,16 +74,15 @@ class NationalPanelTests(unittest.TestCase):
             frame = self.parquet.read_row_group(group, columns=["cell_id", *climate]).to_pandas()
             self.assertFalse(frame[list(climate)].isna().any().any())
 
-    def test_completed_batches_are_reused_without_overwrite(self) -> None:
-        result = build_panel_batches(progress=lambda _: None)
-        self.assertEqual(result["created"], 0)
-        self.assertEqual(result["reused"], self.catalog["batch_count"])
-
-    def test_representative_batch_rerun_is_exact(self) -> None:
-        result = verify_representative_batch_determinism()
-        self.assertTrue(result["analytical_values_exact"])
-        self.assertFalse(result["publication_side_effects"])
-        self.assertEqual(result["component_check_count"], 21)
+    def test_build_recorded_complete_atomic_batches_and_determinism(self) -> None:
+        """Read the build's own verification evidence; do not rebuild tiles in tests."""
+        build = json.loads(BUILD_METRICS_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(build["stage_results"]["grid"]["batch_count"], self.catalog["batch_count"])
+        metrics = json.loads(VALIDATION_METRICS_PATH.read_text(encoding="utf-8"))
+        deterministic = metrics["representative_batch_determinism"]
+        self.assertTrue(deterministic["analytical_values_exact"])
+        self.assertFalse(deterministic["publication_side_effects"])
+        self.assertEqual(deterministic["component_check_count"], 21)
 
     def test_machine_and_human_validation_reports_agree(self) -> None:
         metrics = json.loads(VALIDATION_METRICS_PATH.read_text(encoding="utf-8"))

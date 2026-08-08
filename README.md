@@ -198,10 +198,14 @@ After preflight reports `ready`:
 python scripts/run_project.py --mode validate
 ```
 
-Before derived outputs exist, this runs the portable bootstrap/source tests and
-does not require a generated model or forecast. After a successful reproduction
-run has created the derived output inventory, the same command automatically
-runs the full repository test suite.
+This runs the essential portable, raw-source, notebook-structure, and temporal
+contract checks. It does not rebuild tiles, refit models, rescore forecasts, or
+require optional QGIS layout exports. The full rebuild finishes with the same
+focused post-build checks after its own stage-level validations succeed.
+
+For a deliberate maintainer audit, run `python -m unittest discover -s tests -v`
+separately. It includes additional optional presentation/QGIS checks; those
+checks are skipped when their optional QGIS layout exports were not generated.
 
 ### 4. Build the data, fit the model, and generate outputs
 

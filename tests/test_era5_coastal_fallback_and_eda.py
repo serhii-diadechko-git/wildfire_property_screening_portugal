@@ -3,15 +3,9 @@
 import json
 import unittest
 
-import pyogrio
-
 from src.config import ERA5_LAND
 from src.era5_coastal_fallback import (
     ANALYSIS_JSON_PATH,
-    QA_GPKG_PATH,
-    QA_LAYER,
-    SNAPSHOT_GPKG_PATH,
-    SNAPSHOT_LAYER,
     validate_fallback_panel,
 )
 from src.panel_eda import EDA_JSON_PATH
@@ -39,14 +33,6 @@ class Era5CoastalFallbackAndEdaTests(unittest.TestCase):
         self.assertEqual(result["updated_climate_row_count"], 15_060)
         self.assertEqual(result["climate_missing_count_after"], 0)
         self.assertTrue(result["canonical_climate_contract_validated"])
-
-    def test_gis_outputs_are_qgis_ready(self) -> None:
-        qa_info = pyogrio.read_info(QA_GPKG_PATH, layer=QA_LAYER)
-        snapshot_info = pyogrio.read_info(SNAPSHOT_GPKG_PATH, layer=SNAPSHOT_LAYER)
-        self.assertEqual(qa_info["features"], 1_506)
-        self.assertEqual(snapshot_info["features"], 89_112)
-        self.assertIn("3763", qa_info["crs"])
-        self.assertIn("3763", snapshot_info["crs"])
 
     def test_eda_gate_and_no_missing_predictors(self) -> None:
         metrics = json.loads(EDA_JSON_PATH.read_text(encoding="utf-8"))

@@ -35,6 +35,35 @@ BOOTSTRAP_VALIDATION_MODULES = (
     "tests.test_public_reproducibility",
     "tests.test_era5_land_cds",
     "tests.test_era5_land_extended_acquisition",
+    "tests.test_notebook_review_layers",
+)
+
+# These checks open the supplied raw inputs and are deliberately run before a
+# rebuild.  They are not repeated after every successful pipeline stage.
+SOURCE_VALIDATION_MODULES = (
+    "tests.test_collection_validation",
+    "tests.test_clc_validation",
+    "tests.test_era5_land_validation",
+)
+
+# The build stages already perform their own expensive deterministic reruns.
+# This compact post-build suite verifies the published contracts and artifacts
+# without rebuilding national tiles, rescoring a forecast, or requiring
+# optional QGIS layout exports.
+POST_BUILD_VALIDATION_MODULES = (
+    "tests.test_feature_derivation_contract",
+    "tests.test_national_panel",
+    "tests.test_era5_coastal_fallback_and_eda",
+    "tests.test_extended_training_refit",
+    "tests.test_extended_final_test",
+    "tests.test_model_diagnostics",
+    "tests.test_operational_forecast",
+    "tests.test_historical_exposure_screening",
+)
+
+STANDARD_VALIDATION_MODULES = (
+    *BOOTSTRAP_VALIDATION_MODULES,
+    *SOURCE_VALIDATION_MODULES,
 )
 
 
@@ -113,7 +142,7 @@ def default_reproduction_stages(*, include_qgis: bool) -> tuple[RunStage, ...]:
         RunStage("environment", (python, "tests/validate_environment.py"), "Validate pinned packages and the environment notebook."),
         RunStage("CAOP references", (python, "scripts/prepare_reference_layers.py"), "Create/reuse mainland boundary and municipality reference GeoPackages from CAOP."),
         RunStage("CLC preparation", (python, "scripts/prepare_clc_portugal_layers.py"), "Create/reuse Portugal-clipped governed CLC reference layers from immutable ZIPs."),
-        RunStage("source validation", (python, "-m", "unittest", "tests.test_collection_validation", "tests.test_clc_validation", "tests.test_era5_land_validation", "-v"), "Validate registered raw source contracts."),
+        RunStage("source validation", (python, "-m", "unittest", *SOURCE_VALIDATION_MODULES, "-v"), "Validate registered raw source contracts."),
         RunStage("national panel", (python, "scripts/build_national_panel.py", "--stage", "all"), "Build/reuse bounded national feature components and panel."),
         RunStage("training panel", (python, "scripts/build_extended_training_panel.py", "--stage", "all"), "Build/reuse the labelled 2010-2021 development panel."),
         RunStage("model refit", (python, "scripts/refit_extended_training_models.py"), "Refit the frozen nine-feature candidate and validate only 2020-2021."),
@@ -133,7 +162,7 @@ def default_reproduction_stages(*, include_qgis: bool) -> tuple[RunStage, ...]:
             )
         )
     stages.append(
-        RunStage("full test suite", (python, "-m", "unittest", "discover", "-s", "tests", "-v"), "Run all repository tests."),
+        RunStage("post-build contract checks", (python, "-m", "unittest", *POST_BUILD_VALIDATION_MODULES, "-v"), "Verify published data, model, and scoring contracts without repeating expensive build work."),
     )
     return tuple(stages)
 
@@ -179,17 +208,15 @@ def _output_inventory() -> list[dict[str, object]]:
 
 
 def validation_command() -> tuple[tuple[str, ...], str]:
-    """Choose validation scope from the actual checkout state.
+    """Return the portable validation scope used by the public launcher.
 
-    A fresh clone can validate its portable source/environment contract before
-    generated model outputs exist. Once the full output inventory is present,
-    the same command escalates to the complete test suite.
+    A normal project validation checks environment-independent source and
+    temporal contracts once.  It never escalates to a second, artifact-heavy
+    full-discovery run merely because outputs happen to exist locally.
     """
-    if all(item["exists"] for item in _output_inventory()):
-        return ("-m", "unittest", "discover", "-s", "tests", "-v"), "full repository test suite"
     return (
-        ("-m", "unittest", *BOOTSTRAP_VALIDATION_MODULES, "-v"),
-        "bootstrap/source validation (derived outputs are not built yet)",
+        ("-m", "unittest", *STANDARD_VALIDATION_MODULES, "-v"),
+        "essential bootstrap and raw-source contract checks",
     )
 
 

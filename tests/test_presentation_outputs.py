@@ -9,7 +9,7 @@ import unittest
 
 import pandas as pd
 
-from src.final_visuals import ALL_PRESENTATION_FIGURE_PATHS, validate_final_visuals
+from src.final_visuals import FIGURE_PATHS, QGIS_FIGURE_PATHS, validate_final_visuals
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,11 +29,14 @@ class PresentationOutputTests(unittest.TestCase):
         self.assertTrue(metrics["no_predictive_claim"])
         cross = pd.read_csv(CROSSTAB_PATH)
         self.assertEqual(int(cross.cell_count.sum()), 89_112)
-        for path in ALL_PRESENTATION_FIGURE_PATHS.values():
+        for path in FIGURE_PATHS.values():
             self.assertTrue(path.exists(), path)
             self.assertGreater(path.stat().st_size, 5_000)
 
-    def test_read_only_figure_verifier_uses_all_six_stable_paths(self) -> None:
+    def test_qgis_layout_exports_validate_when_present(self) -> None:
+        """Layout PNGs are optional because normal reproduction does not require PyQGIS."""
+        if not all(path.exists() for path in QGIS_FIGURE_PATHS.values()):
+            self.skipTest("Run reproduce with --with-qgis to validate optional QGIS layout exports")
         result = validate_final_visuals()
         self.assertEqual(result["figure_count"], 6)
         self.assertEqual(result["history_window"], "2016-2025")

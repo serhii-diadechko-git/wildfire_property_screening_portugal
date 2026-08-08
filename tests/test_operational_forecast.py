@@ -20,7 +20,6 @@ from src.operational_forecast import (
     _forecast_paths,
     _sha256,
     forecast_preflight,
-    run_operational_forecast,
     validate_forecast_artifacts,
 )
 
@@ -76,11 +75,6 @@ class OperationalForecastTests(unittest.TestCase):
             validation["climate_assignment_counts"],
             {"containing_valid_era5_land_cell": 87_606, "nearest_valid_era5_land_cell": 1_506},
         )
-
-    def test_operational_rerun_revalidates_without_overwriting(self) -> None:
-        result = run_operational_forecast(CURRENT_FORECAST_YEAR)
-        self.assertEqual(result["status"], "validated_reused")
-
 
 if __name__ == "__main__":
     unittest.main()

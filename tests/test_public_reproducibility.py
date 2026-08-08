@@ -61,7 +61,7 @@ class PublicReproducibilityTests(unittest.TestCase):
         stages = default_reproduction_stages(include_qgis=False)
         self.assertGreaterEqual(len(stages), 10)
         self.assertEqual(stages[0].name, "environment")
-        self.assertEqual(stages[-1].name, "full test suite")
+        self.assertEqual(stages[-1].name, "post-build contract checks")
         self.assertIn("model diagnostics", [stage.name for stage in stages])
         names = [stage.name for stage in stages]
         self.assertLess(names.index("CAOP references"), names.index("CLC preparation"))
@@ -73,7 +73,7 @@ class PublicReproducibilityTests(unittest.TestCase):
     def test_fresh_checkout_validation_has_a_bootstrap_scope(self) -> None:
         command, scope = validation_command()
         self.assertIn("unittest", command)
-        self.assertIn("bootstrap" if scope.startswith("bootstrap") else "full", scope)
+        self.assertIn("essential", scope)
 
     def test_public_launcher_bootstraps_the_repository_virtual_environment(self) -> None:
         launcher = (ROOT / "scripts" / "run_project.py").read_text(encoding="utf-8")
