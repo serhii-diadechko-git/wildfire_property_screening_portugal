@@ -38,7 +38,8 @@ class PresentationOutputTests(unittest.TestCase):
         if not all(path.exists() for path in QGIS_FIGURE_PATHS.values()):
             self.skipTest("Run reproduce with --with-qgis to validate optional QGIS layout exports")
         result = validate_final_visuals()
-        self.assertEqual(result["figure_count"], 6)
+        self.assertEqual(result["figure_count"], 4)
+        self.assertEqual(result["optional_qgis_figure_count"], 2)
         self.assertEqual(result["history_window"], "2016-2025")
         self.assertEqual(result["canonical_cell_count"], 89_112)
         self.assertFalse(result["images_rewritten"])

@@ -251,7 +251,41 @@ def _build_layouts(project: QgsProject, historical: QgsVectorLayer, hazard: QgsV
     _export_layout(comparison_layout, "comparison")
 
 
-def _validate_project() -> dict[str, object]:
+def _layout_export_inventory(*, require_exports: bool) -> dict[str, dict[str, object]]:
+    """Describe optional layout exports without making project validation depend on them.
+
+    A QGIS project embeds its layouts, so it remains usable when the separately
+    exported PNG/PDF presentation copies are absent from a clean checkout.
+    Rebuilding the project does create and validate those copies; opening an
+    existing project only reports whether they are available.
+    """
+    exports: dict[str, dict[str, object]] = {}
+    for key, png_path in MAP_EXPORTS.items():
+        pdf_path = PDF_EXPORTS[key]
+        present = png_path.is_file() and pdf_path.is_file()
+        if require_exports and not present:
+            raise FileNotFoundError(f"Missing QGIS layout export: {png_path} or {pdf_path}")
+        if present:
+            record = {
+                "png": png_path.relative_to(ROOT).as_posix(),
+                "png_bytes": png_path.stat().st_size,
+                "pdf": pdf_path.relative_to(ROOT).as_posix(),
+                "pdf_bytes": pdf_path.stat().st_size,
+                "status": "verified",
+            }
+            if record["png_bytes"] < 5_000 or record["pdf_bytes"] < 5_000:
+                raise ValueError("QGIS layout export is unexpectedly small")
+        else:
+            record = {
+                "png": png_path.relative_to(ROOT).as_posix(),
+                "pdf": pdf_path.relative_to(ROOT).as_posix(),
+                "status": "not_generated_optional",
+            }
+        exports[key] = record
+    return exports
+
+
+def _validate_project(*, require_layout_exports: bool = False) -> dict[str, object]:
     opened = QgsProject()
     if not opened.read(str(PROJECT_PATH)):
         raise ValueError("QGIS could not reopen the written project")
@@ -292,11 +326,7 @@ def _validate_project() -> dict[str, object]:
         raise ValueError("QGIS aliases did not persist")
     if any(layer.featureCount() != 89_112 for layer in screening_layers):
         raise ValueError("QGIS screening views do not resolve all 89,112 features")
-    exports = {key: {"png": path.relative_to(ROOT).as_posix(), "png_bytes": path.stat().st_size,
-                     "pdf": PDF_EXPORTS[key].relative_to(ROOT).as_posix(), "pdf_bytes": PDF_EXPORTS[key].stat().st_size}
-               for key, path in MAP_EXPORTS.items()}
-    if any(record["png_bytes"] < 5_000 or record["pdf_bytes"] < 5_000 for record in exports.values()):
-        raise ValueError("QGIS layout export is unexpectedly small")
+    exports = _layout_export_inventory(require_exports=require_layout_exports)
     return {
         "project": PROJECT_PATH.relative_to(ROOT).as_posix(),
         "crs": "EPSG:3763",
@@ -380,7 +410,7 @@ def build_project() -> dict[str, object]:
     if not project.write(str(PROJECT_PATH)):
         raise RuntimeError(f"Could not write QGIS project: {PROJECT_PATH}")
     normalise_qgz_paths(PROJECT_PATH, ROOT)
-    record = _validate_project()
+    record = _validate_project(require_layout_exports=True)
     _write_validation(record)
     return record
 

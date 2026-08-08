@@ -49,8 +49,6 @@ QGIS_FIGURE_PATHS = {
     "historical_icnf_comparison_map": FIGURES_DIR / "historical_exposure_and_official_icnf_structural_hazard_comparison.png",
 }
 
-ALL_PRESENTATION_FIGURE_PATHS = {**QGIS_FIGURE_PATHS, **FIGURE_PATHS}
-
 FIGURE_SOURCE_PATHS = {
     "historical_exposure_map": (
         "data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg",
@@ -279,8 +277,11 @@ def validate_final_visuals() -> dict[str, object]:
     if qgis_validation["screening_view_feature_count"] != 89_112:
         raise ValueError("QGIS validation no longer resolves all screening cells")
 
+    # The four Matplotlib figures are the portable final-chart contract.  The
+    # two QGIS layout exports are optional presentation copies: the QGIS
+    # projects embed their layouts and remain useful without exported PNGs.
     records: dict[str, dict[str, object]] = {}
-    for name, path in ALL_PRESENTATION_FIGURE_PATHS.items():
+    for name, path in FIGURE_PATHS.items():
         if not path.exists() or path.stat().st_size < 5_000:
             raise ValueError(f"Missing or incomplete presentation figure: {path}")
         image = plt.imread(path)
@@ -297,10 +298,35 @@ def validate_final_visuals() -> dict[str, object]:
             "status": "verified_existing",
         }
 
+    optional_qgis_records: dict[str, dict[str, object]] = {}
+    available_qgis_maps = {
+        name: path for name, path in QGIS_FIGURE_PATHS.items() if path.is_file()
+    }
+    if available_qgis_maps and len(available_qgis_maps) != len(QGIS_FIGURE_PATHS):
+        raise ValueError("QGIS map exports must be either absent or present as a complete pair")
+    for name, path in available_qgis_maps.items():
+        if path.stat().st_size < 5_000:
+            raise ValueError(f"Missing or incomplete optional QGIS presentation figure: {path}")
+        image = plt.imread(path)
+        if image.ndim not in (2, 3) or min(image.shape[:2]) < 500:
+            raise ValueError(f"Optional QGIS presentation figure has an unexpected image shape: {path} {image.shape}")
+        source_data, source_code = FIGURE_SOURCE_PATHS[name]
+        optional_qgis_records[name] = {
+            "path": path.relative_to(ROOT).as_posix(),
+            "source_data": source_data,
+            "source_code": source_code,
+            "bytes": path.stat().st_size,
+            "pixel_height": int(image.shape[0]),
+            "pixel_width": int(image.shape[1]),
+            "status": "verified_existing_optional",
+        }
+
     return {
         "figure_count": len(records),
+        "optional_qgis_figure_count": len(optional_qgis_records),
         "history_window": "2016-2025",
         "canonical_cell_count": 89_112,
         "figures": records,
+        "optional_qgis_figures": optional_qgis_records,
         "images_rewritten": False,
     }
