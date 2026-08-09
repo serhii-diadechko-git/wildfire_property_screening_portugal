@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import time
 from typing import Iterable
 
 from src.paths import PROJECT_ROOT, RAW_DATA_DIR, RUN_LOGS_DIR, project_relative
@@ -174,6 +175,7 @@ def _run_stage(stage: RunStage, log_handle) -> dict[str, object]:
     command = tuple(sys.executable if item == "{python}" else item for item in stage.command)
     print(f"\n[{stage.name}] {stage.explanation}")
     print("  command:", " ".join(command))
+    started = time.perf_counter()
     process = subprocess.run(
         command,
         cwd=PROJECT_ROOT,
@@ -185,7 +187,12 @@ def _run_stage(stage: RunStage, log_handle) -> dict[str, object]:
     log_handle.write(f"\n## {stage.name}\n\n$ {' '.join(command)}\n\n{process.stdout}\n")
     log_handle.flush()
     summary = process.stdout.strip().splitlines()[-1] if process.stdout.strip() else "no output"
-    result = {"stage": stage.name, "return_code": process.returncode, "last_output_line": summary}
+    result = {
+        "stage": stage.name,
+        "return_code": process.returncode,
+        "elapsed_seconds": round(time.perf_counter() - started, 3),
+        "last_output_line": summary,
+    }
     if process.returncode:
         raise RuntimeError(f"Stage '{stage.name}' failed. See the run log for full output.")
     print(f"  completed: {summary}")
@@ -245,10 +252,13 @@ def write_run_summary(*, mode: str, preflight: dict[str, object], stages: Iterab
     if preflight["missing_file_count"]:
         lines.extend(["", "Missing files are listed in the terminal preflight JSON. Obtain them only from the official sources in `data/source_manifest.json`."])
     if stages:
-        lines.extend(["", "## Executed stages", "", "| Stage | Status | Last output line |", "|---|---|---|"])
+        lines.extend(["", "## Executed stages", "", "| Stage | Status | Elapsed seconds | Last output line |", "|---|---|---:|---|"])
         for stage in stages:
             status = "passed" if stage["return_code"] == 0 else "failed"
-            lines.append(f"| {stage['stage']} | {status} | {stage['last_output_line'].replace('|', '\\|')} |")
+            lines.append(
+                f"| {stage['stage']} | {status} | {stage.get('elapsed_seconds', 0):.3f} | "
+                f"{stage['last_output_line'].replace('|', '\\|')} |"
+            )
     lines.extend(["", "## Output inventory", "", "| Output | Path | Present |", "|---|---|---|"])
     for output in _output_inventory():
         lines.append(f"| {output['name']} | `{output['path']}` | {output['exists']} |")

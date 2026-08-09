@@ -260,6 +260,14 @@ The full rebuild can take substantial time and memory. It never modifies
 `data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
 otherwise open the tracked QGIS projects directly.
 
+### Stable validation evidence versus local run logs
+
+Normal notebook review is read-only. Tracked `reports/validation/` files hold
+stable analytical evidence and change only when the generated evidence changes.
+Each command run writes its timestamp, elapsed durations, commands, and full
+terminal output to Git-ignored `reports/run_logs/`; those local run records
+should not be committed.
+
 ## Important: first-run data preparation can be slow
 
 > [!IMPORTANT]

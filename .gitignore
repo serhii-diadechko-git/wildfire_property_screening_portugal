@@ -44,3 +44,8 @@ local_data_paths.json
 # OS files
 .DS_Store
 Thumbs.db
+
+# Microsoft Office temporary lock files
+~$*.pptx
+~$*.docx
+~$*.xlsx

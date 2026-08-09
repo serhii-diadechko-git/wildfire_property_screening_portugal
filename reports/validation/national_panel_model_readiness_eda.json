@@ -1,5 +1,4 @@
 {
-  "created_utc": "2026-08-07T09:06:43.841717+00:00",
   "panel_path": "data/processed/national_panel_2015_2024.parquet",
   "row_count": 891120,
   "split_row_counts": {

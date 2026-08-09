@@ -50,20 +50,8 @@ Corrected precipitation was used for 2022 and 2023. No outcome-year information 
 
 Three representative national batches (`x00_y10`, `x06_y21`, `x10_y21`) were re-derived in memory. Every slope, CLC, ICNF, ERA5 and assembled batch value was exactly identical; no files were published by the rerun.
 
-## Component duration evidence
+## Rebuild execution record
 
-These are minimum observed first-to-last atomic batch-publication spans, not CPU times; they exclude work before the first published batch.
-
-| Component | Seconds |
-|---|---:|
-| grid | 42.56 |
-| icnf_geometry_repair | 26.50 |
-| slope | 129.76 |
-| clc | 519.09 |
-| era5 | 22.91 |
-| icnf_components | 357.47 |
-| panel_batches | 45.04 |
-
-Final validation, including the three-batch deterministic rerun, took 135.16 seconds.
+Machine-dependent elapsed times and command output are intentionally recorded only in the Git-ignored `reports/run_logs/` record created for each reproduction. They are not validation evidence and therefore do not change this tracked report.
 
 Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at `data/processed/national_panel_2015_2024_validation.json`.

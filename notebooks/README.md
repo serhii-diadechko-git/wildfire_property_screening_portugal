@@ -54,6 +54,14 @@ they render real tables/plots from them. By default, costly/rewrite-capable
 stages are disabled. Turn on a switch only when deliberately regenerating the
 corresponding derived output after raw-input preflight has passed.
 
+### Git and run-record boundary
+
+Ordinary notebook review should not create a Git change. Tracked
+`reports/validation/` files contain stable analytical evidence; per-run UTC
+times, elapsed durations, commands, and terminal output are written only to
+Git-ignored `reports/run_logs/`. A deliberate rebuild may change a tracked
+validation report only when the underlying analytical evidence changes.
+
 Notebook `04` explains the governed model and its annual update mechanism.
 Notebook `06` is the single presentation of held-out final-test metrics and
 diagnostics, including all-row and positive-target error and Capture@20% as a

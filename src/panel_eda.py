@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
 from pathlib import Path
 
@@ -13,7 +12,8 @@ import pyarrow.parquet as pq
 
 from src.config import TEMPORAL
 from src.feature_contract import PREDICTOR_COLUMNS, TARGET_COLUMN
-from src.national_panel import NATIONAL_PANEL_PATH, OBSERVATION_YEARS, ROOT, _atomic_json
+from src.national_panel import NATIONAL_PANEL_PATH, OBSERVATION_YEARS, ROOT
+from src.reporting import write_json_if_changed, write_text_if_changed
 
 
 EDA_JSON_PATH = ROOT / "reports/validation/national_panel_model_readiness_eda.json"
@@ -138,7 +138,6 @@ def run_panel_eda() -> dict[str, object]:
         "gate": "Model-design gate passed — modelling may begin",
     }
     metrics = {
-        "created_utc": datetime.now(timezone.utc).isoformat(),
         "panel_path": str(NATIONAL_PANEL_PATH.relative_to(ROOT)).replace("\\", "/"),
         "row_count": len(panel),
         "split_row_counts": {key: int(value) for key, value in panel.split.value_counts().items()},
@@ -156,7 +155,7 @@ def run_panel_eda() -> dict[str, object]:
         "model_design_decision": decision,
         "final_test_use": "Descriptive drift review only; no model performance or model selection was performed.",
     }
-    _atomic_json(metrics, EDA_JSON_PATH)
+    write_json_if_changed(EDA_JSON_PATH, metrics)
     _write_figures(metrics, predictor_correlations)
     _write_report(metrics)
     return metrics
@@ -207,7 +206,8 @@ def _write_report(metrics: dict[str, object]) -> None:
             f"`{item['left']}` / `{item['right']}`: {item['correlation']:.3f}" for item in redundancy
         )
     )
-    EDA_REPORT_PATH.write_text(
+    write_text_if_changed(
+        EDA_REPORT_PATH,
         "# National panel model-readiness EDA\n\n"
         f"**{metrics['model_design_decision']['gate']}.**\n\n"
         "This report is descriptive. Final-test years are shown only for temporal-drift assessment; no model was trained, selected or evaluated.\n\n"
@@ -227,5 +227,4 @@ def _write_report(metrics: dict[str, object]) -> None:
         "The built-up-share training IQR is zero because most cells have zero mapped built-up area, so its 3-IQR flag counts non-zero values rather than implausible extremes.\n\n"
         "Exact distributions, annual means, correlations and 3-IQR outlier-screen counts are stored in "
         "`reports/validation/national_panel_model_readiness_eda.json`. Extreme values remain within the feature contract.\n",
-        encoding="utf-8",
     )

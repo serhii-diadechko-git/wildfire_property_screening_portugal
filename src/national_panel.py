@@ -45,6 +45,7 @@ from src.geospatial_utils import (
     icnf_vsi_path,
     polygonal_geometry,
 )
+from src.reporting import write_text_if_changed
 from src.source_registry import (
     CLC_2006_V2020_20U1,
     CLC_2012_V2020_20U1,
@@ -1262,10 +1263,6 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         range_rows.append(
             f"| `{column}` | {min(minima):.8f} | {max(maxima):.8f} | {missing:,} |"
         )
-    duration_rows = [
-        f"| {component} | {seconds:.2f} |"
-        for component, seconds in metrics["component_duration_evidence"]["seconds"].items()
-    ]
     fallback = metrics.get("climate_coastal_fallback", {})
     if fallback.get("adopted"):
         climate_text = (
@@ -1283,8 +1280,8 @@ def write_validation_report(metrics: dict[str, object]) -> None:
             f"{metrics['climate_water_mask']['affected_row_count']:,} "
             f"({metrics['climate_water_mask']['panel_row_proportion']:.4%} of the panel)."
         )
-    VALIDATION_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    VALIDATION_REPORT_PATH.write_text(
+    write_text_if_changed(
+        VALIDATION_REPORT_PATH,
         "# National 2015-2024 cell-year panel validation\n\n"
         f"**{metrics['panel_readiness_decision']}**\n\n"
         "This decision authorises panel EDA only. It does not establish modelling readiness, "
@@ -1308,14 +1305,12 @@ def write_validation_report(metrics: dict[str, object]) -> None:
         "No outcome-year information entered predictors. Annual repaired ICNF polygons were locally unioned before intersection, preventing double counting.\n\n"
         f"Three representative national batches (`{'`, `'.join(metrics['representative_batch_determinism']['batch_ids'])}`) "
         "were re-derived in memory. Every slope, CLC, ICNF, ERA5 and assembled batch value was exactly identical; no files were published by the rerun.\n\n"
-        "## Component duration evidence\n\n"
-        "These are minimum observed first-to-last atomic batch-publication spans, not CPU times; "
-        "they exclude work before the first published batch.\n\n"
-        "| Component | Seconds |\n|---|---:|\n" + "\n".join(duration_rows) + "\n\n"
-        f"Final validation, including the three-batch deterministic rerun, took {metrics['validation_runtime_seconds']:.2f} seconds.\n\n"
+        "## Rebuild execution record\n\n"
+        "Machine-dependent elapsed times and command output are intentionally recorded only in the "
+        "Git-ignored `reports/run_logs/` record created for each reproduction. They are not validation evidence "
+        "and therefore do not change this tracked report.\n\n"
         "Full machine-readable metrics, ranges, missingness, quantiles, and repair logs are stored at "
         "`data/processed/national_panel_2015_2024_validation.json`.\n",
-        encoding="utf-8",
     )
 
 

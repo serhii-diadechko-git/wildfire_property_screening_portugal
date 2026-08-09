@@ -6,7 +6,6 @@ import hashlib
 import json
 import math
 import os
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -21,6 +20,7 @@ import shapely
 
 from src.config import SPATIAL
 from src.national_panel import BUILD_ROOT as PANEL_BUILD_ROOT, GRID_CATALOG_PATH, GRID_PATH
+from src.reporting import write_json_if_changed, write_text_if_changed
 from src.source_registry import ICNF_STRUCTURAL_HAZARD_2020_2030
 
 
@@ -455,7 +455,6 @@ def _write_reports(
         .to_dict(orient="records")
     )
     metrics = {
-        "created_utc": datetime.now(timezone.utc).isoformat(),
         "purpose": "historical_descriptive_wildfire_exposure_screening_not_prediction",
         "evidence_snapshot": {
             "evidence_as_of_year": EVIDENCE_AS_OF_YEAR,
@@ -486,8 +485,7 @@ def _write_reports(
         "notable_largest_combinations": notable,
         "no_predictive_claim": True,
     }
-    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    METRICS_PATH.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    write_json_if_changed(METRICS_PATH, metrics)
 
     band_rows = "\n".join(
         f"| {row.historical_exposure_band} | {int(row.cell_count):,} | {row.share_of_cells:.2%} |"
@@ -507,7 +505,8 @@ def _write_reports(
         "| " + band + " | " + " | ".join(f"{int(value):,}" for value in cross_pivot.loc[band]) + " |"
         for band in BAND_ORDER
     )
-    REPORT_PATH.write_text(
+    write_text_if_changed(
+        REPORT_PATH,
         f"""# Historical exposure screening and official ICNF comparison
 
 **This output is historical and descriptive, not a prediction, probability, safety guarantee, property recommendation, or validation of the official ICNF map.**
@@ -568,7 +567,6 @@ Machine-readable summaries are stored at `{METRICS_PATH.relative_to(ROOT).as_pos
 - The official 25 m hazard raster is summarized to 1 km by predominant valid class, which necessarily removes within-cell detail.
 - This layer must not be used as a buy/do-not-buy decision or property-level safety guarantee.
 """,
-        encoding="utf-8",
     )
     return metrics
 
@@ -600,4 +598,3 @@ def run_historical_exposure_screening(
         hazard_facts,
         {"core_batches": core_status, "hazard_batches": hazard_status},
     )
-

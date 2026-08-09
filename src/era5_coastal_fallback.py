@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -34,6 +33,7 @@ from src.national_panel import (
     load_era5_grids,
     load_grid_catalog,
 )
+from src.reporting import write_json_if_changed, write_text_if_changed
 
 
 CLIMATE_COLUMNS = CLIMATE_PREDICTOR_COLUMNS
@@ -213,7 +213,6 @@ def analyse_coastal_fallback() -> tuple[pd.DataFrame, dict[str, object]]:
         ["cell_id", "land_class", "cell_lat", "cell_lon", "fallback_lat", "fallback_lon", "distance_km"]
     ].to_dict(orient="records")
     metrics = {
-        "created_utc": datetime.now(timezone.utc).isoformat(),
         "source_extent": {
             "north": float(latitude.max()), "west": float(longitude.min()),
             "south": float(latitude.min()), "east": float(longitude.max()),
@@ -242,7 +241,7 @@ def publish_analysis(mapping: pd.DataFrame, metrics: dict[str, object]) -> None:
     MAPPING_PATH.parent.mkdir(parents=True, exist_ok=True)
     mapping.to_parquet(MAPPING_PATH.with_suffix(".parquet.tmp"), index=False)
     os.replace(MAPPING_PATH.with_suffix(".parquet.tmp"), MAPPING_PATH)
-    _atomic_json(metrics, ANALYSIS_JSON_PATH)
+    write_json_if_changed(ANALYSIS_JSON_PATH, metrics)
 
     grid = _grid_lookup().set_index("cell_id").loc[mapping.cell_id]
     spatial = gpd.GeoDataFrame(
@@ -269,7 +268,8 @@ def publish_analysis(mapping: pd.DataFrame, metrics: dict[str, object]) -> None:
         f"{row['fallback_lat']:.2f} | {row['fallback_lon']:.2f} | {row['distance_km']:.3f} |"
         for row in metrics["largest_distance_cases"]
     )
-    ANALYSIS_REPORT_PATH.write_text(
+    write_text_if_changed(
+        ANALYSIS_REPORT_PATH,
         "# ERA5-Land coastal fallback analysis\n\n"
         "This is a spatial land-mask/grid-alignment diagnosis. It does not change raw GRIBs or interpolate/downscale climate data.\n\n"
         f"Affected canonical cells: {len(mapping):,}. ERA5 source grid: 55 x 37; valid land cells: "
@@ -284,7 +284,6 @@ def publish_analysis(mapping: pd.DataFrame, metrics: dict[str, object]) -> None:
         "| Cell | Land class | Cell lat | Cell lon | Source lat | Source lon | Distance km |\n"
         "|---|---|---:|---:|---:|---:|---:|\n" + top_rows + "\n\n"
         "Local climate comparisons are recorded in the machine-readable JSON.\n",
-        encoding="utf-8",
     )
 
 
