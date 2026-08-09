@@ -22,9 +22,9 @@ Can recent wildfire recurrence, landscape context, terrain, and predictor-year c
 
 ### Final temporal evaluation
 
-The selected nine-feature model was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
+The selected **nine-feature Model V2** was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
 
-| Final temporal metric | Historical-recurrence baseline | Nine-feature two-stage regression |
+| Final temporal metric | Historical-recurrence baseline | Accepted nine-feature Model V2 |
 |---|---:|---:|
 | All-row MAE | 0.02919 | **0.02091** |
 | RMSE | **0.11059** | 0.11100 |
@@ -46,9 +46,9 @@ The model improved average error and the comparative ranking of observed burned 
 
 The nine predictors are defined, including their units, ranges, and source-year rules, in [docs/data_dictionary.md](docs/data_dictionary.md).
 
-### Why this model
+### Why Model V2
 
-The retained model is a **nine-feature two-stage histogram-gradient-boosting regression**:
+The retained Model V2 is a **nine-feature two-stage histogram-gradient-boosting regression**:
 
 1. a [`HistGradientBoostingClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html) estimates whether any burning is expected; and
 2. a [`HistGradientBoostingRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html) estimates burned share when burning is expected.
@@ -179,13 +179,14 @@ scripts\run_qgis_presentation_project.bat --validate-operational
 
 | Output | Purpose |
 |---|---|
-| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved nine-feature two-stage regression model used for the current annual estimate. |
+| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved accepted nine-feature Model V2 used for the current annual estimate. `nine_feature_hurdle` is a legacy internal artifact filename, not the public model name. |
 | `data/processed/final_model_2010_2024/model_metadata.json` | Model feature order, training cutoff, version, and reproducibility metadata. |
 | `data/processed/operational_forecasts/forecast_2026_scores.parquet` | Canonical tabular 2026 comparative estimates. |
 | `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready annual comparative layer. |
 | `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence plus official ICNF comparison attributes. |
 | `reports/figures/` and `reports/tables/` | Reproducible visual and tabular presentation outputs. |
 | `reports/validation/` | Stable analytical validation evidence. |
+| `reports/presentation/wildfire_exposure_screening_capstone_final.pptx` | Editable eight-slide capstone presentation. |
 | `reports/run_logs/` | Local, Git-ignored command logs and timings. |
 
 Parquet is the canonical analytical table format. GeoPackages provide reusable geometry and QGIS/presentation layers; they are not duplicate full cell-year panels.

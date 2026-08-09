@@ -45,17 +45,10 @@ analytical workflows. The 2026 estimate is not a calibrated probability,
 property-level forecast, safety guarantee, insurance estimate, or purchase
 recommendation.
 
-The 2026 project adds a separate top-level group, **00 Annual comparative
-estimate — 2026**, above the shared historical and official comparison groups.
-The two projects are presentation views of validated GeoPackages, not separate
-analytical workflows.
-
-- **01 Historical exposure screening** — `Historical exposure bands — 1 km cells` is the validated descriptive layer. It represents **1 km mainland grid cells with fire recurrence measured in a 2 km context** for 2016–2025. Lower historical exposure does not mean safe.
-- **02 Official ICNF comparison** — `ICNF structural hazard class — predominant class per 1 km cell` is a second styled view of the same screening GeoPackage. It displays the predominant valid class from the official ICNF 25 m SRUP-CPIR 2020-2030 structural-hazard source. The 2020-2030 label identifies the official source/version or planning period; it is not a prediction of fires in those years and is not this project’s prediction.
-- **03 Context** — CAOP 2025 mainland Portugal boundary.
-- **04 QA reference — off by default** — ERA5 coastal-fallback QA and the national 2024 snapshot. The latter is explicitly retrospective EDA only.
-
-The historical palette progresses from sand through orange to dark red. It deliberately avoids representing lower historical exposure as “safe”. Official ICNF class colours are ordered separately and should not be interpreted as a project forecast.
+The historical palette progresses from sand through orange to dark red. It
+deliberately avoids representing lower historical exposure as “safe”. Official
+ICNF class colours are ordered separately and should not be interpreted as a
+project forecast.
 
 ## Layouts
 

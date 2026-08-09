@@ -23,7 +23,8 @@ The same run also creates:
 - the target-free 2026 comparative-estimate map; and
 - final decision/limitations and summary-table visuals.
 
-`notebooks/06_final_charts.ipynb` regenerates or verifies these named outputs
-from repository data and reusable functions. It is the final visual narrative;
-the PNG files are durable presentation artefacts rather than independent
-calculations.
+`notebooks/06_final_charts.ipynb` renders the same diagnostics live from
+validated artefacts without overwriting exported PNGs. It is the final visual
+narrative; the PNG files are durable presentation artefacts rather than
+independent calculations. Use `python scripts/build_final_visuals.py` or the
+full project runner to regenerate files deliberately.

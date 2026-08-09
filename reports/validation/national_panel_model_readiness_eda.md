@@ -1,5 +1,10 @@
 # National panel model-readiness EDA
 
+> **Historical diagnostic record:** this EDA informed the later Model V2
+> development process. Model selection and the held-out final temporal test are
+> now complete; see `model_v2_validation_selection.md` and
+> `final_temporal_test_2022_2024.md` for the current model evidence.
+
 **Model-design gate passed — modelling may begin.**
 
 This report is descriptive. Final-test years are shown only for temporal-drift assessment; no model was trained, selected or evaluated.

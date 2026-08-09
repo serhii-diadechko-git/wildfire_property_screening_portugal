@@ -1,8 +1,8 @@
-# Model v2 validation-selection record
+# Model V2 validation-selection record
 
 ## Decision
 
-**Model v2** is the validation-selected nine-feature two-stage regression
+**Model V2** is the validation-selected nine-feature two-stage regression
 configuration used by the operational 2026 estimate. It replaced the prior
 Model v1 parameter configuration after a predeclared comparison on the full
 development validation period only: predictor years `T=2020-2021`.
@@ -28,9 +28,9 @@ period; that separate evidence is recorded below and in
 | Configuration | All-row MAE | All-row RMSE | Positive-row MAE | Positive-cell capture@20% | Burned-share-mass capture@20% |
 |---|---:|---:|---:|---:|---:|
 | Model v1 reference | 0.014674 | 0.069598 | 0.207624 | 55.62% | 56.23% |
-| **Model v2 selected** | **0.014027** | **0.069442** | 0.207657 | **58.22%** | **60.82%** |
+| **Model V2 selected** | **0.014027** | **0.069442** | 0.207657 | **58.22%** | **60.82%** |
 
-Model v2 was selected because it has the lowest primary all-row MAE and the
+Model V2 was selected because it has the lowest primary all-row MAE and the
 strongest two ranking diagnostics among the tested configurations, while also
 slightly lowering RMSE. Its positive-row MAE is essentially unchanged
 (0.000033 higher), so this is a practical comparative-screening improvement,
@@ -38,7 +38,7 @@ not proof of a universally best wildfire model.
 
 ## Post-selection held-out test
 
-After the validation decision was fixed, Model v2 was evaluated once on
+After the validation decision was fixed, Model V2 was evaluated once on
 `T=2022-2024` (267,336 rows). It improved all-row MAE over the historical
 recurrence baseline, but its RMSE was marginally higher and high-burn outcomes
 remained difficult. The tie-aware top-20% burned-share-mass capture was 57.16%
@@ -46,7 +46,7 @@ for V2 versus 40.17% for the baseline. This supports comparative screening, not
 precise local forecasting. These final-test results were not used to alter V2
 parameters.
 
-## Model v2 parameters
+## Model V2 parameters
 
 The model combines two histogram-gradient-boosting tree ensembles. One estimates
 whether a cell is likely to have any burned share; the other estimates the
@@ -70,7 +70,7 @@ python scripts/run_hyperparameter_experiments.py --full-training --run-name full
 python scripts/build_model_v2_validation_figures.py
 ```
 
-The first independent evaluation of the published Model v2 operational score is
+The first independent evaluation of the published Model V2 operational score is
 possible only after ICNF publishes the observed 2026 burned-area outcome. Until
 then, the 2026 layer is a target-free comparative estimate, not validated
 future performance.

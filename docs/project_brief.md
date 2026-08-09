@@ -34,15 +34,15 @@ It does not recommend the purchase of a specific property.
 ## Spatial design
 
 - The analytical unit is a **1 km x 1 km grid cell per observation year**.
-- The initial surrounding context is a **2 km buffer around each cell**.
+- The surrounding context is a **2 km buffer around each cell**.
 - The 2 km buffer is used for nearby vegetation, slope, and previous-fire features.
-- The 2 km value is an initial parameter and will be checked through sensitivity analysis.
+- The 2 km value is the fixed context definition used by this project. No alternative-buffer sensitivity analysis was completed, so its choice remains a documented limitation for future research.
 
 ## Temporal methodology and model evaluation
 
 In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
 
-> Model v2 selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once V2 was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
+> Model V2 selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once V2 was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
 
@@ -56,7 +56,7 @@ There is no temporal gap between the historical-fire window and predictor year `
 
 ## Final model finding and responsible-use boundary
 
-Model v2 is a nine-feature two-stage burned-share regression model. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. In the complete `T=2020-2021` validation comparison, V2 improved all-row MAE (0.014674 to 0.014027) and burned-share-mass capture@20% (56.23% to 60.82%) over Model v1. Its post-selection final test at `T=2022-2024` improved all-row MAE over the historical baseline (0.020913 vs 0.029186) and captured 57.16% of observed burned-share mass in the tie-aware top 20%, versus 40.17% for the baseline; RMSE was marginally higher (0.110995 vs 0.110595). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a target-free `2026` estimate using T=2025 inputs. Its independent operational evaluation requires the observed ICNF 2026 outcome. The historical 2016-2025 recurrence screening remains supporting context. See `docs/model_v2_validation_selection.md`, `reports/validation/final_temporal_test_2022_2024.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
+Model V2 is a nine-feature two-stage burned-share regression model. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. In the complete `T=2020-2021` validation comparison, V2 improved all-row MAE (0.014674 to 0.014027) and burned-share-mass capture@20% (56.23% to 60.82%) over the previous nine-feature candidate configuration. Its post-selection final test at `T=2022-2024` improved all-row MAE over the historical baseline (0.020913 vs 0.029186) and captured 57.16% of observed burned-share mass in the tie-aware top 20%, versus 40.17% for the baseline; RMSE was marginally higher (0.110995 vs 0.110595). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a target-free `2026` estimate using T=2025 inputs. Its independent operational evaluation requires the observed ICNF 2026 outcome. The historical 2016-2025 recurrence screening remains supporting context. See `docs/model_v2_validation_selection.md`, `reports/validation/final_temporal_test_2022_2024.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
 
 ## Scope
 
@@ -64,7 +64,7 @@ Model v2 is a nine-feature two-stage burned-share regression model. It combines 
 
 - mainland Portugal;
 - a national 1 km analytical grid;
-- an initial 2 km surrounding context buffer;
+- a fixed 2 km surrounding context buffer;
 - historical burned-area patterns;
 - built-up share as an initial residential-relevance proxy;
 - surrounding forest and shrubland;
@@ -100,11 +100,15 @@ transparent historical-recurrence baseline. The target is the continuous
 `burned_share_next_year`; it is not a property-level probability or a safety
 classification.
 
-The hypothesis received partial support in the complete development-validation
-comparison. Model v2 improved all-row MAE and both ranking capture diagnostics
-over its Model v1 reference, while positive-target MAE was effectively
-unchanged. This supports a cautious model-version change, not a claim that V2
-has already passed an independent future-year test.
+The hypothesis received partial support. Model V2 was selected from the
+development validation period and then evaluated once on the held-out final
+period `T=2022-2024`: it reduced all-row MAE from 0.029186 to 0.020913 and
+increased tie-aware burned-share-mass capture@20% from 40.17% to 57.16% versus
+the transparent historical-recurrence benchmark. RMSE was marginally higher
+(0.110995 versus 0.110595), and the high-burn 2025 outcome remained difficult.
+This supports cautious comparative screening on completed historical years; it
+does not yet validate the target-free 2026 operational estimate, whose outcome
+is not available.
 
 The conclusion is therefore limited and comparative. The model may help narrow
 broad-area location research, but it is not sufficiently stable or calibrated
@@ -122,7 +126,7 @@ accuracy label for the project model.
 
 ## Recommendation frame
 
-The completed evidence supports a future annual comparative exposure layer for broad location comparison once its source gate is complete. Its retained model is not a buyer recommendation. Each published forecast must carry its forecast year, input cutoff, model version, and calibration limitation.
+The completed evidence supports the published 2026 annual comparative exposure layer for broad location comparison. Its retained model is not a buyer recommendation. Each published annual estimate must carry its forecast year, input cutoff, model version, and calibration limitation.
 
 The historical screening is most useful when an area has:
 
@@ -154,22 +158,22 @@ Compare official tools, real-time services, annual susceptibility products, and 
 
 ### Demand proxy
 
-Measure how many residentially relevant cells and municipalities have meaningful wildfire exposure. Do not add housing-market data unless the MVP is already complete and the source is confirmed.
+Measure how many residentially relevant cells and municipalities have meaningful wildfire exposure. Housing-market data is outside the completed project scope unless a future research version documents and validates it.
 
 ### Risk and sensitivity
 
-Test model uncertainty, false reassurance, target thresholds, the initial 2 km buffer, temporal stability, geographic generalisation, source-release dependency, and competitor overlap.
+Test model uncertainty, false reassurance, target thresholds, the fixed 2 km buffer, temporal stability, geographic generalisation, source-release dependency, and competitor overlap.
 
 ## Success criteria
 
 ### Required completion criteria
 
 - use documented public data sources;
-- build the reproducible 1 km cell-year dataset using the agreed MVP columns;
+- build the reproducible 1 km cell-year dataset using the retained nine-predictor contract;
 - return a score, insufficient-evidence status, or documented exclusion for every canonical cell, with coverage revalidated for each annual release;
 - represent every mainland municipality containing eligible cells;
-- assign recommendations only when mandatory data is complete;
-- produce clear maps, ranked tables, uncertainty flags, and limitations;
+- publish a comparative estimate, insufficient-evidence status, or documented exclusion only when mandatory data is complete;
+- produce clear maps, machine-readable score/rank tables, uncertainty flags, and limitations;
 - document annual rescoring and model retraining separately.
 
 ### Model evaluation targets
@@ -177,7 +181,7 @@ Test model uncertainty, false reassurance, target thresholds, the initial 2 km b
 - compare the model with a historical-fire-frequency baseline on future-year data;
 - require performance above random ranking;
 - target capture of at least 40% of affected cells within the highest-risk 20% of predictions;
-- use predictive recommendations only if the model improves on the baseline and generalises across years and regions.
+- consider any future automated recommendation category only after separate evidence and governance review; it is not part of this project.
 
 These are evaluation targets, not guaranteed project outcomes.
 
@@ -190,12 +194,9 @@ These are evaluation targets, not guaranteed project outcomes.
 - Analysis-to-decision alignment: **ready**
 - 60-second explanation: **ready**
 
-## First-sprint validation gates
+## Annual-maintenance checks
 
-1. Download and inspect one sample from each required source.
-2. Confirm CRS, schema, licensing, and geographic coverage.
-3. Verify comparable land-cover editions.
-4. Test one small-area 1 km grid and 2 km buffer workflow.
-5. Validate the residential-relevance proxy.
-6. Revalidate the annual source cutoff before publishing each new comparative estimate.
-7. Confirm coverage and missing-data status for each annual update.
+1. Register and validate each new annual ICNF and ERA5-Land source before use.
+2. Revalidate CRS, schema, checksums, licensing/terms, and geographic coverage.
+3. Revalidate the annual source cutoff, model checksum, coverage, and missing-data status before publishing a comparative estimate.
+4. Evaluate the already-published estimate when the corresponding ICNF outcome becomes available, then refit the unchanged selected specification for the following cycle.

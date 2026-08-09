@@ -8,7 +8,7 @@ Collection date for this initial plan: **31 July 2026**.
 
 For ERA5-Land, `2m_temperature` refers to air temperature at 2 metres above the land surface. It does not mean a 2 m grid; ERA5-Land remains coarse regional context assigned to 1 km cells by source-cell rules.
 
-These sources support the agreed MVP schema. Optional feature sources are intentionally excluded from the first version.
+These sources support the retained nine-feature Model V2 schema. Additional sources are not introduced without a separately documented research version and validation decision.
 
 | Source | Expected fields / products | Access method | Accessibility | Main limitation | Official URL |
 |---|---|---|---|---|---|
@@ -16,7 +16,7 @@ These sources support the agreed MVP schema. Optional feature sources are intent
 | Copernicus CLC | Broad built/artificial and forest/shrubland context | Copernicus catalogue/download | Published Copernicus licence and access conditions | Retrospectively assigned broad context, not annual parcel-level land cover; reference year and mapping-unit limits must be retained | https://land.copernicus.eu/en/products/corine-land-cover |
 | DGT CAOP | Mainland boundary and municipality/parish boundaries for reporting | OGC API or official download | Available without charge | Administrative versions change; one version must be fixed for the project | https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop |
 | Copernicus DEM GLO-30 | Elevation raster used to derive `mean_slope_2km` | Copernicus Data Space download/API | Free access under published licence conditions | Static elevation model; national tile processing must be tested | https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM |
-| Copernicus ERA5-Land | JJAS `T`-only mean 2 m temperature, total precipitation, and mean layer-1 soil water | Climate Data Store API/download, NetCDF or GRIB | Free account and licence acceptance required | Coarse regional reanalysis context at about 9 km; use the containing valid ERA5-Land cell, otherwise the validated nearest valid land cell for a water-masked containing cell; no interpolation/downscaling to 1 km | https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land |
+| Copernicus ERA5-Land monthly means | JJAS `T`-only mean 2 m temperature, total precipitation, and mean layer-1 soil water | Climate Data Store API/download, GRIB | Free account and licence acceptance required | Coarse regional reanalysis context at about 9 km; use the containing valid ERA5-Land cell, otherwise the validated nearest valid land cell for a water-masked containing cell; no interpolation/downscaling to 1 km | https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means |
 
 ## ICNF temporal scope and roles
 
@@ -27,7 +27,7 @@ The expanded model-development and final-test design requires ICNF annual burned
 | Historical-fire input | `2000-2023` | For each predictor reference year `T` from `2010` through `2024`, calculate `fire_years_previous_10y_2km` from the inclusive pre-`T` window `T-10` through `T-1`. |
 | Observed outcome label | `2011-2025` | For each `T` from `2010` through `2024`, calculate `burned_share_next_year` from the observed outcome year `T+1`. |
 
-The labelled nine-feature model panel uses fitting years `2010-2019` and validation years `2020-2021` for Model v2 selection. No `T=2022-2024` row was read during that selection; completed labels through `T=2024` are used only for the subsequent operational refit. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad retrospective land-cover context, not annual parcel-level land cover; its governed reference year is always no later than `T`, while its current revised package version is provenance rather than historical availability evidence. ERA5-Land uses only JJAS observations/reanalysis values from `T`; use the containing valid source cell or, for a water-masked containing cell, the validated deterministic nearest valid land cell, without interpolation.
+The labelled nine-feature model panel uses fitting years `2010-2019` and validation years `2020-2021` for Model V2 selection. No `T=2022-2024` row was read during that selection; completed labels through `T=2024` are used only for the subsequent operational refit. ICNF burned areas are an outcome source and a strictly pre-`T` historical-fire input; they are never a same-year `T` predictor. No temporal gap is required because the historical-fire window is information genuinely available at prediction time. CLC is broad retrospective land-cover context, not annual parcel-level land cover; its governed reference year is always no later than `T`, while its current revised package version is provenance rather than historical availability evidence. ERA5-Land uses only JJAS observations/reanalysis values from `T`; use the containing valid source cell or, for a water-masked containing cell, the validated deterministic nearest valid land cell, without interpolation.
 
 ## Annual operational scoring cycle
 
@@ -47,7 +47,7 @@ For forecast year `Y`, refit the frozen nine-feature model only through labelled
 
 ## Market and competitor research sources
 
-These sources support Exercise 5 and are not model-training data.
+These contextual comparison sources are not model-training data and do not alter the retained nine-feature model.
 
 | Solution | Role in comparison | URL |
 |---|---|---|

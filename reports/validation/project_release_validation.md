@@ -1,50 +1,48 @@
 # Public reproducibility and release validation
 
-Validation date: 2026-08-07
+Validation date: 2026-08-09.
 
 ## Purpose
 
 This is a project-facing release check, not an internal assistant log. It
-records the minimum evidence that a public reviewer can set up, inspect, and
-reproduce the project without receiving private credentials or a personal file
-path.
+records the evidence a public reviewer needs to set up, inspect, and reproduce
+the project without receiving private credentials or a personal file path.
 
-## Checks passed
+## Current documentation and package checks
 
 | Check | Result |
 |---|---|
-| Portable source paths | Passed: public source, notebook, QGIS, and script text contains no known personal absolute path. |
-| Local raw-input preflight | Passed locally: 18 ICNF archives, CAOP, 3 CLC packages, 21 DEM tiles, 18 ERA5-Land GRIB records, and the ICNF structural-hazard raster were present. |
+| Portable source paths | Passed: checked Markdown documentation contains no known personal absolute filesystem path. |
+| Markdown links | Passed: 35 tracked Markdown files have zero missing relative links. |
+| External documentation links | Official provider, data-policy, DOI, and library pages resolve; direct provider download endpoints remain accompanied by stable catalogue pages. |
 | Immutable raw-data policy | Passed: `data/raw/` is Git-ignored; the public manifest lists official access paths and no credential is stored in the repository. |
-| Pinned environment | Passed with Python 3.13 and the versions in `requirements.txt`. VS Code uses the project `ipykernel`; a separate JupyterLab workflow is not required. |
-| Notebook verification | Passed: all seven notebooks executed from fresh kernels in numeric order with zero error outputs. Their narrative roles remain separate and their code calls reusable `src/` helpers. |
-| Consolidation checks | Passed: 24 focused public-path, notebook, cleanup, diagnostics, QGIS, and presentation tests. The previously recorded full 62-test release suite remains passed; it was not repeated during this final documentation-only pass. |
-| Markdown links | Passed: 31 Markdown files checked with zero missing relative links. |
-| Presentation | Passed: all 13 slides rendered, template fidelity reported zero issues, and the official overflow test reported no overflow. |
-| Whitespace check | Passed: `git diff --check` reported no errors. |
+| Licence boundary | Passed: repository-owned code, notebooks, documentation, and original figures are released under the MIT License; external data remains subject to provider terms. |
+| Environment and notebook guidance | Current: Python 3.13, pinned dependencies, VS Code/Jupyter-kernel setup, preflight, API acquisition, validation, and deliberate rebuild are documented in the root README. |
+| QGIS projects | Current: the historical project has 5 map layers; the combined 2026 project has 6 map layers. Both use project-relative data paths after a successful rebuild. |
+| Presentation | Current: the editable final deck contains 8 slides and 8 note sections; see `presentation_validation.md`. |
 
 ## Public workflow
 
-1. Install the pinned environment in the root README.
+1. Install the pinned environment using the root README.
 2. Obtain files directly from official providers using `data/README.md` and
    `data/source_manifest.json`.
 3. Run `python scripts/run_project.py --mode preflight`.
-4. Run `python scripts/run_project.py --mode validate`.
-5. Run `python scripts/run_project.py --mode reproduce --confirm-rebuild` only
-   when derived outputs must be regenerated.
+4. Run `python scripts/run_project.py --mode acquire-api` only when missing
+   API-backed inputs are authorised and local credentials are configured.
+5. Run `python scripts/run_project.py --mode validate`.
+6. Run `python scripts/run_project.py --mode reproduce --confirm-rebuild` only
+   when reproducible local outputs must be generated or refreshed.
 
-The runner produces a local, Git-ignored, plain-language stage log in
-`reports/run_logs/`. It never downloads gated inputs or changes `data/raw/`.
+The runner writes local, Git-ignored, plain-language stage logs in
+`reports/run_logs/`. It never changes existing immutable raw files.
 
 ## Release boundary
 
-The retained analytical state is the nine-feature model and its documented
-annual update cycle. Earlier research artefacts are not required to use the
-current method. Raw data may not be mirrored or redistributed until the project
-owner has checked each provider's current terms; see `docs/release_checklist.md`.
+The retained analytical state is the accepted nine-feature Model V2, its
+transparent historical-recurrence benchmark, and the documented annual update
+cycle. The 2026 output is a target-free comparative estimate, pending its
+independent evaluation when the observed ICNF 2026 outcome is available.
 
-## Remaining maintainer action
-
-Choose a licence for the repository's own code and documentation before making
-a public release. This is a governance decision, not a scientific or technical
-blocker.
+Raw provider data is not mirrored in this repository. Review provider terms
+before sharing any raw or adapted dataset; see
+`docs/data_licensing_and_attribution.md` and `docs/release_checklist.md`.

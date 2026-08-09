@@ -6,9 +6,9 @@ data or model results.
 
 ## Before publishing
 
-- [ ] Choose and add a licence for this repository's own code, notebooks, and
-      documentation. No code licence is implied until the project owner makes
-      that decision.
+- [x] Confirm that the repository's own code, notebooks, documentation, and
+      original figures are released under the existing [MIT License](../LICENSE).
+      This does not grant rights to redistribute provider datasets.
 - [ ] Confirm that no raw data, `.cdsapirc`, API token, local settings, or
       personal path is staged. Run `git status --ignored` and inspect only the
       intended files.

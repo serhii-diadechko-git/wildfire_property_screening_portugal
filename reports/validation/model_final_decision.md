@@ -2,7 +2,7 @@
 
 ## Decision
 
-The frozen Model v2 nine-feature two-stage burned-share regression is retained as the project's
+The frozen Model V2 nine-feature two-stage burned-share regression is retained as the project's
 reproducible **continuous comparative burned-share model**. The historical
 recurrence baseline remains the required transparent comparator.
 
@@ -15,8 +15,9 @@ comparative estimate after its annual scoring inputs pass validation.
 
 ## Method rationale
 
-The retained `HurdleHistGradientRegressor` is the project's two-part
-scikit-learn regression model:
+Model V2 is implemented as a two-stage scikit-learn regression model. The
+internal class identifier is `HurdleHistGradientRegressor`; this legacy
+technical name is not the public model name:
 `HistGradientBoostingClassifier` estimates whether any burning occurs, and
 `HistGradientBoostingRegressor` estimates burned share among positive outcomes.
 The final estimate is their product. Histogram gradient boosting uses many
@@ -29,26 +30,27 @@ selection establishes an associative predictive method, not a causal claim.
 
 ## Held-out evidence
 
-On the one frozen final temporal test (T=2022-2024), the Model v2 nine-feature
+On the one frozen final temporal test (T=2022-2024), the Model V2 nine-feature
 two-stage regression had lower all-row MAE than the historical baseline
 (0.02091 vs 0.02919) and higher tie-aware top-20% burned-share-mass capture
 (0.5716 vs 0.4017). Its RMSE was marginally higher (0.11100 vs 0.11059), and
 its positive-row MAE was also marginally higher (0.31437 vs 0.31036).
 
 The high-burned outcome associated with predictor year T=2024 illustrates the
-main limitation: Model v2's mean prediction was 0.00520 while observed mean
-burned share was 0.03053. This
+main limitation: Model V2's mean prediction for that year was 0.00544 while
+observed mean burned share was 0.03053. This
 temporal non-stationarity means the model may support methodological comparison
 and further research, but it is not calibrated enough for a residential
 decision claim.
 
 ## Reusable artefact
 
-After the final evaluation was recorded, the unchanged Model v2 nine-feature
+After the final evaluation was recorded, the unchanged Model V2 nine-feature
 specification was refitted on all labelled predictor years T=2010-2024, whose
 observed outcomes span 2011-2025. The saved annual-scoring artifact is
-`data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`; its feature
-order, training cutoff, and checksum are in the adjacent `model_metadata.json`.
+`data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`; this is a
+legacy internal artifact filename for Model V2. Its feature order, training
+cutoff, and checksum are in the adjacent `model_metadata.json`.
 The previous T=2010-2021 refit remains an archived reproducibility artifact.
 
 The final-test evidence is in `final_temporal_test_2022_2024.md` and the

@@ -1,12 +1,19 @@
-# QGIS presentation project validation
+# QGIS presentation-project validation
 
-The portable QGIS project was created from existing, validated GeoPackage inputs only. It does not alter or duplicate the screening data.
+Validation date: 2026-08-09.
 
-- Project: `qgis/wildfire_exposure_screening_portugal.qgz`
-- Project CRS: EPSG:3763
-- Project layers: 5
-- Layout aliases validated: True
-- Screening-view features validated: 89,112 for each styled view
+Both portable QGIS projects reference existing, validated GeoPackage inputs
+only. They do not alter or duplicate screening or model data.
+
+| Project | CRS | Map layers | Purpose |
+|---|---|---:|---|
+| `qgis/wildfire_exposure_screening_portugal.qgz` | EPSG:3763 | 5 | Historical recurrence, official ICNF structural-hazard comparison, boundary, and off-by-default QA layers. |
+| `qgis/wildfire_exposure_screening_portugal_2026.qgz` | EPSG:3763 | 6 | The same historical/official context plus the separate target-free 2026 comparative-estimate layer. |
+
+The historical screening and annual estimate layers each contain 89,112
+canonical mainland 1 km cells. Layout aliases for the historical project were
+validated. The 2026 project's layer path and required annual estimate are
+validated by the operational QGIS check; see `operational_forecast_2026_validation.md`.
 
 ## Layout exports
 

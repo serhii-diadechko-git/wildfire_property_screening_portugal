@@ -1,6 +1,6 @@
 # Success Criteria and Model Acceptance Rules
 
-> The canonical national panel, backward training extension, and model-readiness EDA are validated. Model v2 was selected using only complete `T=2020-2021` validation evidence, then refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation. Model v2's independent operational evaluation requires the observed ICNF 2026 outcome.
+> The canonical national panel, backward training extension, and model-readiness EDA are validated. Model V2 was selected using only complete `T=2020-2021` validation evidence, then refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation. Model V2's independent operational evaluation requires the observed ICNF 2026 outcome.
 
 ## Purpose
 
@@ -19,7 +19,7 @@ This document separates:
 
 ### 2. Consistent spatial design
 
-**Target:** use one 1 km analytical grid and one clearly documented initial 2 km context buffer.
+**Target:** use one 1 km analytical grid and one clearly documented fixed 2 km context buffer.
 
 **Check:** confirm that cell-level and buffer-level fields follow the definitions in `docs/data_dictionary.md`.
 
@@ -69,7 +69,7 @@ The published 2026 output contains all 89,112 canonical cells. Future annual out
 - one national exposure map;
 - one residential screening map;
 - one model-performance figure;
-- one ranked table;
+- one machine-readable score table with rank or percentile metadata;
 - uncertainty or insufficient-evidence flags;
 - a limitations section.
 
@@ -148,7 +148,7 @@ The continuous model may be retained for methodological comparison only when:
 - ranking quality is acceptable, and probability calibration is acceptable only if a later classification model is introduced;
 - no probability, safety, or purchase claim is made.
 
-The frozen Model v2 nine-feature two-stage regression meets the comparative-evidence condition: it has lower final-test MAE (0.020913 vs 0.029186) and higher tie-aware top-20% burned-share-mass capture (57.16% vs 40.17%) than the historical recurrence baseline. Its RMSE is marginally higher (0.110995 vs 0.110595) and it remains weakly calibrated in the high-burned outcome associated with T=2024, so a published annual score must remain a cautious comparative estimate rather than a buyer-facing recommendation.
+The frozen Model V2 nine-feature two-stage regression meets the comparative-evidence condition: it has lower final-test MAE (0.020913 vs 0.029186) and higher tie-aware top-20% burned-share-mass capture (57.16% vs 40.17%) than the historical recurrence baseline. Its RMSE is marginally higher (0.110995 vs 0.110595) and it remains weakly calibrated in the high-burned outcome associated with T=2024, so a published annual score must remain a cautious comparative estimate rather than a buyer-facing recommendation.
 
 ### Do not accept for buyer-facing predictive recommendation
 

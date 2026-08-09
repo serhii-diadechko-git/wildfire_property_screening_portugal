@@ -1,59 +1,63 @@
 # Capstone presentation validation
 
-Validation date: 2026-08-07
+Validation date: 2026-08-09.
 
-Author: Serhii Diadechko
-
-Presentation: `reports/presentation/v2_wildfire_exposure_screening_capstone_presentation.pptx`
+Presentation: `reports/presentation/wildfire_exposure_screening_capstone_final.pptx`
 
 ## Outcome
 
-The retained 13-slide, 16:9 presentation was refreshed after the final temporal evaluation and operational refit. It presents three explicitly separated views:
+The retained editable capstone deck contains eight 16:9 slides and eight
+speaker-note sections. It presents one concise project story:
 
-1. observed 2016-2025 historical recurrence screening for broad location comparison;
-2. official ICNF structural-hazard context at the common 1 km comparison resolution; and
-3. the frozen nine-feature two-part burned-share regression model (technical term: hurdle model) used for the target-free 2026 comparative estimate.
+1. the broad-area wildfire-exposure screening problem and reproducible
+   data-science/GIS workflow;
+2. the ICNF, CLC/DEM, and ERA5-Land source roles;
+3. observed 2016-2025 recurrence, official ICNF structural-hazard context, and
+   the separate target-free 2026 comparative estimate;
+4. the transparent historical-recurrence benchmark and accepted nine-feature
+   Model V2; and
+5. responsible use for narrowing broad location-search areas before local
+   investigation.
 
-The deck no longer contains the superseded conclusion that no model advanced. It records the frozen `T=2022-2024` comparison: the two-part regression model improved all-row MAE and Capture@20% versus the historical-recurrence baseline, while RMSE was similar and the unusually high-burn `T=2024` outcome was underpredicted. The published 2026 output remains a target-free comparative estimate, not a probability, property-level safety guarantee, insurance estimate, or purchase recommendation.
+The deck does not call a model estimate a probability, safety guarantee,
+property-level forecast, insurance estimate, or purchase recommendation.
 
-## Updated slide evidence
+## Slide evidence
 
 | Slide | Verified purpose | Primary repository evidence |
 |---:|---|---|
-| 1 | Current project conclusion and two-product distinction | `README.md`; final-test and operational-validation reports |
-| 3 | National scope and 15 labelled predictor years | national-panel and final-test reports |
-| 4 | Separation of observed history, frozen ML evaluation and official comparison | data dictionary; final-test report; operational cycle |
-| 5 | Zero-heavy target and complementary error/ranking diagnostics | panel EDA; final-test report; success criteria |
-| 6 | Frozen baseline versus nine-feature final-test comparison | final-test metrics JSON and regenerated comparison figure |
-| 10 | Side-by-side historical recurrence, official ICNF structural hazard, and 2026 model estimate | the two validated spatial GeoPackages and the existing plotting helper used by the final notebook |
-| 12 | Evidence-to-use contract and current deliverables | model decision; operational validation; spatial-output registry |
-| 13 | Updated assessor questions and evidence-backed answers | final-test, model-decision, operational and historical-screening reports |
-
-Slides 2, 7-9, and 11 retain the validated historical-screening, QGIS and ICNF-comparison material. Slide 10 now displays all three complementary maps without changing their data, thresholds, styling, or interpretation.
+| 1 | Project purpose and the reproducible data science, ML, and GIS workflow | `README.md`; `docs/project_brief.md` |
+| 2 | Analytical record and source roles | `docs/data_dictionary.md`; `docs/source_plan.md` |
+| 3 | Observed historical recurrence and separate 2026 comparative estimate | historical-screening and operational-validation reports |
+| 4 | Historical recurrence and official ICNF structural hazard as complementary context | `qgis/README.md`; historical comparison report |
+| 5 | Historical-recurrence benchmark versus accepted Model V2 on the held-out final test | `final_temporal_test_2022_2024.md`; `model_final_decision.md` |
+| 6 | Broad-area screening use case | `docs/project_brief.md`; `docs/operational_forecast_cycle.md` |
+| 7 | Compare the three evidence layers, then verify locally | `qgis/README.md`; spatial-output registry |
+| 8 | Project conclusion and annual refresh/evaluation cycle | `README.md`; `docs/operational_forecast_cycle.md` |
 
 ## Numerical and terminology checks
 
-- Canonical grid: 89,112 mainland cells.
-- Historical-screening evidence window: 2016-2025.
-- Frozen model fit years: `T=2010-2019`; validation years: `T=2020-2021`; final temporal test: `T=2022-2024`.
-- Final-test historical-recurrence baseline: MAE 0.0292, RMSE 0.1106, deterministic positive-cell Capture@20% 48.2% (tie-aware 49.3%), burned-share-mass capture 40.2%.
-- Final-test nine-feature two-part regression: MAE 0.0214, RMSE 0.1107, deterministic and tie-aware positive-cell Capture@20% 50.0%, burned-share-mass capture 60.0%.
-- Historical exposure remains observed evidence, separate from annual model estimates.
-- ICNF structural hazard remains an independent official comparison layer, not a model target or accuracy benchmark.
-- The deck consistently distinguishes 1 km analytical cells from recurrence measured in a 2 km context.
-- No absolute personal filesystem path or retired model-selection report reference remains in visible text or speaker notes.
-- Speaker notes are present on all 13 slides.
+- Canonical grid: 89,112 mainland 1 km cells.
+- Historical-screening evidence window: 2016-2025; recurrence is measured in a
+  mainland-masked 2 km context.
+- Model-development fit years: `T=2010-2019`; validation years: `T=2020-2021`;
+  held-out final temporal test: `T=2022-2024` with outcomes 2023-2025.
+- Final-test historical-recurrence benchmark: MAE 0.0292, RMSE 0.1106, and
+  tie-aware burned-share-mass capture@20% 40.2%.
+- Final-test accepted nine-feature Model V2: MAE 0.0209, RMSE 0.1110, and
+  tie-aware burned-share-mass capture@20% 57.2%.
+- The 2026 annual output is target-free, derived from 2025 predictor inputs,
+  and awaits independent evaluation after ICNF publishes the observed 2026
+  outcome.
+- The official ICNF structural-hazard layer is a separate 25 m official
+  reference summarized to a predominant 1 km class. It is not a model target,
+  prediction, or accuracy benchmark.
 
-## Rendering and packaging QA
+## Package check
 
-- The existing deck layout, visual theme, slide order and historical-screening figures were preserved.
-- The embedded slide-6 chart was replaced with the frozen final-temporal comparison generated from `data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json`.
-- All 13 slides were rendered; the updated slide 10 was inspected at full size.
-- Template-fidelity validation passed with zero issues.
-- Official slide-overflow test: `Test passed. No overflow detected.`
-- PPTX size: 1,360,224 bytes.
-- PPTX SHA-256: `7012E134925AEF6DE950C44C0CD5636E682A01685D3879307F2690CB05B4312B`.
+- PPTX package check: 8 slides and 8 speaker-note sections.
+- PPTX size: 301,973 bytes.
+- PPTX SHA-256: `877A15FD593BB89E33676B680B5A5082DFE307CF19B0ABB15D4700F60792CD7B`.
 
-## Validation decision
-
-**Passed.** The editable PPTX is visually readable and consistent with the final nine-feature model state, the separate historical-screening output, and the documented operational limitations. A PDF export is intentionally not tracked because it is a duplicate delivery format.
+This report validates presentation content, paths, notes, and terminology.
+Render/overflow verification should be rerun after any future manual slide edit.
