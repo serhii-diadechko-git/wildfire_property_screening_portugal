@@ -1,6 +1,6 @@
 # Success Criteria and Model Acceptance Rules
 
-> The canonical national panel, backward training extension, and model-readiness EDA are validated. The one frozen final temporal test `T=2022-2024` is complete. The frozen nine-feature specification is refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation.
+> The canonical national panel, backward training extension, and model-readiness EDA are validated. Model v2 was selected using only complete `T=2020-2021` validation evidence, then refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation. Model v2's independent operational evaluation requires the observed ICNF 2026 outcome.
 
 ## Purpose
 
@@ -84,10 +84,9 @@ The published 2026 output contains all 89,112 canonical cells. Future annual out
 
 ### 1. Baseline comparison
 
-The retained model is described here as a **two-part burned-share regression
-model**. Its technical name, used by the implementation and saved artefact, is
-a hurdle model: one component models whether any burning occurs and the second
-models the positive burned share.
+The retained model is described here as a **two-stage burned-share regression
+model**: one component models whether any burning occurs and the second models
+the positive burned share.
 
 Compare the regression candidates with a training-fitted historical-fire baseline using `fire_years_previous_10y_2km`. A zero-prediction baseline is reported only as an error reference; it is not an acceptable predictive model.
 
@@ -101,7 +100,7 @@ During train/validation model selection, the primary regression evidence is repo
 - positive-cell capture@20%, defined as the share of positive-target cells contained in the highest-ranked 20% of regression estimates;
 - burned-share-mass capture@20%, defined as the share of all observed burned-area mass contained in that same highest-ranked 20%.
 
-Ties at the 20% boundary are handled fractionally in the formal final-test report. A simpler deterministic top-row diagnostic is retained in the generated chart for reproducibility; it differs slightly for the coarse historical baseline because many cells have identical scores. Neither form is a buyer threshold.
+Ties at the 20% boundary are handled fractionally in the formal validation-selection record. A simpler deterministic top-row diagnostic may be retained in a generated chart for reproducibility; it differs slightly for the coarse historical baseline because many cells have identical scores. Neither form is a buyer threshold.
 
 ### 2. Conditional classification evaluation
 
@@ -149,7 +148,7 @@ The continuous model may be retained for methodological comparison only when:
 - ranking quality is acceptable, and probability calibration is acceptable only if a later classification model is introduced;
 - no probability, safety, or purchase claim is made.
 
-The frozen nine-feature hurdle meets the comparative-evidence condition: it has lower final-test MAE and higher burned-share-mass capture than the historical recurrence baseline. It remains weakly calibrated in the high-burned outcome associated with T=2024, so a published annual score must remain a cautious comparative estimate rather than a buyer-facing recommendation.
+The frozen Model v2 nine-feature two-stage regression meets the comparative-evidence condition: it has lower final-test MAE (0.020913 vs 0.029186) and higher tie-aware top-20% burned-share-mass capture (57.16% vs 40.17%) than the historical recurrence baseline. Its RMSE is marginally higher (0.110995 vs 0.110595) and it remains weakly calibrated in the high-burned outcome associated with T=2024, so a published annual score must remain a cautious comparative estimate rather than a buyer-facing recommendation.
 
 ### Do not accept for buyer-facing predictive recommendation
 

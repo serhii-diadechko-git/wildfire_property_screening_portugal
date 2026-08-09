@@ -15,7 +15,10 @@ class ModelDiagnosticsTests(unittest.TestCase):
         overall = pd.read_csv(DIAGNOSTIC_TABLES["overall_metrics"])
         by_year = pd.read_csv(DIAGNOSTIC_TABLES["by_year_metrics"])
         binned = pd.read_csv(DIAGNOSTIC_TABLES["binned_comparison"])
-        self.assertEqual(set(overall["model"]), {"historical_recurrence_baseline", "nine_feature_hurdle"})
+        self.assertEqual(
+            set(overall["model"]),
+            {"Historical recurrence baseline", "Nine-feature Model v2"},
+        )
         self.assertEqual(set(by_year["predictor_year"]), {2022, 2023, 2024})
         self.assertEqual(int(binned["cell_count"].sum()), 267_336)
 

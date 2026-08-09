@@ -2,9 +2,9 @@
 
 ## Fixed model
 
-- Model: fixed nine-feature two-part burned-share regression model (technical term: hurdle model), refit on predictor years T=2010-2024, with observed ICNF outcomes 2011-2025.
-- Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `3923A98D8921401435976530041B89F2DE128006815AA8B6607841C66EED3B0F`).
-- Model selection remains the completed frozen T=2022-2024 final temporal test; no post-test tuning occurred.
+- Model: Model v2 nine-feature two-stage burned-share regression, refit on predictor years T=2010-2024, with observed ICNF outcomes 2011-2025.
+- Artifact: `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` (SHA-256 `0C9DCFE23CEF114C377485D53E209030084451DA067BEDEAD4DA11508A50D290`).
+- Model v2 was selected using the complete T=2020-2021 development validation comparison; its independent operational evaluation is due after the observed ICNF 2026 outcome is available.
 
 ## 2026 scoring contract
 

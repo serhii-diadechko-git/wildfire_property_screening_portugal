@@ -62,12 +62,17 @@ class PublicReproducibilityTests(unittest.TestCase):
         self.assertGreaterEqual(len(stages), 10)
         self.assertEqual(stages[0].name, "environment")
         self.assertEqual(stages[-1].name, "post-build contract checks")
-        self.assertIn("model diagnostics", [stage.name for stage in stages])
         names = [stage.name for stage in stages]
         self.assertLess(names.index("CAOP references"), names.index("CLC preparation"))
         self.assertLess(names.index("CLC preparation"), names.index("source validation"))
         self.assertLess(names.index("national panel"), names.index("spatial QA outputs"))
         self.assertLess(names.index("spatial QA outputs"), names.index("training panel"))
+        self.assertLess(names.index("model refit"), names.index("model v2 evidence"))
+        self.assertLess(names.index("model v2 evidence"), names.index("final temporal test"))
+        self.assertLess(names.index("final temporal test"), names.index("model diagnostics"))
+        self.assertLess(names.index("model diagnostics"), names.index("labelled final years"))
+        self.assertLess(names.index("model v2 evidence"), names.index("labelled final years"))
+        self.assertLess(names.index("model v2 figures"), names.index("figures"))
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))
             self.assertNotIn("/Users/", " ".join(stage.command))

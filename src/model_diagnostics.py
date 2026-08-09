@@ -96,13 +96,18 @@ def build_model_diagnostics() -> dict[str, object]:
     if not predictions.outcome_year.eq(predictions.observation_year + 1).all():
         raise ValueError("Final-test prediction table breaks the T+1 target contract")
 
-    comparison = model_comparison_frame(metrics).reset_index()
+    comparison = model_comparison_frame(metrics).rename(
+        index={
+            "historical_recurrence_baseline": "Historical recurrence baseline",
+            "nine_feature_hurdle": "Nine-feature Model v2",
+        }
+    )
     by_year = _by_year_metrics_frame(metrics)
     binned = binned_observed_estimated_table(predictions, model_column="nine_feature_hurdle")
-    _atomic_csv(comparison, DIAGNOSTIC_TABLES["overall_metrics"])
+    _atomic_csv(comparison.reset_index(), DIAGNOSTIC_TABLES["overall_metrics"])
     _atomic_csv(by_year, DIAGNOSTIC_TABLES["by_year_metrics"])
     _atomic_csv(binned, DIAGNOSTIC_TABLES["binned_comparison"])
-    _save_figure(plot_metric_comparison(comparison.set_index("model")), DIAGNOSTIC_FIGURES["metric_comparison"])
+    _save_figure(plot_metric_comparison(comparison), DIAGNOSTIC_FIGURES["metric_comparison"])
     _save_figure(
         plot_prediction_diagnostics(predictions, model_column="nine_feature_hurdle"),
         DIAGNOSTIC_FIGURES["prediction_diagnostics"],

@@ -27,7 +27,12 @@ from src.extended_training_panel import (
     PANEL_PATH as EXTENDED_PANEL_PATH,
 )
 from src.feature_contract import FIELD_CONTRACTS, PREDICTOR_COLUMNS, TARGET_COLUMN
-from src.modeling import HistoricalFireMeanRegressor, HurdleHistGradientRegressor, RANDOM_SEED
+from src.modeling import (
+    MODEL_SPECIFICATION_VERSION,
+    HistoricalFireMeanRegressor,
+    HurdleHistGradientRegressor,
+    RANDOM_SEED,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -128,6 +133,9 @@ def _save_model(name: str, model: Any, predictions: np.ndarray) -> dict[str, obj
         "random_seed": RANDOM_SEED,
         "temporal_rule": "predictors are T-only; target is T+1; final-test rows are absent",
     }
+    if isinstance(model, HurdleHistGradientRegressor):
+        payload["model_specification_version"] = MODEL_SPECIFICATION_VERSION
+        payload["parameters"] = model.parameter_config()
     temporary = path.with_suffix(path.suffix + ".tmp")
     if temporary.exists():
         raise FileExistsError(f"Stale temporary model output requires inspection: {temporary}")
@@ -137,7 +145,7 @@ def _save_model(name: str, model: Any, predictions: np.ndarray) -> dict[str, obj
 
 
 def refit_extended_models() -> dict[str, object]:
-    """Fit the frozen historical baseline and nine-feature two-part regression model, then validate only T=2020-2021."""
+    """Fit the v2 historical baseline and nine-feature two-part model, then validate only T=2020-2021."""
     if not FEATURE_MATRIX_PATH.exists():
         raise FileNotFoundError("Build the extended nine-feature matrix first")
     frame = pd.read_parquet(FEATURE_MATRIX_PATH)
@@ -188,7 +196,8 @@ def refit_extended_models() -> dict[str, object]:
         "models": {
             "historical_recurrence_baseline": {"definition": "training-period empirical mean target by prior-ten-year recurrence count", "artifact": historical_artifact},
             "nine_feature_hurdle": {"definition": "P(next-year burned share > 0) times conditional expected positive burned share", "artifact": hurdle_artifact,
-                                    "parameters": {"occurrence": {"learning_rate": 0.08, "max_iter": 120, "max_leaf_nodes": 23, "min_samples_leaf": 120, "l2_regularization": 0.05}, "positive_share": {"learning_rate": 0.07, "max_iter": 150, "max_leaf_nodes": 23, "min_samples_leaf": 80, "l2_regularization": 0.05}}},
+                                    "model_specification_version": MODEL_SPECIFICATION_VERSION,
+                                    "parameters": hurdle.parameter_config()},
         },
         "metrics": metrics,
         "tie_aware_ranking_diagnostics": rankings,
@@ -204,9 +213,9 @@ def refit_extended_models() -> dict[str, object]:
 def write_report(result: dict[str, object]) -> None:
     metrics = result["metrics"]
     lines = [
-        "# Extended training-only model refit",
+        "# Model v2 training-only refit",
         "",
-        "This controlled refit uses T=2010-2019 for fitting and T=2020-2021 for validation. T=2022-2024 were not opened or used.",
+        "This controlled refit uses Model v2, selected from the complete T=2020-2021 validation comparison. It fits T=2010-2019 and validates T=2020-2021. T=2022-2024 were not opened or used.",
         "",
         "## Candidate comparison",
         "",

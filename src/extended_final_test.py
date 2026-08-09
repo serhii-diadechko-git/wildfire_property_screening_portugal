@@ -76,6 +76,15 @@ def build_final_feature_matrix() -> dict[str, object]:
         raise FileNotFoundError("Final-test protocol must be present before execution")
     base, access = _read_final_panel_rows()
     result = base.sort_values(["observation_year", "cell_id"], kind="mergesort").reset_index(drop=True)
+    # The development matrix is the canonical labelled-table schema.  Preserve
+    # its column order so later labels can be concatenated without depending on
+    # incidental native ordering of national-panel component fields.
+    development_path = OUTPUT_DIR / "nine_feature_train_validation_matrix.parquet"
+    if development_path.is_file():
+        expected_columns = pq.ParquetFile(development_path).schema.names
+        if set(expected_columns) != set(result.columns):
+            raise ValueError("Later labelled rows do not match the development feature schema")
+        result = result.loc[:, expected_columns]
     if result[list(PREDICTOR_COLUMNS) + [TARGET_COLUMN]].isna().any().any():
         raise ValueError("Final feature matrix contains missing values")
     if not result.outcome_year.eq(result.observation_year + 1).all():

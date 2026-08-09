@@ -15,9 +15,10 @@ This is not a change to the scientific model. It is the normal deployment step a
 |---|---:|---:|---|
 | Development fit | 2010-2019 | 2011-2020 | Fit candidate methods. |
 | Validation | 2020-2021 | 2021-2022 | Compare frozen candidates. |
-| Final temporal test | 2022-2024 | 2023-2025 | One untouched evidence check. |
+| Model v2 selection | 2020-2021 validation only | 2021-2022 | Compare predeclared configurations; no T=2022-2024 data were read. |
+| Held-out final test | 2022-2024 | 2023-2025 | Evaluate frozen Model v2 once; parameters remain unchanged. |
 
-The final evaluation used continuous-regression diagnostics, not classification accuracy: all-row MAE/RMSE, positive-target MAE/RMSE, mean predicted versus observed burned share, and ranking capture@20%. See [`reports/validation/model_final_decision.md`](../reports/validation/model_final_decision.md).
+Model v2 selection used continuous-regression diagnostics, not classification accuracy: all-row MAE/RMSE, positive-target MAE/RMSE, mean predicted versus observed burned share, and ranking capture@20%. See [`model_v2_validation_selection.md`](model_v2_validation_selection.md). The selected configuration subsequently completed its one held-out `T=2022-2024` evaluation; its independent operational evaluation is due when ICNF publishes the 2026 outcome.
 
 ## Current 2026 estimate
 
@@ -32,7 +33,7 @@ The published 2026 output is forward-looking, so it does **not** have an observe
 | Target in scoring matrix | Absent by design |
 | Result | One continuous comparative estimate for each 1 km mainland cell |
 
-After final evaluation was recorded, the model was refit with all labelled rows through `T=2024` / observed outcome 2025. This uses more completed training evidence without revisiting candidate selection, model settings, or the held-out-test decision.
+After Model v2 was selected, it was refit with all labelled rows through `T=2024` / observed outcome 2025. This uses more completed training evidence without revisiting candidate selection or model settings.
 
 Current outputs:
 
@@ -52,7 +53,7 @@ The controlled 2027 cycle is:
 1. Validate/register ICNF 2026 and compare the published 2026 scores with observed per-cell burned share using the predefined regression metrics.
 2. Validate/register ERA5-Land JJAS 2026, which supplies climate predictors for `T=2026`.
 3. Build/validate the new labelled `T=2025 -> outcome 2026` row using unchanged feature definitions and source-year rules.
-4. Refit the **same frozen nine-feature specification** using labelled rows through `T=2025` / outcome 2026. Do not search new settings merely because a new outcome arrived.
+4. Refit the **same documented Model v2 nine-feature specification** using labelled rows through `T=2025` / outcome 2026. Do not search new settings merely because a new outcome arrived.
 5. Derive the target-free `T=2026` matrix and score 2027.
 6. Publish a versioned Parquet table, GeoPackage, checksum, validation report, and QGIS layer.
 
@@ -75,7 +76,7 @@ Notebooks are review layers:
 
 - `04_modelling.ipynb` verifies the saved nine-feature model contract, two-part regression components, temporal safeguards, and annual scoring lifecycle; it does not refit or retune the model.
 - `05_evaluation_recommendations.ipynb` audits the validated historical GeoPackage and its QGIS handoff.
-- `06_final_charts.ipynb` is the single final narrative for EDA, held-out model evidence, the historical/official comparison, and the separate 2026 comparative estimate.
+- `06_final_charts.ipynb` is the single final narrative for EDA, Model v2 validation-selection evidence, the historical/official comparison, and the separate 2026 comparative estimate.
 - Open `qgis/wildfire_exposure_screening_portugal_2026.qgz` for the current annual output.
 
 After an intentional annual update, run:

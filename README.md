@@ -13,9 +13,9 @@ method visible and lets a reviewer examine patterns in QGIS.
 
 ## What the project contains
 
-- A reproducible nine-feature two-part burned-share regression model (the
-  technical term is hurdle model), selected using
-  historical data and then refit through the latest labelled outcome.
+- A reproducible nine-feature two-stage burned-share regression model. Model
+  v2 was selected on the complete `T=2020-2021` validation period and then
+  refit through the latest labelled outcome.
 - A target-free annual comparative estimate for 2026 using 2025 predictors.
 - A separate historical recurrence screening layer: **1 km mainland grid cells
   with fire recurrence measured in a 2 km context**.
@@ -32,7 +32,7 @@ the prior ten years; JJAS mean temperature; JJAS total precipitation; JJAS mean
 layer-1 soil water; JJAS maximum monthly temperature; and JJAS minimum monthly
 soil water. Definitions and units are in [docs/data_dictionary.md](docs/data_dictionary.md).
 
-The two-part regression model combines a histogram-gradient-boosting classifier for whether
+The two-stage regression model combines a histogram-gradient-boosting classifier for whether
 any burning occurs with a histogram-gradient-boosting regressor for burned
 share when burning occurs. Small decision-tree ensembles can represent
 non-linear relationships and interactions among history, landscape, terrain,
@@ -49,12 +49,20 @@ transparent historical-recurrence baseline. The outcome is continuous
 `burned_share_next_year`; it is not a property-level probability or a safety
 classification.
 
-The hypothesis received partial support on the frozen temporal evaluation.
-The nine-feature two-part regression model achieved lower all-row MAE and
-stronger burned-share-mass capture than the historical-recurrence baseline,
-but did not improve every diagnostic: RMSE was effectively unchanged and
-positive-target error was slightly worse. It also underpredicted the unusually
-high-burn outcome associated with predictor year 2024 (outcome year 2025).
+The hypothesis received partial support. In the complete development-validation
+comparison, the selected Model v2 improved all-row MAE from **0.014674** to
+**0.014027**, increased burned-share-mass capture@20% from **56.23%** to
+**60.82%**, and slightly lowered RMSE (0.069598 to 0.069442) relative to Model
+v1; positive-target MAE was effectively unchanged. Selection used no
+`T=2022-2024` rows. After this decision was frozen, V2 completed its one
+held-out final test: all-row MAE was **0.020913** versus **0.029186** for the
+historical-recurrence baseline, and tie-aware top-20% burned-share-mass capture
+was **57.16%** versus **40.17%**. RMSE was marginally higher (0.110995 versus
+0.110595), so the result supports comparative screening rather than precise
+local forecasting. The published 2026 estimate still requires its own outcome
+evaluation after ICNF publishes 2026 burned-area data. See
+[docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md)
+and [reports/validation/final_temporal_test_2022_2024.md](reports/validation/final_temporal_test_2022_2024.md).
 
 The defensible conclusion is therefore comparative and limited: the model can
 help narrow broad-area location research, but it is not sufficiently stable or
@@ -356,20 +364,22 @@ see the calculations visually. Expensive/rewrite-capable notebook stages are
 disabled by default with clearly named Boolean switches; no notebook performs a
 hidden rebuild.
 
-### Model diagnostic outputs
+### Model v2 experiment evidence
 
-The frozen T=2022–2024 final temporal evaluation produces durable regression
-diagnostics in addition to the interactive notebook views:
+The durable validation-only comparison preserves both the prior Model v1
+reference and the selected Model v2 configuration. It is regenerated from the
+saved full-training experiment; it neither fits a new model nor accesses
+`T=2022-2024`.
 
-- `reports/figures/model_final_test_metric_comparison.png`
-- `reports/figures/model_final_test_observed_vs_estimated.png`
-- `reports/figures/model_final_test_binned_observed_vs_estimated.png`
-- `reports/tables/model_final_test_metrics.csv`
-- `reports/tables/model_final_test_metrics_by_year.csv`
-- `reports/tables/model_final_test_binned_observed_vs_estimated.csv`
+- `reports/figures/model_v2_validation_parameter_comparison.png` — all five
+  predeclared configurations on the same validation set.
+- `reports/figures/model_v2_validation_v1_vs_v2_by_year.png` — V1 and selected
+  V2 metrics separately for `T=2020` and `T=2021`.
+- [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md)
+  — selection rationale, exact parameters, and limitations.
 
-They are built by `python scripts/build_model_diagnostics.py` from saved
-predictions/metrics only; that command does not fit a model or change a score.
+Run `python scripts/build_model_v2_validation_figures.py` after the experiment
+to regenerate the two figures.
 
 For spatial inspection, open these portable projects in QGIS after cloning the
 whole repository:

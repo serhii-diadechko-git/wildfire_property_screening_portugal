@@ -45,9 +45,9 @@ kernel (`ipykernel`), not the separate JupyterLab application.
 2. `01_data_collection.ipynb` — immutable source inventory, provenance ledger, and representative archive checks; no download.
 3. `02_data_preparation.ipynb` — canonical grid, nine-predictor contract, CLC assignment, and panel-validation evidence.
 4. `03_eda.ipynb` — validated panel completeness, zero inflation, target behaviour, predictor correlations, temporal drift, and extreme-value screening.
-5. `04_modelling.ipynb` — technical model contract: saved nine-feature two-part regression metadata, fixed feature order, occurrence/positive-share components, temporal safeguards, and annual scoring lifecycle; no tuning, retraining, or repeated final-test results.
+5. `04_modelling.ipynb` — technical Model v2 contract: saved nine-feature two-stage regression metadata, fixed feature order, occurrence/positive-share components, temporal safeguards, and annual scoring lifecycle; no tuning or retraining.
 6. `05_evaluation_recommendations.ipynb` — historical GIS evidence audit: GeoPackage contract, independently recomputed summary checks, and QGIS hand-off; no prediction or recommendation category.
-7. `06_final_charts.ipynb` — final capstone narrative: project design, nine-predictor contract, EDA, frozen final-test regression evidence, and validated GIS/presentation outputs; it reads real artefacts without duplicate analysis.
+7. `06_final_charts.ipynb` — final capstone narrative: project design, nine-predictor contract, EDA, Model v2 validation-selection evidence, and validated GIS/presentation outputs; it reads real artefacts without duplicate analysis.
 
 Run each notebook from a fresh kernel. They read and check validated artefacts;
 they render real tables/plots from them. By default, costly/rewrite-capable
@@ -63,10 +63,10 @@ Git-ignored `reports/run_logs/`. A deliberate rebuild may change a tracked
 validation report only when the underlying analytical evidence changes.
 
 Notebook `04` explains the governed model and its annual update mechanism.
-Notebook `06` is the single presentation of held-out final-test metrics and
-diagnostics, including all-row and positive-target error and Capture@20% as a
-technical ranking diagnostic. This avoids presenting the same final evidence
-twice. Neither notebook claims direct feature importance from correlated
+Notebook `06` is the single presentation of Model v2 validation-selection
+metrics and diagnostics, including all-row and positive-target error and
+Capture@20% as a technical ranking diagnostic. This avoids presenting the
+same model-version evidence twice. Neither notebook claims direct feature importance from correlated
 spatial predictors.
 
 ## Controlled rebuild switches
@@ -79,7 +79,7 @@ spatial predictors.
 | `03` | Reads saved EDA evidence and plots it. | `REGENERATE_EDA` regenerates EDA reports/figures. |
 | `04` | Verifies saved model metadata, feature order, split boundary, two-part regression components, and operational lifecycle. | No notebook rebuild switch; use the project runner for a deliberate refit/reproduction. |
 | `05` | Audits the published historical GeoPackage and recorded metrics. | `VALIDATE_HISTORICAL_SCREENING` recomputes and compares bounded screening attributes. |
-| `06` | Reads and presents validated EDA, final-test diagnostics, GIS, and final-screening artefacts. | No output-writing rebuild switch; it renders live review figures from validated artefacts. |
+| `06` | Reads and presents validated EDA, Model v2 selection diagnostics, GIS, and final-screening artefacts. | No output-writing rebuild switch; it renders live review figures from validated artefacts. |
 
 For a complete automated rebuild, use the root command rather than enabling
 several switches manually:

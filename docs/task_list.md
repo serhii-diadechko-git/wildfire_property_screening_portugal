@@ -1,6 +1,6 @@
 # Current Task List
 
-The validated project state is a nine-feature annual continuous burned-share model plus a separate historical recurrence screening layer. Historical evaluation used fit `T=2010-2019`, validation `T=2020-2021`, and one frozen final temporal test `T=2022-2024`. The operational model is refit through `T=2024` / observed outcome 2025 and the 2026 comparative estimate is published.
+The validated project state is a Model v2 nine-feature annual continuous burned-share model plus a separate historical recurrence screening layer. Model v2 was selected using fit `T=2010-2019` and complete validation `T=2020-2021`, with no `T=2022-2024` rows read during selection. The frozen configuration then completed its one held-out final evaluation on `T=2022-2024`, before the operational model was refit through `T=2024` / observed outcome 2025 and the 2026 comparative estimate was published.
 
 ## Completed analytical workflow
 
@@ -10,9 +10,9 @@ The validated project state is a nine-feature annual continuous burned-share mod
 - [x] Build and validate the bounded national spatial components used by the final nine-feature model.
 - [x] Resolve systematic ERA5-Land coastal masking with the validated nearest-valid-land-cell fallback.
 - [x] Extend model training backward to `T=2010` using the governed source rules.
-- [x] Freeze and evaluate the historical-recurrence baseline and nine-feature two-part burned-share regression model.
-- [x] Run the frozen final temporal evaluation once on `T=2022-2024`.
-- [x] Refit the unchanged nine-feature specification through observed outcome 2025.
+- [x] Compare the historical-recurrence baseline and predeclared nine-feature two-stage regression configurations on `T=2020-2021`.
+- [x] Select documented Model v2 from validation-only evidence, then evaluate the frozen configuration once on held-out `T=2022-2024` data.
+- [x] Refit Model v2 through observed outcome 2025.
 - [x] Publish the target-free 2026 comparative estimate and QGIS-ready layer.
 - [x] Publish the separate 2016-2025 historical recurrence screening and ICNF comparison.
 - [x] Produce the QGIS projects, presentation figures, reports, and final capstone deck.
@@ -34,4 +34,4 @@ The validated project state is a nine-feature annual continuous burned-share mod
 - [ ] Derive the target-free `T=2026` matrix and publish the 2027 comparative estimate.
 - [ ] Validate checksums, source cutoffs, missingness, model reload, QGIS paths, and report wording.
 
-The annual cycle is defined in [operational_forecast_cycle.md](operational_forecast_cycle.md). Any new feature, threshold, classifier, or tuning exercise is a new research version and must not silently alter the frozen operational contract.
+The annual cycle is defined in [operational_forecast_cycle.md](operational_forecast_cycle.md). Any new feature, threshold, classifier, or tuning exercise is a new research version and must not silently alter the documented Model v2 operational contract.

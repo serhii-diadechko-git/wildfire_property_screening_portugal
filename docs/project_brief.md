@@ -42,7 +42,7 @@ It does not recommend the purchase of a specific property.
 
 In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
 
-> Final model-evaluation design: fit T=2010-2019; validate T=2020-2021; one frozen final temporal test T=2022-2024. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred.
+> Model v2 selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once V2 was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
 
@@ -50,13 +50,13 @@ Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. 
 - **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
 - **Historical-fire feature:** `fire_years_previous_10y_2km`, counting years from `T-10` through `T-1` inclusive in which the 2 km context buffer intersects burned area.
 
-The canonical national panel covers `T=2015-2024`. A validated backward extension supplies development years `T=2010-2021`: fitting uses `T=2010-2019`, validation uses `T=2020-2021`, and the frozen final temporal test used `T=2022-2024`. ICNF coverage for this evaluation is `2000-2025`, covering pre-`T` history and observed `T+1` outcomes.
+The canonical national panel covers `T=2015-2024`. A validated backward extension supplies development years `T=2010-2021`: fitting uses `T=2010-2019` and model-version selection uses `T=2020-2021`. ICNF coverage is `2000-2025`, covering pre-`T` history and observed `T+1` outcomes. The `T=2022-2024` rows are now used only as completed labels when refitting the selected operational version through outcome year 2025.
 
 There is no temporal gap between the historical-fire window and predictor year `T`: the window is strictly before `T`, so it is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor. CLC provides broad, retrospective land-cover context; it is not annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2025`, always keeping the land-cover reference year no later than `T`. The current official revised package is used for each reference layer, without claiming that its later revision was operationally available at `T`. ERA5-Land supplies coarse regional climate context, not 1 km weather: use only June-September (`JJAS`) values from `T`. Use the centroid-containing ERA5-Land cell when valid; if it is water-masked for a mainland analytical cell, use the validated deterministic nearest valid ERA5-Land land cell. This preserves the product and temporal aggregation and is not interpolation/downscaling. This is retrospective covariate reconstruction, not an exact real-time historical forecast.
 
 ## Final model finding and responsible-use boundary
 
-The frozen nine-feature two-part burned-share regression model (technical term: hurdle model) achieved lower held-out all-row MAE and stronger top-20% burned-share-mass capture than the historical recurrence baseline. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This two-part design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. However, it materially underpredicted the high observed outcome associated with predictor year T=2024 (outcome year 2025). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a validated `2026` estimate using T=2025 inputs. The historical 2016-2025 recurrence screening remains supporting context. See `reports/validation/model_final_decision.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
+Model v2 is a nine-feature two-stage burned-share regression model. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. In the complete `T=2020-2021` validation comparison, V2 improved all-row MAE (0.014674 to 0.014027) and burned-share-mass capture@20% (56.23% to 60.82%) over Model v1. Its post-selection final test at `T=2022-2024` improved all-row MAE over the historical baseline (0.020913 vs 0.029186) and captured 57.16% of observed burned-share mass in the tie-aware top 20%, versus 40.17% for the baseline; RMSE was marginally higher (0.110995 vs 0.110595). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a target-free `2026` estimate using T=2025 inputs. Its independent operational evaluation requires the observed ICNF 2026 outcome. The historical 2016-2025 recurrence screening remains supporting context. See `docs/model_v2_validation_selection.md`, `reports/validation/final_temporal_test_2022_2024.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
 
 ## Scope
 
@@ -100,18 +100,17 @@ transparent historical-recurrence baseline. The target is the continuous
 `burned_share_next_year`; it is not a property-level probability or a safety
 classification.
 
-The hypothesis received partial support on the one frozen temporal evaluation.
-The nine-feature two-part regression model achieved lower all-row MAE and
-stronger burned-share-mass capture than the historical-recurrence baseline,
-but did not improve every diagnostic: RMSE was effectively unchanged and
-positive-target error was slightly worse. It also underpredicted the unusually
-high-burn outcome associated with predictor year 2024 (outcome year 2025).
+The hypothesis received partial support in the complete development-validation
+comparison. Model v2 improved all-row MAE and both ranking capture diagnostics
+over its Model v1 reference, while positive-target MAE was effectively
+unchanged. This supports a cautious model-version change, not a claim that V2
+has already passed an independent future-year test.
 
 The conclusion is therefore limited and comparative. The model may help narrow
 broad-area location research, but it is not sufficiently stable or calibrated
 to support a safety guarantee, an individual-property forecast, or a
 buy/do-not-buy recommendation. The detailed metric evidence is recorded in
-`reports/validation/model_final_decision.md`.
+`docs/model_v2_validation_selection.md`.
 
 The project also displays a separate official ICNF structural-hazard reference
 layer. The source is the official 25 m SRUP-CPIR 2020-2030 classification; the

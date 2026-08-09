@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any, Mapping
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 from threadpoolctl import threadpool_limits
 
 RANDOM_SEED = 20260805
+
+# Model v2 was selected using only the complete T=2020-2021 validation set.
+# It is intentionally a versioned, explicit configuration rather than an
+# implicit change hidden in a fitted joblib artefact.
+MODEL_SPECIFICATION_VERSION = "v2_validation_selected_20260809"
 
 
 @dataclass
@@ -43,25 +49,55 @@ class HistoricalFireMeanRegressor:
 class HurdleHistGradientRegressor:
     """Continuous expected burned share from occurrence and positive-share parts."""
 
-    def __init__(self, *, random_state: int = RANDOM_SEED) -> None:
+    # Validation-selected operational defaults. Validation-only experiments
+    # may override them explicitly, but must never mutate this dictionary.
+    DEFAULT_OCCURRENCE_PARAMS: dict[str, Any] = {
+        "learning_rate": 0.07,
+        "max_iter": 160,
+        "max_leaf_nodes": 31,
+        "min_samples_leaf": 80,
+        "l2_regularization": 0.02,
+    }
+    DEFAULT_POSITIVE_SHARE_PARAMS: dict[str, Any] = {
+        "loss": "squared_error",
+        "learning_rate": 0.06,
+        "max_iter": 210,
+        "max_leaf_nodes": 31,
+        "min_samples_leaf": 55,
+        "l2_regularization": 0.02,
+    }
+
+    def __init__(
+        self,
+        *,
+        random_state: int = RANDOM_SEED,
+        occurrence_params: Mapping[str, Any] | None = None,
+        positive_share_params: Mapping[str, Any] | None = None,
+    ) -> None:
         self.random_state = random_state
+        occurrence_config = dict(self.DEFAULT_OCCURRENCE_PARAMS)
+        positive_config = dict(self.DEFAULT_POSITIVE_SHARE_PARAMS)
+        if occurrence_params:
+            occurrence_config.update(occurrence_params)
+        if positive_share_params:
+            positive_config.update(positive_share_params)
+        if "random_state" in occurrence_config or "random_state" in positive_config:
+            raise ValueError("Pass random_state through the model constructor, not a parameter override")
+        self.occurrence_params = occurrence_config
+        self.positive_share_params = positive_config
         self.occurrence_model = HistGradientBoostingClassifier(
-            learning_rate=0.08,
-            max_iter=120,
-            max_leaf_nodes=23,
-            min_samples_leaf=120,
-            l2_regularization=0.05,
-            random_state=random_state,
+            **occurrence_config, random_state=random_state
         )
         self.positive_model = HistGradientBoostingRegressor(
-            loss="squared_error",
-            learning_rate=0.07,
-            max_iter=150,
-            max_leaf_nodes=23,
-            min_samples_leaf=80,
-            l2_regularization=0.05,
-            random_state=random_state,
+            **positive_config, random_state=random_state
         )
+
+    def parameter_config(self) -> dict[str, dict[str, Any]]:
+        """Return the concise, reproducible configuration used by this instance."""
+        return {
+            "occurrence": dict(self.occurrence_params),
+            "positive_share": dict(self.positive_share_params),
+        }
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "HurdleHistGradientRegressor":
         target = np.asarray(y, dtype="float64")

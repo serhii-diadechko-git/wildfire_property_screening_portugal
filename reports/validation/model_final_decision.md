@@ -2,8 +2,7 @@
 
 ## Decision
 
-The frozen nine-feature two-part burned-share regression model (technical term:
-hurdle model) is retained as the project's
+The frozen Model v2 nine-feature two-stage burned-share regression is retained as the project's
 reproducible **continuous comparative burned-share model**. The historical
 recurrence baseline remains the required transparent comparator.
 
@@ -30,15 +29,14 @@ selection establishes an associative predictive method, not a causal claim.
 
 ## Held-out evidence
 
-On the one frozen final temporal test (T=2022-2024), the nine-feature two-part
-regression model
-had lower all-row MAE than the historical baseline (0.02140 vs 0.02919) and
-higher tie-aware top-20% burned-share-mass capture (0.6003 vs 0.4017). Its RMSE
-was effectively tied but marginally higher (0.11070 vs 0.11059), and its
-positive-row MAE was also marginally higher (0.31318 vs 0.31036).
+On the one frozen final temporal test (T=2022-2024), the Model v2 nine-feature
+two-stage regression had lower all-row MAE than the historical baseline
+(0.02091 vs 0.02919) and higher tie-aware top-20% burned-share-mass capture
+(0.5716 vs 0.4017). Its RMSE was marginally higher (0.11100 vs 0.11059), and
+its positive-row MAE was also marginally higher (0.31437 vs 0.31036).
 
 The high-burned outcome associated with predictor year T=2024 illustrates the
-main limitation: the hurdle's mean prediction was 0.00622 while observed mean
+main limitation: Model v2's mean prediction was 0.00520 while observed mean
 burned share was 0.03053. This
 temporal non-stationarity means the model may support methodological comparison
 and further research, but it is not calibrated enough for a residential
@@ -46,7 +44,7 @@ decision claim.
 
 ## Reusable artefact
 
-After the final evaluation was recorded, the unchanged nine-feature
+After the final evaluation was recorded, the unchanged Model v2 nine-feature
 specification was refitted on all labelled predictor years T=2010-2024, whose
 observed outcomes span 2011-2025. The saved annual-scoring artifact is
 `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib`; its feature

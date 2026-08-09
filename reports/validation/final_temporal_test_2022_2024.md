@@ -7,23 +7,23 @@ This is a single held-out evaluation under the committed protocol. No model fitt
 | Model | MAE | RMSE | Positive-row MAE | Positive-cell capture at 20% | Burned-share mass capture at 20% |
 |---|---:|---:|---:|---:|---:|
 | Historical recurrence baseline | 0.02918638 | 0.11059461 | 0.31035855 | 0.4930 | 0.4017 |
-| Nine-feature two-part regression | 0.02140124 | 0.11069745 | 0.31318128 | 0.5004 | 0.6003 |
+| Nine-feature two-part regression | 0.02091322 | 0.11099527 | 0.31437449 | 0.4843 | 0.5716 |
 
 ## Results by predictor year
 
 | T | Model | MAE | RMSE | Positive-row MAE | Positive-cell capture at 20% |
 |---:|---|---:|---:|---:|---:|
-| 2022 | Nine-feature two-part regression | 0.00822522 | 0.04596327 | 0.11472921 | 0.4921 |
-| 2023 | Nine-feature two-part regression | 0.02079218 | 0.10548191 | 0.31655982 | 0.5461 |
-| 2024 | Nine-feature two-part regression | 0.03518633 | 0.15337119 | 0.39456727 | 0.4488 |
+| 2022 | Nine-feature two-part regression | 0.00785114 | 0.04599336 | 0.11520591 | 0.4910 |
+| 2023 | Nine-feature two-part regression | 0.02028635 | 0.10595707 | 0.31847112 | 0.5118 |
+| 2024 | Nine-feature two-part regression | 0.03460216 | 0.15368006 | 0.39560972 | 0.4502 |
 
 ## Mean-prediction check
 
 | T | Observed mean burned share | Baseline mean prediction | Two-part regression mean prediction |
 |---:|---:|---:|---:|
-| 2022 | 0.00382940 | 0.01440818 | 0.00488099 |
-| 2023 | 0.01560742 | 0.01421810 | 0.00641105 |
-| 2024 | 0.03053283 | 0.01402081 | 0.00621745 |
+| 2022 | 0.00382940 | 0.01440818 | 0.00445096 |
+| 2023 | 0.01560742 | 0.01421810 | 0.00569917 |
+| 2024 | 0.03053283 | 0.01402081 | 0.00543579 |
 
 ## Scope limitation
 

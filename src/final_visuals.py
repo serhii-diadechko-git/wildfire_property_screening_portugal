@@ -1,7 +1,7 @@
 """Create presentation figures from the validated historical screening evidence.
 
 The figures deliberately use only the completed descriptive screening and the
-frozen final-temporal model-evaluation record. They do not calculate a new
+recorded development-validation model-evaluation record. They do not calculate a new
 score, prediction, or recommendation.
 """
 
@@ -20,7 +20,7 @@ from src.paths import FIGURES_DIR, TABLES_DIR, VALIDATION_DIR
 
 ROOT = Path(__file__).resolve().parents[1]
 SCREENING_METRICS_PATH = VALIDATION_DIR / "historical_exposure_screening_and_icnf_comparison.json"
-MODEL_EVALUATION_PATH = ROOT / "data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json"
+MODEL_EVALUATION_PATH = ROOT / "data/processed/extended_model_selection_2010_2021/metrics.json"
 BAND_TABLE_PATH = TABLES_DIR / "historical_exposure_band_summary.csv"
 HAZARD_TABLE_PATH = TABLES_DIR / "icnf_hazard_class_summary.csv"
 CROSSTAB_TABLE_PATH = TABLES_DIR / "historical_exposure_band_by_icnf_hazard_class.csv"
@@ -63,7 +63,7 @@ FIGURE_SOURCE_PATHS = {
         "src/final_visuals.py",
     ),
     "model_comparison": (
-        "data/processed/extended_model_selection_2010_2021/final_temporal_test_metrics.json",
+        "data/processed/extended_model_selection_2010_2021/metrics.json",
         "src/final_visuals.py",
     ),
     "decision_limitations": (
@@ -132,10 +132,10 @@ def _save_and_return(figure: plt.Figure, path: Path) -> Path:
 
 
 def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
-    """Show held-out final-temporal evidence for the retained model and comparator."""
+    """Show validation evidence for the selected model and transparent comparator."""
     metrics = model_selection["metrics"]
     keys = ["historical_recurrence_baseline", "nine_feature_hurdle"]
-    labels = ["Historical\nrecurrence", "Nine-feature\ntwo-part regression"]
+    labels = ["Historical\nrecurrence", "Selected Model v2\nnine-feature regression"]
     maes = [metrics[key]["overall"]["mae_all"] for key in keys]
     rmses = [metrics[key]["overall"]["rmse_all"] for key in keys]
     captures = [metrics[key]["overall"]["capture_at_20_percent"] for key in keys]
@@ -157,12 +157,12 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
             axis.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:.3f}",
                       ha="center", va="bottom", fontsize=9)
         axis.text(0.5, -0.22, note, ha="center", va="top", transform=axis.transAxes, fontsize=8.5)
-    fig.suptitle("Held-out final temporal evaluation (T=2022–2024)", fontsize=15, fontweight="bold")
+    fig.suptitle("Development validation comparison (T=2020–2021)", fontsize=15, fontweight="bold")
     fig.text(
         0.5,
         -0.05,
-        "The two-part regression lowers all-row MAE and improves capture@20%, while RMSE is similar and high-burn years are underpredicted. "
-        "It is retained for cautious annual comparative estimates; historical recurrence remains descriptive context.",
+        "The validation-selected Model v2 two-stage regression is compared with the transparent historical-recurrence baseline. "
+        "This supports cautious annual comparative estimates; historical recurrence remains descriptive context.",
         ha="center", va="top", fontsize=9.5,
     )
     return _save_and_return(fig, FIGURE_PATHS["model_comparison"])
@@ -270,8 +270,11 @@ def validate_final_visuals() -> dict[str, object]:
         raise ValueError("Screening summary tables no longer cover all canonical cells")
     if int(cross.cell_count.sum()) != 89_112:
         raise ValueError("Historical/ICNF cross-tab no longer covers all canonical cells")
-    if tuple(model_selection["design"]["final_test_years"]) != (2022, 2023, 2024):
-        raise ValueError("Frozen final-test years changed")
+    design = model_selection["design"]
+    if tuple(design["train_years"]) != tuple(range(2010, 2020)) or tuple(design["validation_years"]) != (2020, 2021):
+        raise ValueError("Development-validation years changed")
+    if design["final_test_years_accessed"] or design["final_test_rows_read"]:
+        raise ValueError("Validation comparison unexpectedly accessed final-test years")
     if set(model_selection["metrics"]) != {"historical_recurrence_baseline", "nine_feature_hurdle"}:
         raise ValueError("Final model-comparison candidates changed")
     if qgis_validation["screening_view_feature_count"] != 89_112:

@@ -31,7 +31,7 @@ from threadpoolctl import threadpool_limits
 from src.climate_features import era5_source_paths, jjas_total_precipitation_mm, read_grib_variable
 from src.config import OPERATIONAL_FORECAST
 from src.feature_contract import CLIMATE_PREDICTOR_COLUMNS, PREDICTOR_COLUMNS, TARGET_COLUMN
-from src.modeling import HurdleHistGradientRegressor, RANDOM_SEED
+from src.modeling import MODEL_SPECIFICATION_VERSION, HurdleHistGradientRegressor, RANDOM_SEED
 from src import national_panel as panel
 from src.source_registry import (
     CLC_2018_V2020_20U1,
@@ -154,13 +154,25 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
         if not (LABELED_PANEL_PATH.exists() and PANEL_MANIFEST_PATH.exists()):
             raise FileExistsError("Incomplete labelled-panel output requires inspection")
         manifest = json.loads(PANEL_MANIFEST_PATH.read_text(encoding="utf-8"))
-        if _sha256(LABELED_PANEL_PATH) != manifest["sha256"]:
+        manifest_sources = manifest.get("sources", [])
+        expected_sources = [
+            {"path": path.relative_to(ROOT).as_posix(), "sha256": _sha256(path), "years": list(years)}
+            for path, years in sources
+        ]
+        reusable = (
+            _sha256(LABELED_PANEL_PATH) == manifest.get("sha256")
+            and pq.ParquetFile(LABELED_PANEL_PATH).metadata.num_rows == expected_rows
+            and _source_years(LABELED_PANEL_PATH) == LABELED_YEARS
+            and manifest_sources == expected_sources
+        )
+        if reusable:
+            return manifest | {"status": "validated_reused"}
+        if _sha256(LABELED_PANEL_PATH) != manifest.get("sha256"):
             raise ValueError("Existing labelled panel checksum changed")
         if pq.ParquetFile(LABELED_PANEL_PATH).metadata.num_rows != expected_rows:
             raise ValueError("Existing labelled panel row count changed")
         if _source_years(LABELED_PANEL_PATH) != LABELED_YEARS:
             raise ValueError("Existing labelled panel years changed")
-        return manifest | {"status": "validated_reused"}
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     temporary = LABELED_PANEL_PATH.with_suffix(".parquet.tmp")
@@ -195,10 +207,7 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
         "observation_years": list(LABELED_YEARS),
         "target": TARGET_COLUMN,
         "feature_order": list(PREDICTOR_COLUMNS),
-        "sources": [
-            {"path": path.relative_to(ROOT).as_posix(), "sha256": _sha256(path), "years": list(years)}
-            for path, years in sources
-        ],
+        "sources": expected_sources,
         "target_lineage": "Copied from validated ICNF T+1 labels; no target recalculation performed.",
     }
     _atomic_json(manifest, PANEL_MANIFEST_PATH)
@@ -206,7 +215,7 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
 
 
 def refit_operational_model() -> dict[str, Any]:
-    """Refit the frozen selected specification through observed outcome 2025."""
+    """Refit the validation-selected Model v2 specification through outcome 2025."""
     panel_manifest = build_labeled_nine_feature_panel()
     columns = ["observation_year", *PREDICTOR_COLUMNS, TARGET_COLUMN]
     frame = pd.read_parquet(LABELED_PANEL_PATH, columns=columns)
@@ -230,6 +239,7 @@ def refit_operational_model() -> dict[str, Any]:
             and existing_payload.get("feature_order") == list(PREDICTOR_COLUMNS)
             and existing_payload.get("training_predictor_years") == list(LABELED_YEARS)
             and existing_payload.get("target") == TARGET_COLUMN
+            and existing_payload.get("model_specification_version") == MODEL_SPECIFICATION_VERSION
         )
         if same_lineage:
             existing = np.asarray(existing_payload["model"].predict(sample), dtype="float64")
@@ -247,8 +257,10 @@ def refit_operational_model() -> dict[str, Any]:
         "training_observed_outcome_years": list(range(2011, 2026)),
         "target": TARGET_COLUMN,
         "random_seed": RANDOM_SEED,
-        "selection_evidence": "reports/validation/final_temporal_test_2022_2024.md",
-        "specification_status": "frozen before final test; refit only after final test was recorded",
+        "model_specification_version": MODEL_SPECIFICATION_VERSION,
+        "parameters": model.parameter_config(),
+        "selection_evidence": "docs/model_v2_validation_selection.md",
+        "specification_status": "selected on complete T=2020-2021 validation evidence; refit through observed outcome 2025",
         "output_interpretation": "continuous comparative estimated burned share; not a probability, safety guarantee, or purchase recommendation",
     }
     joblib.dump(payload, temporary)
@@ -265,6 +277,8 @@ def refit_operational_model() -> dict[str, Any]:
         "training_observed_outcome_years": list(range(2011, 2026)),
         "feature_order": list(PREDICTOR_COLUMNS),
         "target": TARGET_COLUMN,
+        "model_specification_version": MODEL_SPECIFICATION_VERSION,
+        "parameters": model.parameter_config(),
         "selection_evidence": payload["selection_evidence"],
         "reload_sample_predictions_identical": True,
         "next_operational_forecast_year": CURRENT_FORECAST_YEAR,
@@ -457,11 +471,15 @@ def build_scoring_matrix(forecast_year: int = CURRENT_FORECAST_YEAR, progress=pr
     return {"path": paths["matrix"].relative_to(ROOT).as_posix(), "sha256": _sha256(paths["matrix"]), "row_count": len(result), "status": "created"}
 
 
-def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]:
+def score_forecast(
+    forecast_year: int = CURRENT_FORECAST_YEAR,
+    *,
+    replace_existing: bool = False,
+) -> dict[str, Any]:
     """Apply the saved fixed model and create table plus one QGIS-ready layer."""
     matrix = build_scoring_matrix(forecast_year)
     paths = _forecast_paths(forecast_year)
-    if paths["scores"].exists() or paths["gpkg"].exists():
+    if (paths["scores"].exists() or paths["gpkg"].exists()) and not replace_existing:
         raise FileExistsError(f"Forecast {forecast_year} output already exists; inspect rather than overwrite")
     payload = joblib.load(MODEL_PATH)
     if tuple(payload["feature_order"]) != PREDICTOR_COLUMNS:
@@ -488,7 +506,13 @@ def score_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]
         "feature_matrix": matrix,
         "score_table": {"path": paths["scores"].relative_to(ROOT).as_posix(), "sha256": _sha256(paths["scores"]), "row_count": len(scores)},
         "spatial_output": spatial_output,
-        "model": {"path": MODEL_PATH.relative_to(ROOT).as_posix(), "sha256": _sha256(MODEL_PATH), "feature_order": list(PREDICTOR_COLUMNS)},
+        "model": {
+            "path": MODEL_PATH.relative_to(ROOT).as_posix(),
+            "sha256": _sha256(MODEL_PATH),
+            "feature_order": list(PREDICTOR_COLUMNS),
+            "model_specification_version": payload.get("model_specification_version"),
+            "parameters": payload.get("parameters"),
+        },
         "input_sources": {
             "era5_land": {
                 "year": forecast_year - 1,
@@ -644,18 +668,21 @@ def write_forecast_validation_report(validation: dict[str, Any]) -> None:
         "",
         "## Interpretation and limitation",
         "",
-        "This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. The fixed model underpredicted the high observed outcome associated with T=2024 during final evaluation; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.",
+        "This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. Model v2 was selected on development validation, so its independent operational evaluation requires the observed ICNF 2026 outcome; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.",
     ]
     FORECAST_VALIDATION_REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def run_operational_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict[str, Any]:
+def run_operational_forecast(
+    forecast_year: int = CURRENT_FORECAST_YEAR,
+    *,
+    replace_existing: bool = False,
+) -> dict[str, Any]:
     """Create an annual score once, or revalidate the immutable published result.
 
-    A rerun deliberately never overwrites a published score.  If all four
-    artifacts exist it performs the same validation and reload check instead;
-    a partial set is an actionable failure rather than an invitation to mix
-    runs.
+    A standard rerun never overwrites a published score. An explicitly
+    requested replacement is reserved for a documented model-version update
+    and atomically republishes score, manifest, and GeoPackage together.
     """
     paths = _forecast_paths(forecast_year)
     present = {name: path.is_file() for name, path in paths.items()}
@@ -667,8 +694,8 @@ def run_operational_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict
         )
     manifest = (
         json.loads(paths["manifest"].read_text(encoding="utf-8"))
-        if all(present.values())
-        else score_forecast(forecast_year)
+        if all(present.values()) and not replace_existing
+        else score_forecast(forecast_year, replace_existing=replace_existing)
     )
     validation = validate_forecast_artifacts(forecast_year)
     # Validation may have reconciled derived provenance after proving exact
@@ -676,7 +703,8 @@ def run_operational_forecast(forecast_year: int = CURRENT_FORECAST_YEAR) -> dict
     # stale pre-validation copy.
     manifest = json.loads(paths["manifest"].read_text(encoding="utf-8"))
     write_forecast_validation_report(validation)
-    return {"status": "validated_reused" if all(present.values()) else "created_and_validated", "manifest": manifest, "validation": validation}
+    status = "replaced_and_validated" if replace_existing else ("validated_reused" if all(present.values()) else "created_and_validated")
+    return {"status": status, "manifest": manifest, "validation": validation}
 
 
 def write_readiness_report(model_metadata: dict[str, Any], preflight: dict[str, Any]) -> None:
@@ -689,9 +717,9 @@ def write_readiness_report(model_metadata: dict[str, Any], preflight: dict[str, 
         "",
         "## Fixed model",
         "",
-        f"- Model: fixed nine-feature two-part burned-share regression model (technical term: hurdle model), refit on predictor years T={LABELED_YEARS[0]}-{LABELED_YEARS[-1]}, with observed ICNF outcomes 2011-2025.",
+        f"- Model: Model v2 nine-feature two-stage burned-share regression, refit on predictor years T={LABELED_YEARS[0]}-{LABELED_YEARS[-1]}, with observed ICNF outcomes 2011-2025.",
         f"- Artifact: `{model_metadata['model_path']}` (SHA-256 `{model_metadata['model_sha256']}`).",
-        "- Model selection remains the completed frozen T=2022-2024 final temporal test; no post-test tuning occurred.",
+        "- Model v2 was selected using the complete T=2020-2021 development validation comparison; its independent operational evaluation is due after the observed ICNF 2026 outcome is available.",
         "",
         f"## {preflight['forecast_year']} scoring contract",
         "",

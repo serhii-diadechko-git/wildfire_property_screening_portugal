@@ -22,6 +22,7 @@ from src.operational_forecast import (
     forecast_preflight,
     validate_forecast_artifacts,
 )
+from src.modeling import MODEL_SPECIFICATION_VERSION
 
 
 class OperationalForecastTests(unittest.TestCase):
@@ -47,6 +48,9 @@ class OperationalForecastTests(unittest.TestCase):
         self.assertEqual(metadata["training_predictor_years"], list(range(2010, 2025)))
         self.assertEqual(metadata["training_observed_outcome_years"], list(range(2011, 2026)))
         self.assertEqual(payload["feature_order"], list(PREDICTOR_COLUMNS))
+        self.assertEqual(payload["model_specification_version"], MODEL_SPECIFICATION_VERSION)
+        self.assertEqual(metadata["model_specification_version"], MODEL_SPECIFICATION_VERSION)
+        self.assertEqual(payload["parameters"]["occurrence"]["max_leaf_nodes"], 31)
         self.assertIn("not a probability", payload["output_interpretation"])
 
     def test_current_preflight_is_ready_with_2025_era5_and_no_future_data(self) -> None:

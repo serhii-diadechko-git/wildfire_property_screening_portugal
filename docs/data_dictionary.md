@@ -22,7 +22,7 @@ In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 m
 
 For ERA5-Land soil water, `layer 1` means the shallowest soil layer, approximately the top 0–7 cm. It is a volumetric water-content measurement (`m³/m³`), not a GIS layer. ERA5-Land also provides deeper soil layers, but this project uses only layer 1 to represent shallow warm-season soil moisture.
 
-The labelled nine-feature model panel covers predictor years `T=2010-2024`. Model development used `T=2010-2019`, validation used `T=2020-2021`, and the completed frozen final temporal test used `T=2022-2024`. The ICNF archive range is `2000-2025` inclusive.
+The labelled nine-feature model panel covers predictor years `T=2010-2024`. Model v2 selection used `T=2010-2019` for fitting and `T=2020-2021` for validation only; no `T=2022-2024` row was read during selection. The later labelled years are used for the operational refit through observed outcome 2025. The ICNF archive range is `2000-2025` inclusive.
 
 There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
 
@@ -73,7 +73,7 @@ The retained final model is a continuous comparative estimate, not a probability
 
 | Column | Type | Meaning |
 |---|---|---|
-| `predicted_burned_share_next_year` | float, 0-1 | Fixed nine-feature two-part burned-share regression output (technical term: hurdle model): estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
+| `predicted_burned_share_next_year` | float, 0-1 | Fixed Model v2 nine-feature two-stage burned-share regression output: estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
 | `forecast_year` | integer | Calendar year estimated by an operational scoring output; equal to `observation_year + 1`. |
 | `prediction_input_year` | integer | Completed predictor year used for all dynamic inputs; equal to `forecast_year - 1`. |
 | `model_sha256` | string | Checksum of the exact serialized nine-feature model used for scoring. |
