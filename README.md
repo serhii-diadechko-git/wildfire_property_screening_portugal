@@ -1,120 +1,84 @@
 # Reproducible Wildfire Exposure Screening — Mainland Portugal
 
-This public capstone project combines data science and GIS to create a
-transparent, broad-area wildfire-exposure screen for mainland Portugal.  It
-uses one 1 km × 1 km cell as the analytical unit; fire recurrence is measured
-in a mainland-masked 2 km outward context buffer.
+This public data-science, machine-learning, and GIS capstone compares wildfire-exposure patterns across mainland Portugal. It supports the **broad-area location-research** stage: use consistent national evidence to narrow a large search area, then continue with local and property-specific investigation.
 
-The model estimates a **comparative next-year burned share**. It is not a
-probability, property-level safety assessment, insurance estimate, forecast of
-an individual fire, or buy/do-not-buy recommendation. GIS is used because the
-inputs, the evidence, and the final inspection layers are spatial: it makes the
-method visible and lets a reviewer examine patterns in QGIS.
+The project does **not** identify a safe area, certify a property, estimate insurance, predict an individual fire, or make a buy/do-not-buy recommendation.
 
-## What the project contains
+## Project design
 
-- A reproducible nine-feature two-stage burned-share regression model. Model
-  v2 was selected on the complete `T=2020-2021` validation period and then
-  refit through the latest labelled outcome.
-- A target-free annual comparative estimate for 2026 using 2025 predictors.
-- A separate historical recurrence screening layer: **1 km mainland grid cells
-  with fire recurrence measured in a 2 km context**.
-- A separate official ICNF structural-hazard comparison layer. It comes from
-  the official 25 m SRUP-CPIR 2020-2030 source, is summarized to the
-  predominant valid class in each 1 km cell, and is not an ICNF prediction or
-  this project's model output.
-- QGIS projects, figures, notebooks, source-validation code, and concise
-  validation reports.
+| Element | Definition |
+|---|---|
+| Analytical record | One mainland Portugal 1 km × 1 km cell in EPSG:3763 for one predictor year. |
+| Spatial context | A mainland-masked 2 km outward buffer provides local context; it is not a second grid. |
+| Model target | `burned_share_next_year`: the proportion of a cell's land area burned in the following year. |
+| Current annual estimate | A target-free 2026 comparative estimated burned-share layer derived from 2025 predictor inputs. |
+| Supporting GIS evidence | Observed 2016–2025 fire recurrence and an official ICNF structural-hazard reference layer. |
 
-The nine model features are built-up share; forest/shrub share in the 2 km
-context; mean slope in the 2 km context; number of previously burned years in
-the prior ten years; JJAS mean temperature; JJAS total precipitation; JJAS mean
-layer-1 soil water; JJAS maximum monthly temperature; and JJAS minimum monthly
-soil water. Definitions and units are in [docs/data_dictionary.md](docs/data_dictionary.md).
+## Research question and conclusion
 
-The two-stage regression model combines a histogram-gradient-boosting classifier for whether
-any burning occurs with a histogram-gradient-boosting regressor for burned
-share when burning occurs. Small decision-tree ensembles can represent
-non-linear relationships and interactions among history, landscape, terrain,
-and climate without imposing one fixed linear effect. The two components suit a
-target with many zero values and continuous positive burned shares. This is an
-associative predictive method, not causal evidence.
+### Research question
 
-## Research hypothesis and conclusion
+Can recent wildfire recurrence, landscape context, terrain, and predictor-year climate estimate the comparative next-year burned share of mainland Portugal 1 km cells better than a transparent historical-recurrence baseline?
 
-The project tests whether recent wildfire recurrence, landscape context,
-terrain, and predictor-year climate conditions can estimate the comparative
-next-year burned share of mainland Portugal 1 km cells better than a
-transparent historical-recurrence baseline. The outcome is continuous
-`burned_share_next_year`; it is not a property-level probability or a safety
-classification.
+### Final temporal evaluation
 
-The hypothesis received partial support. In the complete development-validation
-comparison, the selected Model v2 improved all-row MAE from **0.014674** to
-**0.014027**, increased burned-share-mass capture@20% from **56.23%** to
-**60.82%**, and slightly lowered RMSE (0.069598 to 0.069442) relative to Model
-v1; positive-target MAE was effectively unchanged. Selection used no
-`T=2022-2024` rows. After this decision was frozen, V2 completed its one
-held-out final test: all-row MAE was **0.020913** versus **0.029186** for the
-historical-recurrence baseline, and tie-aware top-20% burned-share-mass capture
-was **57.16%** versus **40.17%**. RMSE was marginally higher (0.110995 versus
-0.110595), so the result supports comparative screening rather than precise
-local forecasting. The published 2026 estimate still requires its own outcome
-evaluation after ICNF publishes 2026 burned-area data. See
-[docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md)
-and [reports/validation/final_temporal_test_2022_2024.md](reports/validation/final_temporal_test_2022_2024.md).
+The selected nine-feature model was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
 
-The defensible conclusion is therefore comparative and limited: the model can
-help narrow broad-area location research, but it is not sufficiently stable or
-calibrated to support a safety guarantee, an individual-property forecast, or
-a buy/do-not-buy recommendation.
+| Final temporal metric | Historical-recurrence baseline | Nine-feature two-stage regression |
+|---|---:|---:|
+| All-row MAE | 0.02919 | **0.02091** |
+| RMSE | **0.11059** | 0.11100 |
+| Burned-share mass Capture@20% | 40.17% | **57.16%** |
 
-## Data access and licensing
+The model improved average error and the comparative ranking of observed burned share, but larger/extreme outcomes remained difficult. The conclusion is therefore limited: it can support cautious broad-area comparison, not precise local forecasting. Read the [model-selection record](docs/model_v2_validation_selection.md) and [final temporal evaluation report](reports/validation/final_temporal_test_2022_2024.md).
 
-Raw source files, credentials, and generated data are deliberately excluded
-from Git. Obtain every input from its official provider and place untouched
-files in the paths described by [data/README.md](data/README.md) and
-[data/source_manifest.json](data/source_manifest.json). The manifest records
-the official URLs, access requirements, terms links, and local path patterns.
+## How the method works
 
-The project-owned code, notebooks, documentation, and original figures are
-released under the [MIT License](LICENSE). This permissive licence allows reuse,
-modification, and redistribution with the copyright and licence notice. It
-does not override the separate licences or access terms of the external data.
+### Data sources and feature roles
 
-The source-specific rules are:
+| Source | Role in the analysis |
+|---|---|
+| [ICNF burned areas and structural-hazard catalogue](https://geocatalogo.icnf.pt/) | Historical-fire context from `T−10` through `T−1`; observed outcome in `T+1`. Never a same-year predictor. The structural-hazard layer is an external reference, not this model's output. |
+| [Copernicus CLC](https://land.copernicus.eu/en/products/corine-land-cover) | Broad built-up and forest/shrub landscape context. It is not annual parcel-level land cover. |
+| [Copernicus DEM GLO-30](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM) | Static terrain context used for mean slope. |
+| [ERA5-Land monthly means](https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means) | June–September (`JJAS`) temperature, precipitation, and shallow soil-water context from predictor year `T` only. It is coarse regional context, not 1 km weather. |
+| [DGT CAOP](https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop) | Mainland boundary, canonical grid, and reporting geography. |
 
-| Source | Access category | Licence / terms identified from official source |
-|---|---|---|
-| [ICNF burned areas and structural-hazard catalogue](https://geocatalogo.icnf.pt/) | Free/open by default; a layer-specific exception may apply | ICNF open-data conditions; ICNF retains intellectual property and requires `ICNF, [layer name], [download URL], [download date]`. No GPL/Creative Commons identifier is stated on the catalogue page. |
-| [DGT CAOP](https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop) | Open public access; redistribution status not established | DGT/SNIG identifies CAOP as an open/high-value public dataset, but the CAOP page does not state a project-specific permissive licence. Verify current DGT/SNIG metadata before redistribution. |
-| [Copernicus CLC](https://land.copernicus.eu/en/products/corine-land-cover) | Free, full and open | Copernicus Land Monitoring data policy (not GPL): source attribution, adaptation disclosure, and no implication of EU endorsement. Commercial use is allowed under the CLC terms. |
-| [Copernicus DEM GLO-30](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM) | Free licence for GLO-30/GLO-90 | Copernicus DEM/ESA user-licence conditions; prescribed WorldDEM/Copernicus attribution is required when communicated or adapted. DOI: [10.5270/ESA-c5d3d65](https://doi.org/10.5270/ESA-c5d3d65). No GPL licence applies. |
-| [ERA5-Land monthly means](https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means) | Free with account and terms acceptance | The CDS dataset page identifies a [CC-BY licence](https://cds.climate.copernicus.eu/terms) and DOI [10.24381/cds.68d2bb30](https://doi.org/10.24381/cds.68d2bb30). Each user must accept CDS terms and retrieve files with their own account. |
+The nine predictors are defined, including their units, ranges, and source-year rules, in [docs/data_dictionary.md](docs/data_dictionary.md).
 
-These are data-access conditions, not software licences: GPL is not applicable
-to these datasets unless a provider explicitly says so. The statements describe
-access and attribution, not ownership transfer. A
-provider may update a licence, access category, or required notice after this
-repository is released, so review the linked official terms on every new
-acquisition or redistribution. The project does not redistribute provider
-downloads, does not publish a personal Google Drive mirror, and never commits a
-CDS token.
+### Why this model
 
-For the complete source-by-source attribution, redistribution, and maintainer
-checklist, see [docs/data_licensing_and_attribution.md](docs/data_licensing_and_attribution.md).
+The retained model is a **nine-feature two-stage histogram-gradient-boosting regression**:
 
-## Quick start (Windows, Linux, or macOS)
+1. a [`HistGradientBoostingClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html) estimates whether any burning is expected; and
+2. a [`HistGradientBoostingRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html) estimates burned share when burning is expected.
 
-Use Python 3.13 and run commands from the cloned repository root. The project
-uses relative paths, so it does not depend on a particular operating-system
-folder or editor.
+Their product is one continuous next-year estimated burned share. This approach suits a large numeric tabular panel with nonlinear relationships and many zero outcomes alongside positive burned shares. It is an associative predictive method, not causal evidence, and it was retained because of the time-aware comparison above—not because it is claimed to be universally best.
+
+For technical detail, parameter choices, safeguards, and limitations, see [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md) and [docs/project_brief.md](docs/project_brief.md).
+
+## Use the outputs responsibly
+
+Use the QGIS layers in this order:
+
+1. Compare broad areas with the 2026 estimated comparative exposure layer.
+2. Read the separate 2016–2025 observed recurrence and official ICNF structural-hazard layers alongside it.
+3. Shortlist broad areas for further research; do not combine the three layers into a single score.
+4. Verify planning, access, insurance, terrain, vegetation management, and property-specific conditions locally before making any decision.
+
+The official ICNF structural-hazard layer is a separate official 25 m landscape classification summarized to the predominant class per 1 km cell. It is neither this project's prediction nor an observed burned-area map for one year. See [qgis/README.md](qgis/README.md).
+
+## Quick start
+
+Use Python 3.13 and run commands from the cloned repository root. The project uses relative paths and works from Windows, Linux, or macOS.
+
+### 1. Create the environment
 
 ```text
 python -m venv .venv
 ```
 
-Activate it with one of the following commands:
+Activate it:
 
 ```powershell
 # Windows PowerShell
@@ -126,207 +90,68 @@ Activate it with one of the following commands:
 source .venv/bin/activate
 ```
 
-Then install pinned dependencies:
+Install the pinned dependencies:
 
 ```text
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 1. Acquire raw inputs
+### 2. Obtain the data
 
-Read `data/source_manifest.json`. Obtain the non-API files from their official
-providers and copy each untouched file to its documented `data/raw/` path. For
-ERA5-Land, accept the CDS terms and create the local credentials file in the
-normal home-directory location (`%USERPROFILE%\\.cdsapirc` on Windows or
-`~/.cdsapirc` on Linux/macOS). Never put credentials in the repository.
+Raw provider files, credentials, and derived outputs are intentionally excluded from Git. Follow [data/README.md](data/README.md) and [data/source_manifest.json](data/source_manifest.json): obtain every original file from its official provider and place it untouched at the documented `data/raw/` path.
 
-For CLC, download the three original Europe-wide ZIP packages into
-`data/raw/clc/`. The 120–150 MB Portugal-clipped GeoPackages under
-`data/processed/clc/` are generated automatically during reproduction; do not
-copy manually clipped files from another machine.
+ERA5-Land requires a CDS account, accepted terms, and a local credential file (`%USERPROFILE%\.cdsapirc` on Windows or `~/.cdsapirc` on Linux/macOS). Never put credentials in this repository.
 
-The project can retrieve the approved API-backed ERA5-Land and ICNF
-structural-hazard inputs for you:
+To retrieve only missing API-backed ERA5-Land and ICNF structural-hazard inputs:
 
 ```text
 python scripts/run_project.py --mode acquire-api
 ```
 
-This command validates existing immutable files and downloads only missing
-API-backed files. It never overwrites raw data. If you prefer manual
-acquisition, place the files first and skip this command.
+This command validates/reuses existing raw files, downloads only missing API-backed inputs, and never overwrites raw data. If one ERA5-Land request fails temporarily, rerun the same command; completed years are preserved. Detailed acquisition and retry guidance is in [data/README.md](data/README.md).
 
-#### If one ERA5-Land year fails
-
-CDS jobs are submitted one year at a time. A temporary CDS failure can occur
-after earlier years have already completed. Rerun the same command safely:
-
-```text
-python scripts/run_project.py --mode acquire-api
-```
-
-Existing files are preserved and validated; only missing years are retried. To
-retry one standard annual GRIB directly, use its year:
-
-```text
-python scripts/download_era5_land_year.py 2013 --download
-```
-
-To retry one corrected precipitation-only request, add the explicit workaround
-switch:
-
-```text
-python scripts/download_era5_land_year.py 2023 --corrected-precipitation --download
-```
-
-After a successful retry, run `python scripts/run_project.py --mode preflight`
-again. Never delete or overwrite earlier successful raw downloads.
-
-### 2. Check raw-data readiness
-
-Run preflight after manual/API acquisition:
+### 3. Check readiness and validate
 
 ```text
 python scripts/run_project.py --mode preflight
-```
-
-`preflight` does not download or alter data. It lists any missing official raw
-files and writes a local, Git-ignored run summary under `reports/run_logs/`.
-The launcher automatically switches to the repository `.venv` when it exists,
-so the commands remain correct if VS Code or a terminal accidentally starts
-them with a global Python installation.
-
-### 3. Validate the environment and source contracts
-
-After preflight reports `ready`:
-
-```text
-# Run reproducibility tests only
 python scripts/run_project.py --mode validate
 ```
 
-This runs the essential portable, raw-source, notebook-structure, and temporal
-contract checks. It does not rebuild tiles, refit models, rescore forecasts, or
-require optional QGIS layout exports. The full rebuild finishes with the same
-focused post-build checks after its own stage-level validations succeed.
+`preflight` reports missing raw inputs without modifying them. `validate` runs the essential environment, source-contract, temporal, notebook-structure, and portability checks; it does not rebuild the panel, refit the model, or require optional QGIS layout exports.
 
-For a deliberate maintainer audit, run `python -m unittest discover -s tests -v`
-separately. It includes additional optional presentation/QGIS checks; those
-checks are skipped when their optional QGIS layout exports were not generated.
+### 4. Deliberately reproduce the workflow
 
-### 4. Build the data, fit the model, and generate outputs
-
-After validation passes, run the deliberate full workflow:
+After preflight reports ready:
 
 ```text
-
-# Deliberately regenerate derived outputs, reports, model artefacts and figures
 python scripts/run_project.py --mode reproduce --confirm-rebuild
 ```
 
-Within this workflow, the model-training step is the `model refit` stage. It
-fits the retained nine-feature model on the labelled development data and
-writes the versioned model artefact. The later stages score the operational
-2026 estimate and build reports/figures; they do not silently retrain it.
+This builds/reuses reference layers and CLC derivatives, derives the panel, refits the fixed nine-feature model on completed labelled data, creates the 2026 comparative estimate, and writes reproducible local outputs. It never modifies `data/raw/`.
 
-If you need to run the core stages separately instead of using `reproduce`,
-keep this order:
 
-```text
-python scripts/prepare_reference_layers.py            # CAOP references + canonical grid
-python scripts/prepare_clc_portugal_layers.py         # Portugal CLC derivatives
-python scripts/build_national_panel.py --stage all
-python scripts/build_spatial_qa_outputs.py            # QGIS-referenced ERA5 QA + 2024 snapshot
-python scripts/build_extended_training_panel.py --stage all
-python scripts/refit_extended_training_models.py       # actual model fit
-python scripts/run_extended_final_temporal_test.py
-python scripts/prepare_operational_forecast.py
-python scripts/score_operational_forecast.py
-python scripts/build_final_visuals.py
-```
+The three Portugal-clipped CLC derivatives are created under
+`data/processed/clc/`. They are approximately 120-150 MB each and are reused
+on later runs. Exact validated derivatives may be copied into these registered
+paths; see [data/README.md](data/README.md) before reuse.
 
-The separate commands assume that acquisition, preflight, and source
-validation have already passed. The first command creates/reuses the CAOP
-boundary and canonical 1 km grid; the second creates/reuses the three CLC
-derivatives. The national-panel command also checks these prerequisites, so it
-is safe to call directly after a clean checkout. The next command creates the
-two derived QA GeoPackages referenced by both tracked QGIS projects. The
-training-panel command then builds labelled data; the refit command fits and
-saves the model; the remaining commands evaluate or apply that saved model and
-create presentation outputs.
-
-The acquisition mode checks whether an ERA5 file is missing before requiring
-the local CDS credentials file. If all requested ERA5 files already exist, it
-validates/reuses them without requiring `.cdsapirc`. When a download is needed,
-the credentials file is used without printing or copying its contents. The
-mode also calls the registered ICNF WCS download. Run
-`--mode preflight` again after acquisition; do not use `acquire-api` as an
-implicit preflight.
-
-The full rebuild can take substantial time and memory. It never modifies
-`data/raw/`. Add `--with-qgis` only in a Python environment that has PyQGIS;
-otherwise open the tracked QGIS projects directly.
-
-### Stable validation evidence versus local run logs
-
-Normal notebook review is read-only. Tracked `reports/validation/` files hold
-stable analytical evidence and change only when the generated evidence changes.
-Each command run writes its timestamp, elapsed durations, commands, and full
-terminal output to Git-ignored `reports/run_logs/`; those local run records
-should not be committed.
-
-## Important: first-run data preparation can be slow
+### Troubleshooting and first-run processing
 
 > [!IMPORTANT]
-> **The initial reproduction may take substantial time and temporary disk space.**
-> It processes large geospatial datasets, including multi-gigabyte Copernicus
-> CLC archives, ICNF burned-area layers, DEM tiles, and ERA5-Land grids. CLC
-> preparation extracts each archive temporarily, clips it to mainland Portugal,
-> and creates these three local GeoPackages of approximately 120–150 MB each:
->
-> - `data/processed/clc/u2012_clc2006_v2020_20u1_pt.gpkg` from
->   `data/raw/clc/u2012_clc2006_v2020_20u1_geoPackage.zip`;
-> - `data/processed/clc/u2018_clc2012_v2020_20u1_pt.gpkg` from
->   `data/raw/clc/u2018_clc2012_v2020_20u1_geoPackage.zip`;
-> - `data/processed/clc/u2018_clc2018_v2020_20u1_pt.gpkg` from
->   `data/raw/clc/u2018_clc2018_v2020_20u1_geoPackage.zip`.
->
-> This
-> is expected GIS processing, not a stuck command.
+> **The first full reproduction can take substantial time and temporary disk space.**
+> Processing the large CLC, ICNF, DEM, and ERA5-Land spatial inputs may appear
+> quiet for several minutes. This is expected unless the command reports an
+> error.
 
-If another project user can provide the already validated files, the setup can
-be faster: copy untouched raw sources into the exact `data/raw/` paths listed
-in `data/source_manifest.json`, and copy validated CLC derivatives into
-`data/processed/clc/` using their exact registered filenames. Then run
-`python scripts/run_project.py --mode preflight` and the relevant validation
-tests. Raw files must remain unchanged, and copied processed artifacts must be
-validated against the project contract before they are reused. Do not copy
-credentials or use unverified files from an unknown source.
+For CLC raw-to-processed file mapping, safe rerun instructions, CDS retry
+guidance, interrupted-build recovery, and QGIS checks, see
+[docs/troubleshooting.md](docs/troubleshooting.md).
 
-### Start from a clean derived-output state
 
-Use this only when you deliberately want to remove locally generated artefacts
-and reproduce them again from the untouched raw inputs:
+### 5. Review the results
 
-```text
-# List exactly what would be removed; deletes nothing.
-python scripts/clean_project_outputs.py --dry-run
-
-# Remove only derived data, generated figures/tables, and local run logs.
-python scripts/clean_project_outputs.py --confirm-delete-derived
-
-# Then rebuild the project.
-python scripts/run_project.py --mode reproduce --confirm-rebuild
-```
-
-The cleanup command never removes `data/raw/`, credentials, source code,
-notebooks, QGIS projects, or tracked validation documentation. It is
-intentionally dry-run first and requires an explicit confirmation flag.
-
-## Review path
-
-Open notebooks in this order after the environment and raw inputs are ready:
+Open notebooks from fresh kernels in this order:
 
 1. `notebooks/00_environment_test.ipynb`
 2. `notebooks/01_data_collection.ipynb`
@@ -336,92 +161,74 @@ Open notebooks in this order after the environment and raw inputs are ready:
 6. `notebooks/05_evaluation_recommendations.ipynb`
 7. `notebooks/06_final_charts.ipynb`
 
-Notebooks are reusable, controlled data-science walkthroughs: they run real
-source checks, display artifacts/plots/tables, and can call the same reusable
-functions as the scripts when an explicit rebuild switch is enabled. Production
-calculations remain in `src/`; notebooks do not duplicate their implementation.
-See [notebooks/README.md](notebooks/README.md). They can be opened in VS Code,
-Jupyter Notebook, PyCharm, or another Jupyter-compatible tool. In VS Code,
-install the Microsoft **Python** and **Jupyter** extensions, open the repository
-folder, select the project's `.venv` interpreter, then select that same
-environment as the notebook kernel. JupyterLab is not required.
+Notebooks are review and learning walkthroughs. They display real artifacts, tables, and plots, and are read-only by default. Production calculations live in `src/`; notebooks do not contain a second competing implementation. See [notebooks/README.md](notebooks/README.md) for notebook roles, rebuild switches, and VS Code setup.
 
-### What the notebooks are for
+Open the QGIS projects after a successful reproduction:
 
-Run the notebooks from a fresh kernel, in numeric order, after `preflight`
-and—when reviewing derived/model outputs—after a successful reproduction run.
-They are a transparent learning, review, and controlled-orchestration path:
+- `qgis/wildfire_exposure_screening_portugal.qgz` — observed historical recurrence and official ICNF comparison.
+- `qgis/wildfire_exposure_screening_portugal_2026.qgz` — target-free 2026 comparative estimate.
 
-- `00` checks the portable Python, GIS, and machine-learning environment using synthetic in-memory examples.
-- `01` and `02` inspect immutable-source provenance, the grid, CLC governance, and the analytical contract.
-- `03` shows validated data-quality, target-distribution, temporal-drift, and correlation evidence.
-- `04` is the technical model-contract notebook: saved model metadata, feature order, two-part regression components, temporal safeguards, and the annual scoring lifecycle. It does not repeat held-out results or refit a model.
-- `05` audits the validated historical GIS layer and hands it off to QGIS. `06` is the final capstone narrative and the single presentation of EDA, final-test regression diagnostics, and validated GIS/presentation visuals.
+For an optional QGIS layout rebuild/validation on Windows with QGIS installed:
 
-Use `scripts/run_project.py` for the one-command rebuild. Use notebooks when
-you want to step through the same workflow, inspect intermediate evidence, and
-see the calculations visually. Expensive/rewrite-capable notebook stages are
-disabled by default with clearly named Boolean switches; no notebook performs a
-hidden rebuild.
+```text
+scripts\run_qgis_presentation_project.bat --validate-existing
+scripts\run_qgis_presentation_project.bat --validate-operational
+```
 
-### Model v2 experiment evidence
-
-The durable validation-only comparison preserves both the prior Model v1
-reference and the selected Model v2 configuration. It is regenerated from the
-saved full-training experiment; it neither fits a new model nor accesses
-`T=2022-2024`.
-
-- `reports/figures/model_v2_validation_parameter_comparison.png` — all five
-  predeclared configurations on the same validation set.
-- `reports/figures/model_v2_validation_v1_vs_v2_by_year.png` — V1 and selected
-  V2 metrics separately for `T=2020` and `T=2021`.
-- [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md)
-  — selection rationale, exact parameters, and limitations.
-
-Run `python scripts/build_model_v2_validation_figures.py` after the experiment
-to regenerate the two figures.
-
-For spatial inspection, open these portable projects in QGIS after cloning the
-whole repository:
-
-- `qgis/wildfire_exposure_screening_portugal.qgz` — observed historical
-  recurrence screening and official ICNF comparison.
-- `qgis/wildfire_exposure_screening_portugal_2026.qgz` — target-free 2026
-  comparative estimate.
-
-Their layers use relative paths where feasible. See [qgis/README.md](qgis/README.md).
-
-## Main generated outputs
-
-The reproducible run writes local outputs outside `data/raw/`:
+## Main local outputs
 
 | Output | Purpose |
 |---|---|
-| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Versioned nine-feature model artefact. |
+| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved nine-feature two-stage regression model used for the current annual estimate. |
+| `data/processed/final_model_2010_2024/model_metadata.json` | Model feature order, training cutoff, version, and reproducibility metadata. |
 | `data/processed/operational_forecasts/forecast_2026_scores.parquet` | Canonical tabular 2026 comparative estimates. |
-| `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready annual estimate. |
-| `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence. |
-| `reports/figures/` and `reports/tables/` | Presentation-ready visuals and summaries. |
-| `reports/validation/` | Reproducible validation and interpretation reports. |
-| `reports/presentation/wildfire_exposure_screening_capstone_final.pptx` | Editable final capstone presentation built from the validated results. |
+| `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready annual comparative layer. |
+| `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence plus official ICNF comparison attributes. |
+| `reports/figures/` and `reports/tables/` | Reproducible visual and tabular presentation outputs. |
+| `reports/validation/` | Stable analytical validation evidence. |
+| `reports/run_logs/` | Local, Git-ignored command logs and timings. |
 
-Parquet is the canonical analytical format. GeoPackages provide reusable
-geometry and presentation/QA layers; they are not a duplicate cell-year panel.
+Parquet is the canonical analytical table format. GeoPackages provide reusable geometry and QGIS/presentation layers; they are not duplicate full cell-year panels.
 
 ## Annual update cycle
 
-The model is not left static forever. For forecast year `Y`, derive unlabelled
-predictors from `T=Y−1` and score the fixed model. When ICNF publishes the
-observed outcome for `Y`, validate that score, add the newly labelled row, and
-refit the unchanged nine-feature specification before scoring `Y+1`. This keeps
-training data and forecast inputs temporally valid. The exact procedure is in
-[docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md).
+For forecast year `Y`, use completed predictor-year inputs from `T=Y−1` to publish a target-free comparative estimate. When ICNF later publishes the observed outcome for `Y`, evaluate that already-published estimate, add the new labelled year, refit the unchanged nine-feature specification, and score `Y+1`.
 
-## Repository scope and release notes
+The current 2026 estimate uses 2025 inputs and can be independently evaluated only after ICNF publishes 2026 burned-area data. The detailed controlled process is in [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md).
 
-Files intended for Git are source code, pinned dependencies, notebooks,
-documentation, QGIS projects/styles, lightweight validation reports, and small
-presentation assets. Large raw data, credentials, local run logs, and derived
-data are ignored. Before publishing a fork or release, complete
-[docs/release_checklist.md](docs/release_checklist.md), including the code
-licence decision and a fresh review of each provider's redistribution terms.
+## Data access and licensing
+
+This is a code-and-methods repository, not a data mirror. The project code,
+notebooks, documentation, and original figures are released under the
+[MIT License](LICENSE). Every external dataset keeps its provider's own access,
+licence, attribution, and redistribution conditions.
+
+Obtain provider files from their official sources using your own account where
+required; do not commit credentials or assume that a public dataset may be
+redistributed without checking its terms. The full source-by-source licence,
+attribution, and redistribution guidance is in
+[docs/data_licensing_and_attribution.md](docs/data_licensing_and_attribution.md).
+
+## Documentation map
+
+| Need | Read |
+|---|---|
+| Feature definitions, units, and temporal rules | [docs/data_dictionary.md](docs/data_dictionary.md) |
+| Research scope, methods, and limits | [docs/project_brief.md](docs/project_brief.md) |
+| Sources, paths, access, and acquisition | [data/README.md](data/README.md) and [data/source_manifest.json](data/source_manifest.json) |
+| Model-selection design and parameters | [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md) |
+| Annual scoring/refitting process | [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md) |
+| Notebook roles and VS Code use | [notebooks/README.md](notebooks/README.md) |
+| QGIS layers, projects, and limitations | [qgis/README.md](qgis/README.md) |
+| Data licences and attribution | [docs/data_licensing_and_attribution.md](docs/data_licensing_and_attribution.md) |
+
+## Clean local rebuild
+
+To remove only local derived outputs, figures/tables, and run logs while preserving raw data, source code, notebooks, QGIS projects, and tracked validation evidence:
+
+```text
+python scripts/clean_project_outputs.py --dry-run
+python scripts/clean_project_outputs.py --confirm-delete-derived
+```
+
+Then run the deliberate reproduction command again. For a release or maintenance review, see [docs/release_checklist.md](docs/release_checklist.md).

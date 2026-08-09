@@ -13,12 +13,16 @@ ignored by Git.
 3. Accept provider terms yourself; never share a CDS token or login details.
 4. Put each untouched file in the exact relative path listed in the manifest.
 5. Run `python scripts/run_project.py --mode preflight` from the repository
-   root. It reports missing files before any derived processing starts.
+   root. It reports missing raw files before any derived processing starts.
 
 For CLC, provide the three original Europe-wide ZIP packages under
-`data/raw/clc/`. Do **not** manually copy or create the Portugal-clipped
-GeoPackages under `data/processed/clc/`: the rebuild creates them from the raw
-packages and the CAOP mainland boundary.
+`data/raw/clc/`. You may also copy the exact validated Portugal-clipped
+GeoPackages into `data/processed/clc/` to avoid repeating the expensive clip.
+Preflight still checks the immutable raw ZIPs; the CLC validation checks the
+prepared GeoPackages. The rebuild reuses complete prepared layers and creates
+missing layers from the raw packages and the CAOP mainland boundary. Use only
+the registered filenames. Do not use an unverified manual clip or overwrite a
+prepared file silently.
 
 The runner validates registered filenames and checksums where a project
 checksum is available. It never downloads a gated dataset, writes into
@@ -82,6 +86,7 @@ derived GeoPackages remain local and reproducible rather than being committed.
 
 The reference-preparation stage is run automatically by
 `python scripts/run_project.py --mode reproduce --confirm-rebuild`. It creates
+or reuses
 the canonical 89,112-cell EPSG:3763 1 km mainland grid in
 `data/processed/reference/` from the CAOP boundary whenever that derived grid
 is absent.
@@ -91,3 +96,7 @@ The CLC preparation step is also run automatically by
 the three mainland Portugal GeoPackages in `data/processed/clc/` before CLC
 source validation and feature derivation. They are intentionally local derived
 artifacts (about 120–150 MB each), not files distributed with the repository.
+
+For expected first-run duration, safe API retries, interrupted builds, QGIS
+layer checks, and local run-log locations, see
+[`../docs/troubleshooting.md`](../docs/troubleshooting.md).
