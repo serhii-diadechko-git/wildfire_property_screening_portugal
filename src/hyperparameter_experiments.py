@@ -54,7 +54,7 @@ V1_POSITIVE_SHARE_PARAMS = {
 
 CANDIDATES: dict[str, dict[str, Any]] = {
     "current_frozen": {
-        "description": "Model v1 frozen operational configuration; reproducibility reference.",
+        "description": "Prior candidate configuration; reproducibility reference.",
         "occurrence": V1_OCCURRENCE_PARAMS,
         "positive_share": V1_POSITIVE_SHARE_PARAMS,
     },

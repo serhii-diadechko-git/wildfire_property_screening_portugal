@@ -213,9 +213,9 @@ def refit_extended_models() -> dict[str, object]:
 def write_report(result: dict[str, object]) -> None:
     metrics = result["metrics"]
     lines = [
-        "# Model v2 training-only refit",
+        "# Final nine-feature model training-only refit",
         "",
-        "This controlled refit uses Model v2, selected from the complete T=2020-2021 validation comparison. It fits T=2010-2019 and validates T=2020-2021. T=2022-2024 were not opened or used.",
+        "This controlled refit uses the final nine-feature model, selected from the complete T=2020-2021 validation comparison. It fits T=2010-2019 and validates T=2020-2021. T=2022-2024 were not opened or used.",
         "",
         "## Candidate comparison",
         "",

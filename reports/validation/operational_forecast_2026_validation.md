@@ -23,4 +23,4 @@
 
 ## Interpretation and limitation
 
-This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. Model V2 was selected on development validation, so its independent operational evaluation requires the observed ICNF 2026 outcome; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.
+This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. The final nine-feature model was selected on development validation, so its independent operational evaluation requires the observed ICNF 2026 outcome; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.

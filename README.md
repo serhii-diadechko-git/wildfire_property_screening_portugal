@@ -22,9 +22,9 @@ Can recent wildfire recurrence, landscape context, terrain, and predictor-year c
 
 ### Final temporal evaluation
 
-The selected **nine-feature Model V2** was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
+The **final nine-feature model** was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
 
-| Final temporal metric | Historical-recurrence baseline | Accepted nine-feature Model V2 |
+| Final temporal metric | Historical-recurrence baseline | Final nine-feature model |
 |---|---:|---:|
 | All-row MAE | 0.02919 | **0.02091** |
 | RMSE | **0.11059** | 0.11100 |
@@ -39,8 +39,8 @@ The registered ICNF annual burned-area records cover calendar years **2000–202
 | Stage | Predictor years `T` | Observed outcome years `T+1` | Purpose |
 |---|---:|---:|---|
 | Development fitting | 2010–2019 | 2011–2020 | Fit the predeclared candidate methods. |
-| Development validation | 2020–2021 | 2021–2022 | Select the accepted Model V2. |
-| Held-out final test | 2022–2024 | 2023–2025 | Evaluate the frozen Model V2 once. |
+| Development validation | 2020–2021 | 2021–2022 | Select the final nine-feature model. |
+| Held-out final test | 2022–2024 | 2023–2025 | Evaluate the frozen final nine-feature model once. |
 | Operational refit | 2010–2024 | 2011–2025 | Refit the unchanged selected specification using all completed labelled rows. |
 | Current annual estimate | 2025 | 2026: not yet observed | Produce the target-free 2026 comparative estimate. |
 
@@ -60,9 +60,9 @@ For example, the 2026 layer uses predictor-year `T=2025` inputs and historical f
 
 The nine predictors are defined, including their units, ranges, and source-year rules, in [docs/data_dictionary.md](docs/data_dictionary.md).
 
-### Why Model V2
+### Why the final model
 
-The retained Model V2 is a **nine-feature two-stage histogram-gradient-boosting regression**:
+The final model is a **nine-feature two-stage histogram-gradient-boosting regression**:
 
 1. a [`HistGradientBoostingClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html) estimates whether any burning is expected; and
 2. a [`HistGradientBoostingRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html) estimates burned share when burning is expected.
@@ -193,7 +193,7 @@ scripts\run_qgis_presentation_project.bat --validate-operational
 
 | Output | Purpose |
 |---|---|
-| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved accepted nine-feature Model V2 used for the current annual estimate. `nine_feature_hurdle` is a legacy internal artifact filename, not the public model name. |
+| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved final nine-feature model used for the current annual estimate. `nine_feature_hurdle` is a legacy internal artifact filename, not the public model name. |
 | `data/processed/final_model_2010_2024/model_metadata.json` | Model feature order, training cutoff, version, and reproducibility metadata. |
 | `data/processed/operational_forecasts/forecast_2026_scores.parquet` | Canonical tabular 2026 comparative estimates. |
 | `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready annual comparative layer. |

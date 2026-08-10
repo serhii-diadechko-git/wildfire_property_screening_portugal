@@ -1,4 +1,4 @@
-"""Contracts for the documented validation-selected Model v2 configuration."""
+"""Contracts for the documented validation-selected final-model configuration."""
 
 from __future__ import annotations
 

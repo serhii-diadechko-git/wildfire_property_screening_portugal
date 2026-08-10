@@ -1,4 +1,4 @@
-"""Build durable figures for the validation-selected Model v2 decision."""
+"""Build durable figures for the validation-selected final-model decision."""
 
 from __future__ import annotations
 

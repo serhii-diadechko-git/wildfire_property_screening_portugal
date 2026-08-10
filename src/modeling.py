@@ -11,7 +11,7 @@ from threadpoolctl import threadpool_limits
 
 RANDOM_SEED = 20260805
 
-# Model v2 was selected using only the complete T=2020-2021 validation set.
+# The final nine-feature model was selected using only the complete T=2020-2021 validation set.
 # It is intentionally a versioned, explicit configuration rather than an
 # implicit change hidden in a fitted joblib artefact.
 MODEL_SPECIFICATION_VERSION = "v2_validation_selected_20260809"

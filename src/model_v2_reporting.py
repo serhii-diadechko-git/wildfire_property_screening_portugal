@@ -1,4 +1,4 @@
-"""Durable, validation-only figures for the documented Model v2 decision.
+"""Durable, validation-only figures for the final-model selection decision.
 
 The inputs are the predeclared full-training hyperparameter experiment.  This
 module does not fit a model and refuses to read final-test years.
@@ -47,7 +47,7 @@ def load_experiment() -> dict[str, Any]:
     result = json.loads(EXPERIMENT_PATH.read_text(encoding="utf-8"))
     scope = result["scope"]
     if scope["final_test_years_accessed"] or scope["final_test_rows_read"]:
-        raise ValueError("Model v2 reporting requires validation-only experiment evidence")
+        raise ValueError("Final-model reporting requires validation-only experiment evidence")
     if not {V1_NAME, V2_NAME}.issubset(result["candidates"]):
         raise ValueError("Experiment record lacks the v1 and selected v2 candidates")
     return result
@@ -75,8 +75,8 @@ def plot_parameter_comparison(result: dict[str, Any]) -> plt.Figure:
         for bar, value in zip(bars, values):
             axis.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:.3f}", ha="center", va="bottom", fontsize=8)
         axis.text(0.5, -0.22, note, transform=axis.transAxes, ha="center", va="top", fontsize=8.5)
-    figure.suptitle("Model v2 selection: predeclared validation-only parameter comparison (T=2020–2021)", fontsize=15, fontweight="bold")
-    figure.text(0.5, -0.02, "Red: prior Model v1 reference. Blue: selected Model v2. No T=2022–2024 row was read for this selection.", ha="center", fontsize=9)
+    figure.suptitle("Final-model selection: predeclared validation-only parameter comparison (T=2020–2021)", fontsize=15, fontweight="bold")
+    figure.text(0.5, -0.02, "Red: prior candidate reference. Blue: final selected model. No T=2022–2024 row was read for this selection.", ha="center", fontsize=9)
     return figure
 
 
@@ -102,8 +102,8 @@ def plot_v1_v2_year_comparison(result: dict[str, Any]) -> plt.Figure:
     for axis, (key, title, note) in zip(axes, metric_specs):
         v1 = [candidates[V1_NAME]["metrics"]["by_validation_year"][str(year)][key] for year in years]
         v2 = [candidates[V2_NAME]["metrics"]["by_validation_year"][str(year)][key] for year in years]
-        axis.bar(positions - width / 2, v1, width, label="Model v1 reference", color="#9B2226")
-        axis.bar(positions + width / 2, v2, width, label="Selected Model v2", color="#33658A")
+        axis.bar(positions - width / 2, v1, width, label="Prior candidate reference", color="#9B2226")
+        axis.bar(positions + width / 2, v2, width, label="Final selected model", color="#33658A")
         axis.set_xticks(positions, [str(year) for year in years])
         axis.set_title(title, fontweight="bold")
         axis.grid(axis="y", alpha=0.25)
@@ -111,7 +111,7 @@ def plot_v1_v2_year_comparison(result: dict[str, Any]) -> plt.Figure:
         axis.text(0.5, -0.22, note, transform=axis.transAxes, ha="center", va="top", fontsize=8.5)
     axes[0].set_ylabel("Validation value")
     axes[-1].legend(loc="upper left", fontsize=8)
-    figure.suptitle("Prior Model v1 versus selected Model v2 by validation year", fontsize=15, fontweight="bold")
+    figure.suptitle("Prior candidate versus final selected model by validation year", fontsize=15, fontweight="bold")
     figure.text(0.5, -0.02, "Both configurations use identical train/validation rows and a fixed random seed; this is not final-test evidence.", ha="center", fontsize=9)
     return figure
 
@@ -132,5 +132,5 @@ def build_model_v2_validation_figures() -> dict[str, str]:
     }
     for path in outputs.values():
         if not path.is_file() or path.stat().st_size < 5_000:
-            raise ValueError(f"Model v2 figure was not written correctly: {path}")
+            raise ValueError(f"Final-model figure was not written correctly: {path}")
     return {name: path.relative_to(ROOT).as_posix() for name, path in outputs.items()}

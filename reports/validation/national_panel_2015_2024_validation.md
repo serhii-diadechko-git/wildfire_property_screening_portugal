@@ -1,7 +1,7 @@
 # National 2015-2024 cell-year panel validation
 
 > **Historical stage record:** this panel gate preceded the completed EDA,
-> Model V2 selection, held-out final test, operational refit, and 2026 annual
+> Final-model selection, held-out final test, operational refit, and 2026 annual
 > estimate. It remains provenance for the panel build, not the current project
 > readiness decision.
 

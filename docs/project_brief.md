@@ -42,7 +42,7 @@ It does not recommend the purchase of a specific property.
 
 In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
 
-> Model V2 selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once V2 was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
+> Final-model selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once the final model was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
 
@@ -56,7 +56,7 @@ There is no temporal gap between the historical-fire window and predictor year `
 
 ## Final model finding and responsible-use boundary
 
-Model V2 is a nine-feature two-stage burned-share regression model. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. In the complete `T=2020-2021` validation comparison, V2 improved all-row MAE (0.014674 to 0.014027) and burned-share-mass capture@20% (56.23% to 60.82%) over the previous nine-feature candidate configuration. Its post-selection final test at `T=2022-2024` improved all-row MAE over the historical baseline (0.020913 vs 0.029186) and captured 57.16% of observed burned-share mass in the tie-aware top 20%, versus 40.17% for the baseline; RMSE was marginally higher (0.110995 vs 0.110595). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a target-free `2026` estimate using T=2025 inputs. Its independent operational evaluation requires the observed ICNF 2026 outcome. The historical 2016-2025 recurrence screening remains supporting context. See `docs/model_v2_validation_selection.md`, `reports/validation/final_temporal_test_2022_2024.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
+The final nine-feature model is a two-stage burned-share regression model. It combines histogram-gradient-boosting decision-tree ensembles: a classifier for whether any burning occurs and a regressor for the burned share conditional on burning. This design accommodates many zero outcomes while allowing non-linear relationships and interactions among fire history, landscape, terrain, and climate, without imposing a fixed linear effect. In the complete `T=2020-2021` validation comparison, it improved all-row MAE (0.014674 to 0.014027) and burned-share-mass capture@20% (56.23% to 60.82%) over the previous nine-feature candidate configuration. Its post-selection final test at `T=2022-2024` improved all-row MAE over the historical baseline (0.020913 vs 0.029186) and captured 57.16% of observed burned-share mass in the tie-aware top 20%, versus 40.17% for the baseline; RMSE was marginally higher (0.110995 vs 0.110595). It provides a continuous comparative annual estimate, but not a calibrated probability, safety rating, property-level forecast, or purchase recommendation. The model was refit through outcome 2025 and produced a target-free `2026` estimate using T=2025 inputs. Its independent operational evaluation requires the observed ICNF 2026 outcome. The historical 2016-2025 recurrence screening remains supporting context. See `docs/model_v2_validation_selection.md`, `reports/validation/final_temporal_test_2022_2024.md`, `reports/validation/operational_forecast_readiness.md`, and `reports/validation/operational_forecast_2026_validation.md`.
 
 ## Scope
 
@@ -100,7 +100,7 @@ transparent historical-recurrence baseline. The target is the continuous
 `burned_share_next_year`; it is not a property-level probability or a safety
 classification.
 
-The hypothesis received partial support. Model V2 was selected from the
+The hypothesis received partial support. The final nine-feature model was selected from the
 development validation period and then evaluated once on the held-out final
 period `T=2022-2024`: it reduced all-row MAE from 0.029186 to 0.020913 and
 increased tie-aware burned-share-mass capture@20% from 40.17% to 57.16% versus

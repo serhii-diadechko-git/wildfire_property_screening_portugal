@@ -135,7 +135,7 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
     """Show validation evidence for the selected model and transparent comparator."""
     metrics = model_selection["metrics"]
     keys = ["historical_recurrence_baseline", "nine_feature_hurdle"]
-    labels = ["Historical\nrecurrence", "Selected Model v2\nnine-feature regression"]
+    labels = ["Historical\nrecurrence", "Final nine-feature\nmodel"]
     maes = [metrics[key]["overall"]["mae_all"] for key in keys]
     rmses = [metrics[key]["overall"]["rmse_all"] for key in keys]
     captures = [metrics[key]["overall"]["capture_at_20_percent"] for key in keys]
@@ -161,7 +161,7 @@ def build_model_comparison_figure(model_selection: dict[str, object]) -> Path:
     fig.text(
         0.5,
         -0.05,
-        "The validation-selected Model v2 two-stage regression is compared with the transparent historical-recurrence baseline. "
+        "The final nine-feature two-stage regression is compared with the transparent historical-recurrence baseline. "
         "This supports cautious annual comparative estimates; historical recurrence remains descriptive context.",
         ha="center", va="top", fontsize=9.5,
     )

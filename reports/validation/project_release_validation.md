@@ -38,7 +38,7 @@ The runner writes local, Git-ignored, plain-language stage logs in
 
 ## Release boundary
 
-The retained analytical state is the accepted nine-feature Model V2, its
+The retained analytical state is the final nine-feature model, its
 transparent historical-recurrence benchmark, and the documented annual update
 cycle. The 2026 output is a target-free comparative estimate, pending its
 independent evaluation when the observed ICNF 2026 outcome is available.

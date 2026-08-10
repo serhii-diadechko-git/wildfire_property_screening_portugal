@@ -99,7 +99,7 @@ def build_model_diagnostics() -> dict[str, object]:
     comparison = model_comparison_frame(metrics).rename(
         index={
             "historical_recurrence_baseline": "Historical recurrence baseline",
-            "nine_feature_hurdle": "Nine-feature Model v2",
+            "nine_feature_hurdle": "Final nine-feature model",
         }
     )
     by_year = _by_year_metrics_frame(metrics)

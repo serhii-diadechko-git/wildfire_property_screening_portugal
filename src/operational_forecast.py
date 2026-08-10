@@ -215,7 +215,7 @@ def build_labeled_nine_feature_panel() -> dict[str, Any]:
 
 
 def refit_operational_model() -> dict[str, Any]:
-    """Refit the validation-selected Model v2 specification through outcome 2025."""
+    """Refit the validation-selected final nine-feature specification through outcome 2025."""
     panel_manifest = build_labeled_nine_feature_panel()
     columns = ["observation_year", *PREDICTOR_COLUMNS, TARGET_COLUMN]
     frame = pd.read_parquet(LABELED_PANEL_PATH, columns=columns)
@@ -668,7 +668,7 @@ def write_forecast_validation_report(validation: dict[str, Any]) -> None:
         "",
         "## Interpretation and limitation",
         "",
-        "This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. Model v2 was selected on development validation, so its independent operational evaluation requires the observed ICNF 2026 outcome; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.",
+        "This is a year-specific comparative estimated burned share for broad 1 km mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. The final nine-feature model was selected on development validation, so its independent operational evaluation requires the observed ICNF 2026 outcome; use ranks and estimates cautiously alongside the historical recurrence layer and official/local information.",
     ]
     FORECAST_VALIDATION_REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -717,9 +717,9 @@ def write_readiness_report(model_metadata: dict[str, Any], preflight: dict[str, 
         "",
         "## Fixed model",
         "",
-        f"- Model: Model v2 nine-feature two-stage burned-share regression, refit on predictor years T={LABELED_YEARS[0]}-{LABELED_YEARS[-1]}, with observed ICNF outcomes 2011-2025.",
+        f"- Model: final nine-feature two-stage burned-share regression, refit on predictor years T={LABELED_YEARS[0]}-{LABELED_YEARS[-1]}, with observed ICNF outcomes 2011-2025.",
         f"- Artifact: `{model_metadata['model_path']}` (SHA-256 `{model_metadata['model_sha256']}`).",
-        "- Model v2 was selected using the complete T=2020-2021 development validation comparison; its independent operational evaluation is due after the observed ICNF 2026 outcome is available.",
+        "- The final nine-feature model was selected using the complete T=2020-2021 development validation comparison; its independent operational evaluation is due after the observed ICNF 2026 outcome is available.",
         "",
         f"## {preflight['forecast_year']} scoring contract",
         "",

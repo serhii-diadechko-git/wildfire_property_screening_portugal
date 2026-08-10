@@ -1,14 +1,14 @@
-# Model V2 validation-selection record
+# Final nine-feature model selection record
 
 ## Decision
 
-**Model V2** is the validation-selected nine-feature two-stage regression
+The **final nine-feature model** is the validation-selected two-stage regression
 configuration used by the operational 2026 estimate. It replaced the prior
-Model v1 parameter configuration after a predeclared comparison on the full
+candidate parameter configuration after a predeclared comparison on the full
 development validation period only: predictor years `T=2020-2021`.
 
 The selection decision did **not** read, fit, tune, score, or report rows from
-`T=2022-2024`. Only after V2 was frozen was it evaluated once on that held-out
+`T=2022-2024`. Only after the final model was frozen was it evaluated once on that held-out
 period; that separate evidence is recorded below and in
 `reports/validation/final_temporal_test_2022_2024.md`.
 
@@ -27,10 +27,10 @@ period; that separate evidence is recorded below and in
 
 | Configuration | All-row MAE | All-row RMSE | Positive-row MAE | Positive-cell capture@20% | Burned-share-mass capture@20% |
 |---|---:|---:|---:|---:|---:|
-| Model v1 reference | 0.014674 | 0.069598 | 0.207624 | 55.62% | 56.23% |
-| **Model V2 selected** | **0.014027** | **0.069442** | 0.207657 | **58.22%** | **60.82%** |
+| Prior candidate reference | 0.014674 | 0.069598 | 0.207624 | 55.62% | 56.23% |
+| **Final nine-feature model selected** | **0.014027** | **0.069442** | 0.207657 | **58.22%** | **60.82%** |
 
-Model V2 was selected because it has the lowest primary all-row MAE and the
+The final nine-feature model was selected because it has the lowest primary all-row MAE and the
 strongest two ranking diagnostics among the tested configurations, while also
 slightly lowering RMSE. Its positive-row MAE is essentially unchanged
 (0.000033 higher), so this is a practical comparative-screening improvement,
@@ -38,7 +38,7 @@ not proof of a universally best wildfire model.
 
 ## Post-selection held-out test
 
-After the validation decision was fixed, Model V2 was evaluated once on
+After the validation decision was fixed, the final nine-feature model was evaluated once on
 `T=2022-2024` (267,336 rows). It improved all-row MAE over the historical
 recurrence baseline, but its RMSE was marginally higher and high-burn outcomes
 remained difficult. The tie-aware top-20% burned-share-mass capture was 57.16%
@@ -46,7 +46,7 @@ for V2 versus 40.17% for the baseline. This supports comparative screening, not
 precise local forecasting. These final-test results were not used to alter V2
 parameters.
 
-## Model V2 parameters
+## Final-model parameters
 
 The model combines two histogram-gradient-boosting tree ensembles. One estimates
 whether a cell is likely to have any burned share; the other estimates the
@@ -70,7 +70,7 @@ python scripts/run_hyperparameter_experiments.py --full-training --run-name full
 python scripts/build_model_v2_validation_figures.py
 ```
 
-The first independent evaluation of the published Model V2 operational score is
+The first independent evaluation of the published final-model operational score is
 possible only after ICNF publishes the observed 2026 burned-area outcome. Until
 then, the 2026 layer is a target-free comparative estimate, not validated
 future performance.
