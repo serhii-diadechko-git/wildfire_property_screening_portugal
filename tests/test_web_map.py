@@ -79,8 +79,13 @@ class WebMapTests(unittest.TestCase):
         stylesheet = (root / "web" / "styles.css").read_text(encoding="utf-8")
         self.assertIn("OpenStreetMap Standard", client)
         self.assertIn("OpenStreetMap Humanitarian", client)
+        self.assertIn("Terrain (Esri World Topographic)", client)
+        self.assertIn("Satellite imagery (Esri World Imagery)", client)
         self.assertIn("No online basemap", client)
+        self.assertIn("opacity-control", client)
+        self.assertIn("popupOffsetFor", client)
         self.assertIn("min-height: 100vh", stylesheet)
+        self.assertIn("Close  ×", stylesheet)
 
 
 if __name__ == "__main__":
