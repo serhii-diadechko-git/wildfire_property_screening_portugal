@@ -25,9 +25,10 @@ model, or expose the ICNF structural-hazard comparison layer.
   bands. These are relative comparison bands, not safety categories.
 - **Click inspection:** the selected cell's estimated burned share, source
   years, and descriptive 1/3/5 km context summaries.
-- **Basemap:** OpenStreetMap tiles, loaded only for the view currently used in
+- **Basemap selector:** OpenStreetMap Standard, OpenStreetMap Humanitarian,
+  or no online basemap. Tiles are loaded only for the view currently used in
   the browser. Visible OpenStreetMap attribution is mandatory. This local
-  viewer does not prefetch or package OSM tiles.
+  viewer does not prefetch or package tiles.
 
 The browser map is useful for accessible presentation and broad-area research.
 QGIS remains the technical GIS review interface. See the repository

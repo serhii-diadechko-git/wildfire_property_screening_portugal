@@ -73,6 +73,15 @@ class WebMapTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("2026 estimated comparative wildfire exposure", response.text)
 
+    def test_browser_client_has_documented_basemap_choices_and_full_view_shell(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        client = (root / "web" / "app.js").read_text(encoding="utf-8")
+        stylesheet = (root / "web" / "styles.css").read_text(encoding="utf-8")
+        self.assertIn("OpenStreetMap Standard", client)
+        self.assertIn("OpenStreetMap Humanitarian", client)
+        self.assertIn("No online basemap", client)
+        self.assertIn("min-height: 100vh", stylesheet)
+
 
 if __name__ == "__main__":
     unittest.main()

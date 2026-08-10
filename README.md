@@ -104,9 +104,9 @@ python scripts/run_exposure_api.py
 Open `http://127.0.0.1:8000` for the interactive map. It displays the 2026
 estimate as three comparative percentile bands and lets a user click a 1 km
 cell for its estimate and descriptive 1/3/5 km context summaries. The
-OpenStreetMap background needs an internet connection; the exposure layer and
-API remain local. Use it to narrow broad research areas, not to assess a
-specific property or make a purchase decision.
+OpenStreetMap Standard/Humanitarian background selector needs an internet
+connection; the exposure layer and API remain local. Use it to narrow broad
+research areas, not to assess a specific property or make a purchase decision.
 
 Open `http://127.0.0.1:8000/docs` for the interactive API documentation. The
 API accepts coordinates, not addresses, by design: address geocoding would

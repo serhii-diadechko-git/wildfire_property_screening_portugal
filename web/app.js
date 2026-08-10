@@ -4,10 +4,21 @@
   "use strict";
   const colors = { lower: "#ead9a0", intermediate: "#eca900", higher: "#a6222a" };
   const map = L.map("map", { preferCanvas: true, zoomControl: true, minZoom: 5, maxZoom: 13 });
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  const standard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap contributors</a>",
-  }).addTo(map);
+  });
+  const humanitarian = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap contributors</a>, tiles style by <a href=\"https://www.hotosm.org/\" target=\"_blank\" rel=\"noopener\">Humanitarian OpenStreetMap Team</a>",
+  });
+  const noBasemap = L.layerGroup();
+  standard.addTo(map);
+  L.control.layers({
+    "OpenStreetMap Standard": standard,
+    "OpenStreetMap Humanitarian": humanitarian,
+    "No online basemap": noBasemap,
+  }, {}, { position: "topright", collapsed: false }).addTo(map);
 
   const percent = (value, digits = 2) => `${(Number(value) * 100).toFixed(digits)}%`;
   const text = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" })[char]);
