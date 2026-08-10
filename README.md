@@ -32,6 +32,20 @@ The selected **nine-feature Model V2** was frozen after development validation o
 
 The model improved average error and the comparative ranking of observed burned share, but larger/extreme outcomes remained difficult. The conclusion is therefore limited: it can support cautious broad-area comparison, not precise local forecasting. Read the [model-selection record](docs/model_v2_validation_selection.md) and [final temporal evaluation report](reports/validation/final_temporal_test_2022_2024.md).
 
+### Temporal coverage and current estimate
+
+The registered ICNF annual burned-area records cover calendar years **2000–2025**. They are not all outcome labels: the earlier years supply the ten-year historical-fire context required for the first labelled predictor year.
+
+| Stage | Predictor years `T` | Observed outcome years `T+1` | Purpose |
+|---|---:|---:|---|
+| Development fitting | 2010–2019 | 2011–2020 | Fit the predeclared candidate methods. |
+| Development validation | 2020–2021 | 2021–2022 | Select the accepted Model V2. |
+| Held-out final test | 2022–2024 | 2023–2025 | Evaluate the frozen Model V2 once. |
+| Operational refit | 2010–2024 | 2011–2025 | Refit the unchanged selected specification using all completed labelled rows. |
+| Current annual estimate | 2025 | 2026: not yet observed | Produce the target-free 2026 comparative estimate. |
+
+For example, the 2026 layer uses predictor-year `T=2025` inputs and historical fire years 2015–2024 only. It can be independently evaluated only after ICNF publishes the observed 2026 burned-area outcome. See the detailed [annual operational cycle](docs/operational_forecast_cycle.md).
+
 ## How the method works
 
 ### Data sources and feature roles
