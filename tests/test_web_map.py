@@ -83,9 +83,14 @@ class WebMapTests(unittest.TestCase):
         self.assertIn("Satellite imagery (Esri World Imagery)", client)
         self.assertIn("No online basemap", client)
         self.assertIn("opacity-control", client)
-        self.assertIn("popupOffsetFor", client)
+        self.assertIn("applyHighlights", client)
+        self.assertIn("intersecting_cell_ids", client)
+        self.assertIn("const highlightTiers = new Map()", client)
+        self.assertIn("layer.setStyle(style(layer.feature))", client)
+        self.assertNotIn("L.geoJSON(sourceLayer.feature", client)
+        self.assertIn('selectionTitle.textContent = "Cell details"', client)
         self.assertIn("min-height: 100vh", stylesheet)
-        self.assertIn("Close  ×", stylesheet)
+        self.assertIn("highlight-three", stylesheet)
 
 
 if __name__ == "__main__":

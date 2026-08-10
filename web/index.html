@@ -26,10 +26,15 @@
           <li><span class="swatch higher"></span>Higher (80&ndash;100%)</li>
         </ul>
       </aside>
-      <section class="map-card explanation">
-        <h2>How to use this map</h2>
-        <p>Click a cell to see its 2026 comparative estimate and descriptive 1, 3, and 5 km context summaries. The map helps narrow broad areas for further research; it is not a property-level forecast, safety guarantee, insurance quote, or buy/do-not-buy recommendation.</p>
-        <p>The estimate is target-free: 2026 observed burned-area data are not yet available. The displayed score is the estimated share of the cell&rsquo;s land area that may burn, not a probability.</p>
+      <section class="map-card selection" aria-live="polite">
+        <div class="selection-heading">
+          <h2 id="selection-title">Cell details</h2>
+          <button id="clear-selection" type="button" hidden>Clear</button>
+        </div>
+        <div id="selection-content">
+          <p>Click a 1 km cell to inspect its 2026 comparative estimate.</p>
+          <p class="card-note">The map will also highlight the nearby 3 km and 5 km context cells. These are surrounding-area summaries, not a second grid or a property assessment.</p>
+        </div>
       </section>
     </main>
     <footer class="app-footer">

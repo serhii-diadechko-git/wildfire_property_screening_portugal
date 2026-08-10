@@ -23,8 +23,11 @@ model, or expose the ICNF structural-hazard comparison layer.
 - **2026 comparative estimate:** 89,112 1 km cells, displayed as lower
   (0-50%), intermediate (50-80%), and higher (80-100%) national percentile
   bands. These are relative comparison bands, not safety categories.
-- **Click inspection:** the selected cell's estimated burned share, source
-  years, and descriptive 1/3/5 km context summaries.
+- **Selected-cell card:** clicking a cell fills a persistent map card with its
+  estimated burned share, source year, and plain-language 1/3/5 km context
+  summaries. The selected cell is yellow, cells within 3 km are cyan, and the
+  outer 3-5 km context cells are blue. The colours are a temporary selection
+  overlay; they do not alter the exposure bands.
 - **Basemap selector:** OpenStreetMap Standard, OpenStreetMap Humanitarian,
   Esri World Topographic terrain, Esri World Imagery satellite, or no online
   basemap. Tiles are loaded only for the view currently used in the browser.

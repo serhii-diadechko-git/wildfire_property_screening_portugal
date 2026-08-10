@@ -10,6 +10,29 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/v1/map/2026/cells.geojson": {
+      "get": {
+        "tags": [
+          "web map"
+        ],
+        "summary": "Return the reduced browser map asset for the published 2026 estimate.",
+        "description": "Serve a prebuilt 2026-only map derivative without loading it into memory.",
+        "operationId": "web_map_cells_v1_map_2026_cells_geojson_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Build the local web-map asset after reproducing outputs."
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -144,6 +167,14 @@
           "mean_fire_years_history_10y_2km": {
             "type": "number",
             "title": "Mean Fire Years History 10Y 2Km"
+          },
+          "intersecting_cell_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Intersecting Cell Ids",
+            "description": "Canonical 1 km cells with positive overlap with the metric radius around the requested coordinate."
           }
         },
         "type": "object",
@@ -154,7 +185,8 @@
           "mean_predicted_burned_share_next_year",
           "mean_predicted_exposure_percentile",
           "higher_estimated_exposure_area_share",
-          "mean_fire_years_history_10y_2km"
+          "mean_fire_years_history_10y_2km",
+          "intersecting_cell_ids"
         ],
         "title": "BufferSummary",
         "description": "Area-weighted descriptive summary around the requested coordinate."

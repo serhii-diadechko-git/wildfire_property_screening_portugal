@@ -14,7 +14,10 @@ the same validated output; neither is a new model or changes validated data.
   percentile;
 - observed 2016-2025 historical recurrence context; and
 - intersection-area-weighted context summaries within the requested 1 km,
-  3 km, and 5 km radii.
+  3 km, and 5 km radii; and
+- the canonical cell identifiers with positive overlap in each metric context
+  radius, so the local browser map can highlight the selected surrounding
+  cells precisely.
 
 The default response exposes the project estimate and historical recurrence
 only. It **does not expose the ICNF structural-hazard raster or derived

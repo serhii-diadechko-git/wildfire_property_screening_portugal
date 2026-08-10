@@ -37,6 +37,7 @@ class ExposureApiTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["containing_cell"]["cell_id"], "A")
         self.assertEqual([item["radius_km"] for item in payload["context_buffers"]], [1.0, 3.0, 5.0])
+        self.assertEqual(payload["context_buffers"][0]["intersecting_cell_ids"], ["A", "B"])
         self.assertEqual(payload["containing_cell"]["estimated_comparative_exposure_band"], "Lower estimated comparative exposure percentile (0-50%)")
 
     def test_lookup_rejects_invalid_or_outside_locations(self) -> None:

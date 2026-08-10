@@ -64,6 +64,9 @@ class BufferSummary(BaseModel):
     mean_predicted_exposure_percentile: float
     higher_estimated_exposure_area_share: float
     mean_fire_years_history_10y_2km: float
+    intersecting_cell_ids: list[str] = Field(
+        description="Canonical 1 km cells with positive overlap with the metric radius around the requested coordinate."
+    )
 
 
 class ExposureResponse(BaseModel):
@@ -154,6 +157,7 @@ class ExposureStore:
             mean_predicted_exposure_percentile=weighted_mean("predicted_exposure_percentile"),
             higher_estimated_exposure_area_share=higher_share,
             mean_fire_years_history_10y_2km=weighted_mean("fire_years_history_10y_2km"),
+            intersecting_cell_ids=sorted(candidates["cell_id"].astype(str).tolist()),
         )
 
 
