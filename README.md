@@ -88,6 +88,24 @@ Use the QGIS layers in this order:
 
 The official ICNF structural-hazard layer is a separate official 25 m landscape classification summarized to the predominant class per 1 km cell. It is neither this project's prediction nor an observed burned-area map for one year. See [qgis/README.md](qgis/README.md).
 
+## Local exposure lookup API
+
+After the documented reproduction workflow has published the 2026 spatial
+outputs, a small read-only REST API can return the containing 1 km cell and
+1/3/5 km context summaries for a coordinate. It is a presentation interface
+over the validated outputs; it does not retrain the model or expose the ICNF
+structural-hazard comparison layer.
+
+```text
+python scripts/validate_exposure_api.py
+python scripts/run_exposure_api.py
+```
+
+Open `http://127.0.0.1:8000/docs` for the interactive OpenAPI documentation.
+The API accepts coordinates, not addresses, by design: address geocoding would
+require a separately governed provider and privacy terms. See the complete
+[local exposure API guide](docs/exposure_api_guide.md).
+
 ## Quick start
 
 Use Python 3.13 and run commands from the cloned repository root. The project uses relative paths and works from Windows, Linux, or macOS.

@@ -1,0 +1,320 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Portugal Wildfire Exposure Screening API",
+    "description": "Read-only lookup for the published 2026 mainland Portugal comparative wildfire-exposure layer. Coordinates only: address geocoding is intentionally not bundled because it requires a separate provider, privacy policy, and usage terms.",
+    "license": {
+      "name": "Project code: MIT",
+      "url": "https://github.com/serhii-diadechko-git/wildfire_property_screening_portugal/blob/main/LICENSE"
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/exposure": {
+      "get": {
+        "tags": [
+          "exposure lookup"
+        ],
+        "summary": "Look up the containing 1 km cell and 1/3/5 km context summaries.",
+        "operationId": "exposure_v1_exposure_get",
+        "parameters": [
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 15.0,
+              "minimum": -31.0,
+              "description": "WGS84 longitude in decimal degrees.",
+              "title": "Longitude"
+            },
+            "description": "WGS84 longitude in decimal degrees."
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 55.0,
+              "minimum": 25.0,
+              "description": "WGS84 latitude in decimal degrees.",
+              "title": "Latitude"
+            },
+            "description": "WGS84 latitude in decimal degrees."
+          },
+          {
+            "name": "buffers_km",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Comma-separated context radii in kilometres; default: 1,3,5.",
+              "default": "1,3,5",
+              "title": "Buffers Km"
+            },
+            "description": "Comma-separated context radii in kilometres; default: 1,3,5."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExposureResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Coordinate is outside the canonical mainland Portugal grid."
+          },
+          "503": {
+            "description": "Published local spatial outputs are not available."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BufferSummary": {
+        "properties": {
+          "radius_km": {
+            "type": "number",
+            "title": "Radius Km"
+          },
+          "intersecting_cell_count": {
+            "type": "integer",
+            "title": "Intersecting Cell Count"
+          },
+          "intersected_grid_area_sq_km": {
+            "type": "number",
+            "title": "Intersected Grid Area Sq Km"
+          },
+          "mean_predicted_burned_share_next_year": {
+            "type": "number",
+            "title": "Mean Predicted Burned Share Next Year"
+          },
+          "mean_predicted_exposure_percentile": {
+            "type": "number",
+            "title": "Mean Predicted Exposure Percentile"
+          },
+          "higher_estimated_exposure_area_share": {
+            "type": "number",
+            "title": "Higher Estimated Exposure Area Share"
+          },
+          "mean_fire_years_history_10y_2km": {
+            "type": "number",
+            "title": "Mean Fire Years History 10Y 2Km"
+          }
+        },
+        "type": "object",
+        "required": [
+          "radius_km",
+          "intersecting_cell_count",
+          "intersected_grid_area_sq_km",
+          "mean_predicted_burned_share_next_year",
+          "mean_predicted_exposure_percentile",
+          "higher_estimated_exposure_area_share",
+          "mean_fire_years_history_10y_2km"
+        ],
+        "title": "BufferSummary",
+        "description": "Area-weighted descriptive summary around the requested coordinate."
+      },
+      "CellEstimate": {
+        "properties": {
+          "cell_id": {
+            "type": "string",
+            "title": "Cell Id"
+          },
+          "forecast_year": {
+            "type": "integer",
+            "title": "Forecast Year"
+          },
+          "prediction_input_year": {
+            "type": "integer",
+            "title": "Prediction Input Year"
+          },
+          "predicted_burned_share_next_year": {
+            "type": "number",
+            "title": "Predicted Burned Share Next Year",
+            "description": "Continuous estimated share of the cell land area expected to burn in the forecast year; not a probability."
+          },
+          "predicted_exposure_percentile": {
+            "type": "number",
+            "title": "Predicted Exposure Percentile",
+            "description": "National relative rank of the annual estimated burned share, from 0 to 1."
+          },
+          "estimated_comparative_exposure_band": {
+            "type": "string",
+            "title": "Estimated Comparative Exposure Band"
+          },
+          "historical_evidence_period": {
+            "type": "string",
+            "title": "Historical Evidence Period"
+          },
+          "fire_years_history_10y_2km": {
+            "type": "integer",
+            "title": "Fire Years History 10Y 2Km"
+          },
+          "historical_exposure_band": {
+            "type": "string",
+            "title": "Historical Exposure Band"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cell_id",
+          "forecast_year",
+          "prediction_input_year",
+          "predicted_burned_share_next_year",
+          "predicted_exposure_percentile",
+          "estimated_comparative_exposure_band",
+          "historical_evidence_period",
+          "fire_years_history_10y_2km",
+          "historical_exposure_band"
+        ],
+        "title": "CellEstimate",
+        "description": "Annual comparative estimate and historical evidence for one 1 km cell."
+      },
+      "ExposureResponse": {
+        "properties": {
+          "api_version": {
+            "type": "string",
+            "title": "Api Version"
+          },
+          "request_longitude": {
+            "type": "number",
+            "title": "Request Longitude"
+          },
+          "request_latitude": {
+            "type": "number",
+            "title": "Request Latitude"
+          },
+          "grid_x_epsg_3763": {
+            "type": "number",
+            "title": "Grid X Epsg 3763"
+          },
+          "grid_y_epsg_3763": {
+            "type": "number",
+            "title": "Grid Y Epsg 3763"
+          },
+          "containing_cell": {
+            "$ref": "#/components/schemas/CellEstimate"
+          },
+          "context_buffers": {
+            "items": {
+              "$ref": "#/components/schemas/BufferSummary"
+            },
+            "type": "array",
+            "title": "Context Buffers"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "api_version",
+          "request_longitude",
+          "request_latitude",
+          "grid_x_epsg_3763",
+          "grid_y_epsg_3763",
+          "containing_cell",
+          "context_buffers",
+          "limitations"
+        ],
+        "title": "ExposureResponse",
+        "description": "Read-only response for a mainland Portugal coordinate lookup."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
