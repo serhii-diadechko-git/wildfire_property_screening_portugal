@@ -18,7 +18,7 @@ A property purchase is a long-term and expensive decision. Wildfire exposure dif
 
 ## Project goal
 
-Use public geospatial data and machine-learning methods to estimate comparative next-calendar-year burned-share exposure across mainland Portugal, alongside a transparent historical screening output. Historical records are the training/testing evidence; the reusable model is scored only after the prior year's required inputs are complete.
+Build a reproducible data-science, machine-learning, and GIS workflow that helps a prospective buyer narrow **broad mainland Portugal location-search areas** for further wildfire-exposure research. It combines a comparative annual estimate with observed historical recurrence and an official structural-hazard reference. Historical records are the training/testing evidence; the reusable model is scored only after the prior year's required inputs are complete.
 
 ## Intended use
 
@@ -45,6 +45,12 @@ In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 m
 > Final-model selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once the final model was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
+
+### Capstone purpose versus scientific modelling question
+
+The **capstone purpose** is decision support at the broad-area search stage: compare consistent national evidence, narrow an initial location search, and then investigate shortlisted areas locally. It is not a property recommendation system.
+
+The **scientific modelling question** is narrower: whether recent fire recurrence, landscape context, terrain, and predictor-year climate can estimate comparative next-year burned share better than a transparent recurrence-only benchmark. The model result is one source of evidence within the capstone workflow; it is not causal proof, a safety classification, or the final property decision.
 
 - **Continuous target:** `burned_share_next_year`, the share of the cell burned in `T+1`.
 - **Classification target:** `burned_next_year`, derived later from `burned_share_next_year` after inspecting the continuous-target distribution.
@@ -83,22 +89,23 @@ The final nine-feature model is a two-stage burned-share regression model. It co
 - alternative feature sets or tuning beyond the retained nine-feature model,
   unless evaluated as a separately versioned research change.
 
-## Business and data questions
+## Capstone decision and data questions
 
-1. Which eligible residential areas have the lowest relative wildfire exposure?
-2. Which areas remain comparatively low-exposure across different years?
-3. Which environmental and historical variables are most associated with wildfire exposure?
-4. How reliable is the model in future years and held-out geographic areas?
-5. Which locations should be shortlisted, reviewed with caution, deprioritised, or marked as insufficient evidence?
+1. Which broad areas should be prioritised for further local location research based on comparative wildfire-exposure evidence?
+2. Which patterns remain comparatively lower or higher across different completed years?
+3. Does the final nine-feature model improve on historical recurrence alone in held-out future years?
+4. How stable are its comparative estimates and limitations across time?
+5. Which broad areas should be shortlisted for local verification, investigated with caution, or marked as insufficient evidence?
 
-## Research hypothesis and final evidence
+## Scientific modelling hypothesis and final evidence
 
-The project tests whether recent wildfire recurrence, landscape context,
+The scientific component tests whether recent wildfire recurrence, landscape context,
 terrain, and predictor-year climate conditions can estimate the comparative
 next-year burned share of mainland Portugal 1 km cells better than a
 transparent historical-recurrence baseline. The target is the continuous
 `burned_share_next_year`; it is not a property-level probability or a safety
-classification.
+classification. This limited empirical question supports the capstone's
+broad-area screening purpose; it does not define a buy/do-not-buy decision.
 
 The hypothesis received partial support. The final nine-feature model was selected from the
 development validation period and then evaluated once on the held-out final
@@ -126,7 +133,7 @@ accuracy label for the project model.
 
 ## Recommendation frame
 
-The completed evidence supports the published 2026 annual comparative exposure layer for broad location comparison. Its retained model is not a buyer recommendation. Each published annual estimate must carry its forecast year, input cutoff, model version, and calibration limitation.
+The completed evidence supports the published 2026 annual comparative exposure layer for broad location comparison. Its retained model is not a buyer recommendation. Each published annual estimate must carry its forecast year, input cutoff, documented model specification, and calibration limitation.
 
 The historical screening is most useful when an area has:
 

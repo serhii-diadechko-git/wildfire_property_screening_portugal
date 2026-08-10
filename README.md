@@ -14,9 +14,15 @@ The project does **not** identify a safe area, certify a property, estimate insu
 | Current annual estimate | A target-free 2026 comparative estimated burned-share layer derived from 2025 predictor inputs. |
 | Supporting GIS evidence | Observed 2016–2025 fire recurrence and an official ICNF structural-hazard reference layer. |
 
-## Research question and conclusion
+## Capstone purpose, scientific question, and conclusion
 
-### Research question
+### Capstone purpose
+
+How can a reproducible data-science, machine-learning, and GIS workflow help a prospective buyer **narrow broad mainland Portugal location-search areas** for further local research on wildfire exposure?
+
+The capstone answer is a set of comparable 1 km evidence layers: a target-free annual comparative estimate, observed historical recurrence, and an official ICNF structural-hazard reference. They support an earlier, broad-area research step; they do not determine whether to buy a property.
+
+### Scientific modelling question
 
 Can recent wildfire recurrence, landscape context, terrain, and predictor-year climate estimate the comparative next-year burned share of mainland Portugal 1 km cells better than a transparent historical-recurrence baseline?
 
@@ -30,7 +36,7 @@ The **final nine-feature model** was frozen after development validation on `T=2
 | RMSE | **0.11059** | 0.11100 |
 | Burned-share mass Capture@20% | 40.17% | **57.16%** |
 
-The model improved average error and the comparative ranking of observed burned share, but larger/extreme outcomes remained difficult. The conclusion is therefore limited: it can support cautious broad-area comparison, not precise local forecasting. Read the [model-selection record](docs/model_v2_validation_selection.md) and [final temporal evaluation report](reports/validation/final_temporal_test_2022_2024.md).
+The final model improved average error and the comparative ranking of observed burned share, but larger/extreme outcomes remained difficult. Scientifically, this is partial support for a comparative predictive relationship—not causal proof and not a precise local forecast. For the capstone, the result is useful because it adds a transparent, reproducible annual layer to the broader location-screening workflow. Read the [model-selection record](docs/model_v2_validation_selection.md) and [final temporal evaluation report](reports/validation/final_temporal_test_2022_2024.md).
 
 ### Temporal coverage and current estimate
 
