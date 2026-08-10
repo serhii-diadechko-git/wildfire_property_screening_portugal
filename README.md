@@ -224,6 +224,20 @@ notebooks, documentation, and original figures are released under the
 [MIT License](LICENSE). Every external dataset keeps its provider's own access,
 licence, attribution, and redistribution conditions.
 
+This repository documents an educational data-science capstone. It is not
+offered by the author as a commercial wildfire-risk, insurance, valuation, or
+property-decision service. Its outputs support broad-area location research;
+they must not be presented as a safety guarantee, a property-level assessment,
+or a buy/do-not-buy recommendation. The MIT License applies only to this
+repository's original code and authored materials; it does not grant rights to
+sell, redistribute, or relicense provider data or restricted derivatives.
+
+In particular, the separate official ICNF structural-hazard comparison layer
+is not the project's ML output. Its official layer metadata restricts
+commercialisation and may require express DGT authorisation for other uses.
+Do not include that layer or its derived classes in a commercial product unless
+the required written permission has been obtained.
+
 Obtain provider files from their official sources using your own account where
 required; do not commit credentials or assume that a public dataset may be
 redistributed without checking its terms. The full source-by-source licence,
