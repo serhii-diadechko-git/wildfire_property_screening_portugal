@@ -15,6 +15,10 @@ __pycache__/
 !.env.example
 local_data_paths.json
 
+# Private commercialisation/legal research; intentionally never committed.
+/docs/commercialisation_legal_working_notes.md
+/local_private/
+
 # Data: keep folder structure, not downloaded or generated data
 /data/raw/*
 !/data/raw/.gitkeep
