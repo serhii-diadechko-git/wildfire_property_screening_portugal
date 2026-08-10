@@ -45,6 +45,16 @@ analytical workflows. The 2026 estimate is not a calibrated probability,
 property-level forecast, safety guarantee, insurance estimate, or purchase
 recommendation.
 
+## Browser-map companion
+
+For a simpler local browser presentation of the same validated 2026 estimate,
+run `python scripts/build_web_map_assets.py --overwrite` followed by
+`python scripts/run_exposure_api.py`, then open `http://127.0.0.1:8000`.
+The browser viewer has the annual comparative layer and click inspection only;
+it deliberately does not display the ICNF structural-hazard comparison layer.
+It complements rather than replaces these QGIS projects, which remain the
+technical GIS review and presentation environment.
+
 The historical palette progresses from sand through orange to dark red. It
 deliberately avoids representing lower historical exposure as “safe”. Official
 ICNF class colours are ordered separately and should not be interpreted as a

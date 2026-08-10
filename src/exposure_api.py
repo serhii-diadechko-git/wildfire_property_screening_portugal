@@ -15,12 +15,15 @@ from typing import Annotated
 import geopandas as gpd
 import numpy as np
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from pyproj import Transformer
 from shapely.geometry import Point
 
 from src.operational_forecast_reporting import load_operational_forecast_spatial_artifact
 from src.paths import PROJECT_ROOT
+from src.web_map import WEB_MAP_GEOJSON_PATH
 
 API_TITLE = "Portugal Wildfire Exposure Screening API"
 API_VERSION = "0.1.0"
@@ -30,6 +33,7 @@ HISTORICAL_LAYER = "historical_exposure_screening"
 WGS84_TO_GRID = Transformer.from_crs("EPSG:4326", "EPSG:3763", always_xy=True)
 GRID_TO_WGS84 = Transformer.from_crs("EPSG:3763", "EPSG:4326", always_xy=True)
 DEFAULT_BUFFERS_KM = (1.0, 3.0, 5.0)
+WEB_DIRECTORY = PROJECT_ROOT / "web"
 
 
 class CellEstimate(BaseModel):
@@ -201,6 +205,33 @@ def create_app(store: ExposureStore | None = None) -> FastAPI:
     )
     if store is not None:
         app.state.exposure_store = store
+
+    # The browser client is static. It calls only same-origin, read-only endpoints;
+    # it cannot train, rescore, geocode, or reveal the ICNF structural-hazard layer.
+    app.mount("/web", StaticFiles(directory=WEB_DIRECTORY), name="web")
+
+    @app.get("/", include_in_schema=False)
+    def web_map() -> FileResponse:
+        """Serve the local 2026 comparative-exposure viewer."""
+
+        return FileResponse(WEB_DIRECTORY / "index.html")
+
+    @app.get(
+        "/v1/map/2026/cells.geojson",
+        tags=["web map"],
+        summary="Return the reduced browser map asset for the published 2026 estimate.",
+        responses={503: {"description": "Build the local web-map asset after reproducing outputs."}},
+    )
+    def web_map_cells() -> FileResponse:
+        """Serve a prebuilt 2026-only map derivative without loading it into memory."""
+
+        if not WEB_MAP_GEOJSON_PATH.is_file():
+            raise HTTPException(
+                status_code=503,
+                detail=("The local 2026 web-map asset is unavailable. Run "
+                        "python scripts/build_web_map_assets.py after the documented reproduction workflow."),
+            )
+        return FileResponse(WEB_MAP_GEOJSON_PATH, media_type="application/geo+json")
 
     @app.get("/health", tags=["service"])
     def health(request: Request) -> dict[str, str]:

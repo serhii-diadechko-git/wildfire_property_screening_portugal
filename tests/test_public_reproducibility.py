@@ -72,6 +72,7 @@ class PublicReproducibilityTests(unittest.TestCase):
         self.assertLess(names.index("final temporal test"), names.index("model diagnostics"))
         self.assertLess(names.index("model diagnostics"), names.index("labelled final years"))
         self.assertLess(names.index("final-model evidence"), names.index("labelled final years"))
+        self.assertLess(names.index("operational score"), names.index("local web-map asset"))
         self.assertLess(names.index("final-model selection figures"), names.index("figures"))
         for stage in stages:
             self.assertNotIn("C:\\", " ".join(stage.command))

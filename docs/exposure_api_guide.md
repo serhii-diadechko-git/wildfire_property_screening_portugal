@@ -1,9 +1,9 @@
 # Local exposure lookup API
 
 This is a small, read-only REST API for the published **2026 comparative
-wildfire-exposure** output. It is a convenient interface for a website,
-prototype, or local GIS-adjacent application; it is not a new model and does
-not change any validated data.
+wildfire-exposure** output. It also serves the repository's local browser map
+at `http://127.0.0.1:8000`. Both are convenient presentation interfaces over
+the same validated output; neither is a new model or changes validated data.
 
 ## What it answers
 
@@ -36,6 +36,15 @@ licensing/use restrictions. It also does not geocode or retain addresses.
    ```text
    python scripts/validate_exposure_api.py
    ```
+4. Build the reduced, browser-ready map derivative:
+
+   ```text
+   python scripts/build_web_map_assets.py --overwrite
+   ```
+
+   The derivative is `data/processed/web_map/estimated_comparative_wildfire_exposure_2026.geojson`.
+   It contains only the fields needed to display and inspect the annual
+   estimate. The GeoPackage remains the validated spatial publication.
 
 ## Start the service
 
@@ -46,7 +55,9 @@ python scripts/run_exposure_api.py
 ```
 
 The default host is `127.0.0.1`, so it is reachable only from the local
-machine at `http://127.0.0.1:8000`. Interactive documentation is available at
+machine at `http://127.0.0.1:8000`. The local browser map is at that root URL;
+it uses OpenStreetMap as an online background and the local 2026 derivative as
+its overlay. Interactive API documentation is available at
 `http://127.0.0.1:8000/docs`; the machine-readable OpenAPI document is at
 `http://127.0.0.1:8000/openapi.json`.
 
@@ -65,7 +76,10 @@ python scripts/run_exposure_api.py --host 0.0.0.0 --port 8000
 ```
 
 Do not expose the service publicly without authentication, rate limiting,
-HTTPS, monitoring, a privacy notice, and a data-licence review.
+HTTPS, monitoring, a privacy notice, a data-licence review, and a basemap
+provider suitable for production traffic. The OpenStreetMap public tile service
+is appropriate only for modest interactive use under its current policy; do not
+prefetch or package its tiles.
 
 ## Example request
 

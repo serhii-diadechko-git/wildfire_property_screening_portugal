@@ -16,10 +16,12 @@ from src.exposure_api import app
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the local Portugal wildfire-exposure lookup API.")
+    parser = argparse.ArgumentParser(description="Run the local Portugal wildfire-exposure API and browser map.")
     parser.add_argument("--host", default="127.0.0.1", help="Bind address; default keeps the service local.")
     parser.add_argument("--port", type=int, default=8000, help="TCP port; default: 8000.")
     arguments = parser.parse_args()
+    print(f"Local web map: http://{arguments.host}:{arguments.port}")
+    print(f"API documentation: http://{arguments.host}:{arguments.port}/docs")
     uvicorn.run(app, host=arguments.host, port=arguments.port, reload=False)
 
 

@@ -88,23 +88,30 @@ Use the QGIS layers in this order:
 
 The official ICNF structural-hazard layer is a separate official 25 m landscape classification summarized to the predominant class per 1 km cell. It is neither this project's prediction nor an observed burned-area map for one year. See [qgis/README.md](qgis/README.md).
 
-## Local exposure lookup API
+## Local web map and exposure lookup API
 
 After the documented reproduction workflow has published the 2026 spatial
-outputs, a small read-only REST API can return the containing 1 km cell and
-1/3/5 km context summaries for a coordinate. It is a presentation interface
-over the validated outputs; it does not retrain the model or expose the ICNF
-structural-hazard comparison layer.
+outputs, the project provides two local presentation interfaces over the same
+validated results: a simple browser map for broad-area exploration and a
+read-only REST API for coordinate lookup. Neither interface retrains the model
+or exposes the separately governed ICNF structural-hazard comparison layer.
 
 ```text
-python scripts/validate_exposure_api.py
+python scripts/build_web_map_assets.py --overwrite
 python scripts/run_exposure_api.py
 ```
 
-Open `http://127.0.0.1:8000/docs` for the interactive OpenAPI documentation.
-The API accepts coordinates, not addresses, by design: address geocoding would
+Open `http://127.0.0.1:8000` for the interactive map. It displays the 2026
+estimate as three comparative percentile bands and lets a user click a 1 km
+cell for its estimate and descriptive 1/3/5 km context summaries. The
+OpenStreetMap background needs an internet connection; the exposure layer and
+API remain local. Use it to narrow broad research areas, not to assess a
+specific property or make a purchase decision.
+
+Open `http://127.0.0.1:8000/docs` for the interactive API documentation. The
+API accepts coordinates, not addresses, by design: address geocoding would
 require a separately governed provider and privacy terms. See the complete
-[local exposure API guide](docs/exposure_api_guide.md).
+[local web-map guide](web/README.md) and [local exposure API guide](docs/exposure_api_guide.md).
 
 ## Quick start
 
@@ -221,6 +228,7 @@ scripts\run_qgis_presentation_project.bat --validate-operational
 | `data/processed/final_model_2010_2024/model_metadata.json` | Model feature order, training cutoff, version, and reproducibility metadata. |
 | `data/processed/operational_forecasts/forecast_2026_scores.parquet` | Canonical tabular 2026 comparative estimates. |
 | `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready annual comparative layer. |
+| `data/processed/web_map/estimated_comparative_wildfire_exposure_2026.geojson` | Derived, browser-ready 2026 map layer; generated locally and not the analytical source of truth. |
 | `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence plus official ICNF comparison attributes. |
 | `reports/figures/` and `reports/tables/` | Reproducible visual and tabular presentation outputs. |
 | `reports/validation/` | Stable analytical validation evidence. |
@@ -273,6 +281,7 @@ attribution, and redistribution guidance is in
 | Annual scoring/refitting process | [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md) |
 | Notebook roles and VS Code use | [notebooks/README.md](notebooks/README.md) |
 | QGIS layers, projects, and limitations | [qgis/README.md](qgis/README.md) |
+| Local interactive web map | [web/README.md](web/README.md) |
 | Data licences and attribution | [docs/data_licensing_and_attribution.md](docs/data_licensing_and_attribution.md) |
 
 ## Clean local rebuild
