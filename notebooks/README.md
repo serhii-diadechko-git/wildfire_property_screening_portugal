@@ -76,8 +76,11 @@ annual estimate: final-model fitting uses `T=2010–2019`, selection uses
 `T=2020–2021`, and the one held-out final test uses `T=2022–2024` with observed
 outcomes through 2025. The 2026 layer instead uses `T=2025` inputs and has no
 observed target yet. The root [README](../README.md#temporal-coverage-and-current-estimate)
-and the [annual operational cycle](../docs/operational_forecast_cycle.md)
-contain the full year-by-year table and annual update rules.
+provides the concise year summary, the
+[model-learning guide](../docs/model_learning_and_2026_estimate.md) explains the
+complete training-to-scoring flow, and the
+[annual operational runbook](../docs/operational_forecast_cycle.md) defines the
+annual update procedure.
 
 ## Controlled rebuild switches
 
@@ -107,9 +110,9 @@ run this terminal command from the project root:
 python scripts/run_project.py --mode reproduce --confirm-rebuild
 ```
 
-The notebook sequence is a review path, not the annual scoring engine. The
-annual lifecycle is documented in
-[docs/operational_forecast_cycle.md](../docs/operational_forecast_cycle.md).
+The notebook sequence is a review path, not the annual scoring engine. Use the
+[annual operational runbook](../docs/operational_forecast_cycle.md) for the
+controlled update commands and safeguards.
 
 ## QGIS and final outputs
 

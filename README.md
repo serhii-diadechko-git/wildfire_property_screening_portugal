@@ -50,7 +50,9 @@ The registered ICNF annual burned-area records cover calendar years **2000–202
 | Operational refit | 2010–2024 | 2011–2025 | Refit the unchanged selected specification using all completed labelled rows. |
 | Current annual estimate | 2025 | 2026: not yet observed | Produce the target-free 2026 comparative estimate. |
 
-For example, the 2026 layer uses predictor-year `T=2025` inputs and historical fire years 2015–2024 only. It can be independently evaluated only after ICNF publishes the observed 2026 burned-area outcome. See the detailed [annual operational cycle](docs/operational_forecast_cycle.md).
+The current layer uses `T=2025` inputs to estimate 2026; no observed 2026
+outcome is used. See the [model-learning and scoring flow](docs/model_learning_and_2026_estimate.md)
+for the complete temporal explanation.
 
 ## How the method works
 
@@ -64,18 +66,21 @@ For example, the 2026 layer uses predictor-year `T=2025` inputs and historical f
 | [ERA5-Land monthly means](https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means) | June–September (`JJAS`) temperature, precipitation, and shallow soil-water context from predictor year `T` only. It is coarse regional context, not 1 km weather. |
 | [DGT CAOP](https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop) | Mainland boundary, canonical grid, and reporting geography. |
 
-The nine predictors are defined, including their units, ranges, and source-year rules, in [docs/data_dictionary.md](docs/data_dictionary.md).
+The nine predictors are defined, including their units, ranges, and source-year
+rules, in the [data dictionary](docs/data_dictionary.md). The visual
+[model-learning and 2026 estimate guide](docs/model_learning_and_2026_estimate.md)
+shows how labelled historical rows become the current annual score.
 
 ### Why the final model
 
-The final model is a **nine-feature two-stage histogram-gradient-boosting regression**:
-
-1. a [`HistGradientBoostingClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html) estimates whether any burning is expected; and
-2. a [`HistGradientBoostingRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html) estimates burned share when burning is expected.
-
-Their product is one continuous next-year estimated burned share. This approach suits a large numeric tabular panel with nonlinear relationships and many zero outcomes alongside positive burned shares. It is an associative predictive method, not causal evidence, and it was retained because of the time-aware comparison above—not because it is claimed to be universally best.
-
-For technical detail, parameter choices, safeguards, and limitations, see [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md) and [docs/project_brief.md](docs/project_brief.md).
+The final model is a **nine-feature two-stage histogram-gradient-boosting
+regression** designed for a continuous target containing many exact zeros. It
+combines an estimate of whether any burning occurs with an estimate of burned
+share when burning occurs. The resulting value is one continuous next-year
+estimated burned share, not a probability or causal claim. See the
+[model-learning guide](docs/model_learning_and_2026_estimate.md) for the model
+flow and [model-selection record](docs/model_v2_validation_selection.md) for
+parameters and validation evidence.
 
 ## Use the outputs responsibly
 
@@ -243,9 +248,11 @@ Parquet is the canonical analytical table format. GeoPackages provide reusable g
 
 ## Annual update cycle
 
-For forecast year `Y`, use completed predictor-year inputs from `T=Y−1` to publish a target-free comparative estimate. When ICNF later publishes the observed outcome for `Y`, evaluate that already-published estimate, add the new labelled year, refit the unchanged nine-feature specification, and score `Y+1`.
-
-The current 2026 estimate uses 2025 inputs and can be independently evaluated only after ICNF publishes 2026 burned-area data. The detailed controlled process is in [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md).
+For forecast year `Y`, use completed inputs from `T=Y−1` to publish a
+target-free estimate. After ICNF publishes the observed outcome for `Y`,
+evaluate the published estimate, add the new labelled year, refit the unchanged
+specification, and score `Y+1`. Commands, safeguards, required inputs, and
+outputs are in the [annual operational runbook](docs/operational_forecast_cycle.md).
 
 ## Data access and licensing
 
@@ -282,7 +289,8 @@ attribution, and redistribution guidance is in
 | Research scope, methods, and limits | [docs/project_brief.md](docs/project_brief.md) |
 | Sources, paths, access, and acquisition | [data/README.md](data/README.md) and [data/source_manifest.json](data/source_manifest.json) |
 | Model-selection design and parameters | [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md) |
-| Annual scoring/refitting process | [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md) |
+| How the model learns and produces an annual estimate | [docs/model_learning_and_2026_estimate.md](docs/model_learning_and_2026_estimate.md) |
+| Annual update commands, checks, and outputs | [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md) |
 | Notebook roles and VS Code use | [notebooks/README.md](notebooks/README.md) |
 | QGIS layers, projects, and limitations | [qgis/README.md](qgis/README.md) |
 | Local interactive web map | [web/README.md](web/README.md) |

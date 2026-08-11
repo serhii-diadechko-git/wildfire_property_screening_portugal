@@ -1,86 +1,113 @@
-# Annual operational forecast cycle
+# Annual operational estimate runbook
 
-## The simple idea
+This document is the controlled runbook for evaluating an existing annual
+estimate, adding newly completed data, refitting the unchanged final model
+specification, and publishing the next estimate. For the scientific learning
+logic, target formula, model components, and temporal split, first read
+[From historical evidence to the 2026 estimate](model_learning_and_2026_estimate.md).
 
-The project has two separate jobs:
+## Operational rule
 
-1. **Learn from completed years.** For predictor year `T`, the observed target exists only after ICNF publishes burned areas for `T+1`. Those completed rows are used for training, validation, testing, and later refitting.
-2. **Estimate the next year.** For forecast year `Y`, use inputs from completed year `T=Y-1` and create an unlabelled score. The target for `Y` is intentionally unknown.
+For forecast year `Y`:
 
-This is not a change to the scientific model. It is the normal deployment step after historical model selection: evaluate a fixed method on years with known outcomes, use it for the next year, then evaluate that new score when the outcome becomes available.
+1. the score uses predictor inputs from completed year `T=Y-1`;
+2. the historical-fire feature uses `T-10` through `T-1` only;
+3. `burned_share_next_year` is absent from the scoring matrix;
+4. the saved final specification is refit only through the newest predictor
+   year whose `T+1` ICNF outcome is available; and
+5. the published score is evaluated only after ICNF releases the observed
+   burned-area outcome for `Y`.
 
-## What has already been evaluated
+This is a rolling data update, not a new model-selection experiment. Changing
+features, thresholds, algorithms, or model parameters requires a separately
+versioned research and validation cycle.
 
-| Stage | Predictor years `T` | Observed targets | Purpose |
-|---|---:|---:|---|
-| Development fit | 2010-2019 | 2011-2020 | Fit candidate methods. |
-| Validation | 2020-2021 | 2021-2022 | Compare frozen candidates. |
-| Final-model selection | 2020-2021 validation only | 2021-2022 | Compare predeclared configurations; no T=2022-2024 data were read. |
-| Held-out final test | 2022-2024 | 2023-2025 | Evaluate the frozen final nine-feature model once; parameters remain unchanged. |
+## Current published cycle
 
-Final-model selection used continuous-regression diagnostics, not classification accuracy: all-row MAE/RMSE, positive-target MAE/RMSE, mean predicted versus observed burned share, and ranking capture@20%. See [`model_v2_validation_selection.md`](model_v2_validation_selection.md). The selected configuration subsequently completed its one held-out `T=2022-2024` evaluation; its independent operational evaluation is due when ICNF publishes the 2026 outcome.
-
-## Current 2026 estimate
-
-The published 2026 output is forward-looking, so it does **not** have an observed target or error metric yet:
-
-| Item | Value |
+| Item | Current value |
 |---|---|
 | Forecast year `Y` | 2026 |
-| Predictor/input year `T` | 2025 |
-| ICNF history used | 2015-2024 only (`T-10` through `T-1`) |
-| Climate used | JJAS 2025 ERA5-Land only |
+| Predictor year `T` | 2025 |
+| Historical ICNF window | 2015-2024 |
+| Climate input | ERA5-Land JJAS 2025 |
+| Operational refit evidence | `T=2010-2024`, observed outcomes 2011-2025 |
 | Target in scoring matrix | Absent by design |
-| Result | One continuous comparative estimate for each 1 km mainland cell |
+| Coverage | 89,112 mainland Portugal 1 km cells |
+| Independent evaluation | Possible only after ICNF publishes the 2026 outcome |
 
-After the final nine-feature model was selected, it was refit with all labelled rows through `T=2024` / observed outcome 2025. This uses more completed training evidence without revisiting candidate selection or model settings.
+## Current commands
 
-Current outputs:
+Run from the repository root after required raw inputs have passed preflight:
 
-- `data/processed/operational_forecasts/forecast_2026_nine_feature_matrix.parquet`
-- `data/processed/operational_forecasts/forecast_2026_scores.parquet`
-- `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg`
-- `qgis/wildfire_exposure_screening_portugal_2026.qgz`
-
-They are comparative estimated burned shares, not probabilities, property-level safety assessments, insurance estimates, or purchase decisions.
-
-## What happens when the next annual data arrive
-
-When ICNF publishes complete 2026 burned-area data, it becomes the observed target for the already published `T=2025` / forecast-2026 score.
-
-The controlled 2027 cycle is:
-
-1. Validate/register ICNF 2026 and compare the published 2026 scores with observed per-cell burned share using the predefined regression metrics.
-2. Validate/register ERA5-Land JJAS 2026, which supplies climate predictors for `T=2026`.
-3. Build/validate the new labelled `T=2025 -> outcome 2026` row using unchanged feature definitions and source-year rules.
-4. Refit the **same documented final nine-feature specification** using labelled rows through `T=2025` / outcome 2026. Do not search new settings merely because a new outcome arrived.
-5. Derive the target-free `T=2026` matrix and score 2027.
-6. Publish a versioned Parquet table, GeoPackage, checksum, validation report, and QGIS layer.
-
-The pattern repeats annually. It is a rolling update, not a new model-selection experiment.
-
-## Reproducible implementation and notebook roles
-
-The code fails closed: it refuses scoring if a required T-only input is absent, and the scoring matrix rejects an observed target column.
-
-For the current 2026 cycle, run from the repository root:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\prepare_operational_forecast.py
-.\.venv\Scripts\python.exe scripts\score_operational_forecast.py
+```text
+python scripts/prepare_operational_forecast.py
+python scripts/score_operational_forecast.py
 ```
 
-The second command safely revalidates existing published artifacts rather than overwriting them. Current scripts are intentionally pinned to the validated 2026 cutoff. Before a future-year run, first add/validate the new annual source records and labelled row, then update the controlled annual extension step; do not simply change a year number.
+The scoring command validates and reuses matching published artifacts rather
+than silently overwriting them. The current scripts are intentionally pinned to
+the validated 2026 source cutoff. A future annual cycle must first register and
+validate its new source years and update the controlled year configuration.
 
-Notebooks are review layers:
+For a complete clean reproduction of all derived project outputs, use the root
+workflow documented in the [project README](../README.md):
 
-- `04_modelling.ipynb` verifies the saved nine-feature model contract, two-part regression components, temporal safeguards, and annual scoring lifecycle; it does not refit or retune the model.
-- `05_evaluation_recommendations.ipynb` audits the validated historical GeoPackage and its QGIS handoff.
-- `06_final_charts.ipynb` is the single final narrative for EDA, final-model selection evidence, the historical/official comparison, and the separate 2026 comparative estimate.
-- Open `qgis/wildfire_exposure_screening_portugal_2026.qgz` for the current annual output.
-
-After an intentional annual update, run:
-
-```powershell
-.\.venv\Scripts\python.exe -m unittest tests.test_operational_forecast tests.test_era5_land_validation -v
+```text
+python scripts/run_project.py --mode reproduce --confirm-rebuild
 ```
+
+## Current outputs
+
+| Path | Purpose |
+|---|---|
+| `data/processed/operational_forecasts/forecast_2026_nine_feature_matrix.parquet` | Target-free 2025 predictor matrix. |
+| `data/processed/final_model_2010_2024/nine_feature_hurdle.joblib` | Saved operational model; the filename is retained for backward compatibility. |
+| `data/processed/final_model_2010_2024/model_metadata.json` | Feature order, evidence cutoff, model version, and checksums. |
+| `data/processed/operational_forecasts/forecast_2026_scores.parquet` | Canonical tabular 2026 estimates. |
+| `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg` | QGIS-ready 2026 layer. |
+| `data/processed/web_map/estimated_comparative_wildfire_exposure_2026.geojson` | Browser-ready derivative of the spatial output. |
+| `qgis/wildfire_exposure_screening_portugal_2026.qgz` | Portable QGIS presentation project. |
+
+These outputs are continuous comparative estimated burned shares. They are not
+observed 2026 outcomes, probabilities that whole cells will burn,
+property-level assessments, insurance estimates, or purchase recommendations.
+
+## Controlled 2027 update
+
+After the required official 2026 data become available:
+
+1. Register and validate ICNF 2026 without modifying the raw archive.
+2. Compare the already published 2026 estimates with observed 2026 per-cell
+   burned share using the predefined regression metrics.
+3. Register and validate ERA5-Land JJAS 2026 for predictor year `T=2026`.
+4. Build and validate the labelled `T=2025 -> outcome 2026` rows using the
+   unchanged feature definitions and source-year rules.
+5. Refit the unchanged final specification through `T=2025` / outcome 2026.
+6. Build the target-free `T=2026` matrix and estimate 2027.
+7. Publish versioned Parquet, metadata, validation report, GeoPackage, web-map,
+   and QGIS outputs.
+
+The same pattern repeats annually. Do not tune the model merely because a new
+outcome has arrived.
+
+## Fail-closed safeguards
+
+The operational code must stop rather than publish when:
+
+- a required predictor-year source is missing or fails validation;
+- an observed target appears in the target-free scoring matrix;
+- the feature names or order differ from saved model metadata;
+- the model evidence cutoff is later than the newest observed outcome;
+- required cell coverage, uniqueness, ranges, or climate assignments fail; or
+- an existing artifact does not match its recorded configuration and checksum.
+
+After an intentional annual update, run the focused checks:
+
+```text
+python -m unittest tests.test_operational_forecast tests.test_era5_land_validation -v
+python scripts/run_project.py --mode validate
+```
+
+Notebooks are review and presentation layers, not the annual scoring engine.
+Their roles and execution order are documented in
+[notebooks/README.md](../notebooks/README.md).
