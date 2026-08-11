@@ -67,6 +67,10 @@
   }, {}, { position: "topright", collapsed: false }).addTo(map);
   L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 140 }).addTo(map);
 
+  map.createPane("measurementPane");
+  map.getPane("measurementPane").style.pointerEvents = "none";
+  map.getPane("measurementPane").style.zIndex = "650";
+  const measurementRenderer = L.svg({ pane: "measurementPane" });
   const measurementLayers = L.featureGroup().addTo(map);
   const measurementControl = L.control({ position: "topright" });
   measurementControl.onAdd = () => {
@@ -140,12 +144,21 @@
     measurementPoints = [];
   }
 
+  function leaveMeasurementMode(message) {
+    measurementMode = undefined;
+    measurementPoints = [];
+    activeMeasurement = undefined;
+    map.doubleClickZoom.enable();
+    map.dragging.enable();
+    map.getContainer().classList.remove("measurement-active");
+    measurementStatus.textContent = message;
+    updateMeasurementButtons();
+  }
+
   function setMeasurementMode(mode) {
     if (measurementMode === mode) {
       cancelActiveMeasurement();
-      measurementMode = undefined;
-      map.doubleClickZoom.enable();
-      measurementStatus.textContent = "Choose distance or area.";
+      leaveMeasurementMode("Choose distance or area.");
     } else {
       cancelActiveMeasurement();
       measurementMode = mode;
@@ -154,7 +167,7 @@
         ? "Distance: click points; double-click to finish."
         : "Area: click corners; double-click to finish.";
     }
-    updateMeasurementButtons();
+    if (measurementMode) updateMeasurementButtons();
   }
 
   function finishMeasurement() {
@@ -162,23 +175,13 @@
     if (!activeMeasurement || measurementPoints.length < minimumPoints) return;
     const value = measurementValue();
     activeMeasurement.setLatLngs(measurementPoints);
-    activeMeasurement.bindTooltip(value, { permanent: true, direction: "center", className: "measurement-label" }).openTooltip();
-    activeMeasurement = undefined;
-    measurementPoints = [];
-    measurementMode = undefined;
-    map.doubleClickZoom.enable();
-    measurementStatus.innerHTML = `<strong>Measured:</strong> ${value}`;
-    updateMeasurementButtons();
+    activeMeasurement.bindTooltip(value, { permanent: true, direction: "center", className: "measurement-label", interactive: false }).openTooltip();
+    leaveMeasurementMode(`Measured: ${value}`);
   }
 
   function clearMeasurements() {
     measurementLayers.clearLayers();
-    activeMeasurement = undefined;
-    measurementPoints = [];
-    measurementMode = undefined;
-    map.doubleClickZoom.enable();
-    measurementStatus.textContent = "All measurements cleared.";
-    updateMeasurementButtons();
+    leaveMeasurementMode("All measurements cleared. Click any map cell to inspect it.");
   }
 
   map.on("click", (event) => {
@@ -186,8 +189,8 @@
     measurementPoints.push(event.latlng);
     if (!activeMeasurement) {
       activeMeasurement = measurementMode === "distance"
-        ? L.polyline(measurementPoints, { color: "#22d3ee", weight: 3 })
-        : L.polygon(measurementPoints, { color: "#22d3ee", fillColor: "#0e7490", fillOpacity: 0.25, weight: 2 });
+        ? L.polyline(measurementPoints, { color: "#22d3ee", interactive: false, renderer: measurementRenderer, weight: 3 })
+        : L.polygon(measurementPoints, { color: "#22d3ee", fillColor: "#0e7490", fillOpacity: 0.25, interactive: false, renderer: measurementRenderer, weight: 2 });
       activeMeasurement.addTo(measurementLayers);
     } else {
       activeMeasurement.setLatLngs(measurementPoints);
@@ -212,10 +215,7 @@
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || !measurementMode) return;
     cancelActiveMeasurement();
-    measurementMode = undefined;
-    map.doubleClickZoom.enable();
-    measurementStatus.textContent = "Measurement cancelled.";
-    updateMeasurementButtons();
+    leaveMeasurementMode("Measurement cancelled. Click any map cell to inspect it.");
   });
 
   // Keep surrounding-radius summaries visually secondary to the selected
