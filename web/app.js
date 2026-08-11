@@ -24,6 +24,7 @@
   const inputDetailsDialog = document.getElementById("input-details-dialog");
   const inputDetailsContent = document.getElementById("input-details-content");
   const inputDetailsClose = document.getElementById("input-details-close");
+  const featureHelpPopover = document.getElementById("feature-help-popover");
   const legendDescription = document.getElementById("legend-description");
   const legendItems = document.getElementById("legend-items");
   let exposureOpacity = 0.82;
@@ -33,6 +34,7 @@
   let selectedFeature;
   let selectedContext;
   let selectedInputs;
+  let activeFeatureHelp;
 
   const standard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -92,10 +94,40 @@
     return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning, help]) => `<section><div class="input-feature-heading"><strong>${name}</strong><button class="feature-info" type="button" aria-label="What ${name} means" data-help="${text(help)}">i</button></div><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">Select or focus an <strong>i</strong> icon for a plain-language definition. The result combines all nine inputs through the final model and remains a broad-area comparative estimate, not a property-level assessment.</p>`;
   }
 
+  // The popover is deliberately outside the scrolling dialog content. That
+  // prevents a help label from widening the dialog or creating a horizontal
+  // scrollbar on narrow screens.
+  function showFeatureHelp(button) {
+    const card = button.closest("section");
+    const isNarrow = window.matchMedia("(max-width: 760px)").matches;
+    const side = isNarrow || card.matches(":nth-child(odd)") ? "left" : "right";
+    featureHelpPopover.textContent = button.dataset.help;
+    featureHelpPopover.hidden = false;
+    featureHelpPopover.dataset.side = side;
+    const buttonRect = button.getBoundingClientRect();
+    const popoverRect = featureHelpPopover.getBoundingClientRect();
+    const gap = 8;
+    const unclampedLeft = side === "left"
+      ? buttonRect.left - popoverRect.width - gap
+      : buttonRect.right + gap;
+    const left = Math.min(Math.max(8, unclampedLeft), window.innerWidth - popoverRect.width - 8);
+    const top = Math.min(Math.max(8, buttonRect.top), window.innerHeight - popoverRect.height - 8);
+    featureHelpPopover.style.left = `${left}px`;
+    featureHelpPopover.style.top = `${top}px`;
+    activeFeatureHelp = button;
+  }
+
+  function hideFeatureHelp(button) {
+    if (button && activeFeatureHelp !== button) return;
+    featureHelpPopover.hidden = true;
+    activeFeatureHelp = undefined;
+  }
+
   function defaultSelection() {
     selectionTitle.textContent = "Cell details";
     clearSelection.hidden = true;
     showInputDetails.hidden = true;
+    hideFeatureHelp();
     selectionContent.innerHTML = '<p>Click a 1 km cell to inspect its 2026 comparative estimate.</p><p class="card-note">The map will also highlight nearby 3 km and 5 km context cells. These are surrounding-area summaries, not a second grid or a property assessment.</p>';
   }
 
@@ -202,6 +234,7 @@
     selectedContext = undefined;
     selectedInputs = undefined;
     if (inputDetailsDialog.open) inputDetailsDialog.close();
+    hideFeatureHelp();
     defaultSelection();
   });
   showInputDetails.addEventListener("click", () => {
@@ -212,6 +245,29 @@
   inputDetailsClose.addEventListener("click", () => inputDetailsDialog.close());
   inputDetailsDialog.addEventListener("click", (event) => {
     if (event.target === inputDetailsDialog) inputDetailsDialog.close();
+  });
+  inputDetailsDialog.addEventListener("close", () => hideFeatureHelp());
+  inputDetailsContent.addEventListener("pointerover", (event) => {
+    const button = event.target.closest(".feature-info");
+    if (button) showFeatureHelp(button);
+  });
+  inputDetailsContent.addEventListener("pointerout", (event) => {
+    const button = event.target.closest(".feature-info");
+    if (button && !button.contains(event.relatedTarget)) hideFeatureHelp(button);
+  });
+  inputDetailsContent.addEventListener("focusin", (event) => {
+    const button = event.target.closest(".feature-info");
+    if (button) showFeatureHelp(button);
+  });
+  inputDetailsContent.addEventListener("focusout", (event) => {
+    const button = event.target.closest(".feature-info");
+    if (button && !button.contains(event.relatedTarget)) hideFeatureHelp(button);
+  });
+  inputDetailsContent.addEventListener("click", (event) => {
+    const button = event.target.closest(".feature-info");
+    if (!button) return;
+    event.preventDefault();
+    showFeatureHelp(button);
   });
   document.querySelectorAll('input[name="display-classification"]').forEach((input) => {
     input.addEventListener("change", () => changeClassification(input.value));
