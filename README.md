@@ -101,10 +101,13 @@ python scripts/build_web_map_assets.py --overwrite
 python scripts/run_exposure_api.py
 ```
 
-Open `http://127.0.0.1:8000` for the interactive map. It displays the 2026
-estimate as three comparative percentile bands and lets a user click a 1 km
-cell for its estimate and descriptive 1/3/5 km context summaries. The
-The OpenStreetMap Standard/Humanitarian, terrain, and satellite background
+Open `http://127.0.0.1:8000` for the interactive map. It keeps the continuous
+estimated burned share separate from the cell's national relative rank. Users
+can switch between a three-group overview and five equal national-rank groups;
+these colour groups do not change the model estimate and are not physical risk
+thresholds. Clicking a 1 km cell shows its estimate, exact percentile rank, and
+descriptive 1/3/5 km context summaries. The OpenStreetMap
+Standard/Humanitarian, terrain, and satellite background
 selector needs an internet connection; the exposure layer and API remain local.
 Use it to narrow broad research areas, not to assess a specific property or
 make a purchase decision.

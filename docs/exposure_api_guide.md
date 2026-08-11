@@ -97,7 +97,8 @@ than 10 km; its default is `1,3,5`.
 The response contains a continuous `predicted_burned_share_next_year`: the
 estimated share of the 1 km cell land area that may burn in 2026. It is not a
 probability. `predicted_exposure_percentile` is a comparative national rank,
-not a safety rating. A `404` response means the coordinate is outside the
+calculated by ranking all same-year mainland cell estimates from low to high;
+it is not the percentage expected to burn or a safety rating. A `404` response means the coordinate is outside the
 canonical mainland grid; a `503` response means the required published local
 outputs have not been built or failed their contract checks.
 

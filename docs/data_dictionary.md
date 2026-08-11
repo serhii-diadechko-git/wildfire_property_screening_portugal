@@ -73,7 +73,8 @@ The retained final model is a continuous comparative estimate, not a probability
 
 | Column | Type | Meaning |
 |---|---|---|
-| `predicted_burned_share_next_year` | float, 0-1 | Final nine-feature two-stage burned-share regression output: estimated share of the cell's mainland-land area burned in `T+1`. It is a continuous research estimate, not a probability or recommendation. |
+| `predicted_burned_share_next_year` | float, 0-1 | Final nine-feature two-stage regression output: model-estimated proportion of the cell's mainland-land area that may burn in `T+1`. Multiply by 100 for a percentage. It is a continuous research estimate, not a probability or recommendation. |
+| `predicted_exposure_percentile` | float, 0-1 | National relative rank of `predicted_burned_share_next_year` among all scored mainland cells for the same forecast year. For example, `0.747` means the estimate is higher than approximately 74.7% of cells; it does not mean 74.7% of the cell may burn. Ties use their average rank. Presentation colour groups are derived from this field and are not physical risk thresholds. |
 | `forecast_year` | integer | Calendar year estimated by an operational scoring output; equal to `observation_year + 1`. |
 | `prediction_input_year` | integer | Completed predictor year used for all dynamic inputs; equal to `forecast_year - 1`. |
 | `model_sha256` | string | Checksum of the exact serialized nine-feature model used for scoring. |

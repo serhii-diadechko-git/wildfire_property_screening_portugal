@@ -38,7 +38,9 @@ same four groups and layers, plus this additional group at the top:
 - **00 Annual comparative estimate — 2026**
   - **2026 estimated comparative wildfire exposure — 1 km cells**: target-free
     comparative estimates from 2025 predictor inputs, displayed as lower
-    (0–50%), intermediate (50–80%), and higher (80–100%) estimated percentiles.
+    (0–50th), intermediate (>50–80th), and higher (>80–100th) national-rank
+    groups. The colour represents the relative rank of the continuous estimate,
+    not the percentage of the cell expected to burn.
 
 Both projects are presentation views of validated GeoPackages, not separate
 analytical workflows. The 2026 estimate is not a calibrated probability,
@@ -79,6 +81,6 @@ This output is historical comparative exposure only. It is not a next-year forec
 
 The validated QGIS-ready 2026 estimate is `data/processed/spatial_outputs/estimated_comparative_wildfire_exposure_2026.gpkg`, layer `estimated_comparative_exposure_2026` (89,112 EPSG:3763 features). Add it as a separate layer; do not replace or relabel the historical layer, which remains supporting 2016-2025 evidence. Its key fields are `forecast_year`, `prediction_input_year`, `predicted_burned_share_next_year`, `predicted_exposure_percentile`, `model_sha256`, and `score_status`.
 
-Use the 2026 layer to compare broad cells by a year-specific estimated burned share and percentile. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. See `reports/validation/operational_forecast_2026_validation.md` before presentation or interpretation.
+Use the 2026 layer to compare broad cells by a year-specific estimated burned share and national percentile rank. The burned-share field estimates a proportion of cell land; the percentile ranks that value among all same-year mainland cells. It is not a probability, property-level forecast, safety guarantee, insurance estimate, or purchase recommendation. See `reports/validation/operational_forecast_2026_validation.md` before presentation or interpretation.
 
 For a ready-to-open combined view, use `wildfire_exposure_screening_portugal_2026.qgz`. It preserves the historical presentation project and adds the separate **00 Annual comparative estimate — 2026** group. Its display-only percentile bands do not alter the validated model score or make a safety claim. Regenerate that portable project, only when the validated forecast GeoPackage exists and QGIS is installed, with `scripts\run_qgis_presentation_project.bat scripts\build_operational_forecast_qgis_project.py`.

@@ -76,6 +76,7 @@ class WebMapTests(unittest.TestCase):
     def test_browser_client_has_documented_basemap_choices_and_full_view_shell(self) -> None:
         root = Path(__file__).resolve().parents[1]
         client = (root / "web" / "app.js").read_text(encoding="utf-8")
+        page = (root / "web" / "index.html").read_text(encoding="utf-8")
         stylesheet = (root / "web" / "styles.css").read_text(encoding="utf-8")
         self.assertIn("OpenStreetMap Standard", client)
         self.assertIn("OpenStreetMap Humanitarian", client)
@@ -85,6 +86,12 @@ class WebMapTests(unittest.TestCase):
         self.assertIn("opacity-control", client)
         self.assertIn("applyHighlights", client)
         self.assertIn("intersecting_cell_ids", client)
+        self.assertIn("five: {", client)
+        self.assertIn("Five equal national-rank groups", client)
+        self.assertIn("changeClassification", client)
+        self.assertIn("Detail: 5 equal rank groups", page)
+        self.assertIn("National relative rank", client)
+        self.assertIn("Two different percentages", client)
         self.assertIn("const highlightTiers = new Map()", client)
         self.assertIn("layer.setStyle(style(layer.feature))", client)
         self.assertNotIn("L.geoJSON(sourceLayer.feature", client)

@@ -2,15 +2,32 @@
  * same-origin read-only API for click context; no model work occurs in the browser. */
 (() => {
   "use strict";
-  const colors = { lower: "#ead9a0", intermediate: "#eca900", higher: "#a6222a" };
+  const classifications = {
+    three: {
+      description: "Overview groups based on each cell's national rank. Colours do not show the percentage expected to burn.",
+      items: [["#ead9a0", "Lower national rank (0–50th percentile)"], ["#eca900", "Intermediate national rank (>50–80th percentile)"], ["#a6222a", "Higher national rank (>80–100th percentile)"]],
+      band: (percentile) => percentile <= 0.50 ? ["#ead9a0", "Lower national rank (0–50th percentile)"] : percentile <= 0.80 ? ["#eca900", "Intermediate national rank (>50–80th percentile)"] : ["#a6222a", "Higher national rank (>80–100th percentile)"],
+    },
+    five: {
+      description: "Five equal national-rank groups for more detail. Colours do not show the percentage expected to burn.",
+      items: [["#fff1c7", "0–20th national rank"], ["#f8cf6a", ">20–40th national rank"], ["#eca900", ">40–60th national rank"], ["#dd6b32", ">60–80th national rank"], ["#a6222a", ">80–100th national rank"]],
+      band: (percentile) => percentile <= 0.20 ? ["#fff1c7", "0–20th national-rank group"] : percentile <= 0.40 ? ["#f8cf6a", ">20–40th national-rank group"] : percentile <= 0.60 ? ["#eca900", ">40–60th national-rank group"] : percentile <= 0.80 ? ["#dd6b32", ">60–80th national-rank group"] : ["#a6222a", ">80–100th national-rank group"],
+    },
+  };
   const map = L.map("map", { preferCanvas: true, zoomControl: true, minZoom: 5, maxZoom: 13 });
   const cellLayers = new Map();
   const highlightTiers = new Map();
   const selectionTitle = document.getElementById("selection-title");
   const selectionContent = document.getElementById("selection-content");
   const clearSelection = document.getElementById("clear-selection");
+  const legendDescription = document.getElementById("legend-description");
+  const legendItems = document.getElementById("legend-items");
   let exposureOpacity = 0.82;
   let selectionRequestId = 0;
+  let classificationMode = "three";
+  let cells;
+  let selectedFeature;
+  let selectedContext;
 
   const standard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -50,17 +67,36 @@
 
   function selectionHtml(properties, context) {
     const contexts = context.context_buffers;
+    const rank = Number(properties.predicted_exposure_percentile) * 100;
     const summary = contexts.map((item) => row(
       `${item.radius_km} km radius`,
-      `${item.intersecting_cell_count} cells; average estimate ${percent(item.mean_predicted_burned_share_next_year)}; ${percent(item.higher_estimated_exposure_area_share, 1)} in higher band`
+      `${item.intersecting_cell_count} cells; average estimate ${percent(item.mean_predicted_burned_share_next_year)}; ${percent(item.higher_estimated_exposure_area_share, 1)} in the top-20% national-rank group`
     )).join("");
     return `<table class="selection-table">${
       row("Cell ID", text(properties.cell_id)) +
-      row("2026 band", text(properties.estimated_comparative_exposure_band)) +
-      row("Estimated burned share", percent(properties.predicted_burned_share_next_year)) +
+      row("Estimated 2026 burned share", percent(properties.predicted_burned_share_next_year)) +
+      row("National relative rank", `${rank.toFixed(1)}th percentile`) +
+      row("Map colour group", text(currentBand(properties)[1])) +
       row("Predictor inputs", text(properties.prediction_input_year)) +
       summary
-    }</table><p class="card-note"><strong>Nearby-area context:</strong> each radius is a circle around the clicked point. It summarises overlapping 1 km cells; it is not a second grid, a property assessment, or a separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
+    }</table><div class="rank-scale" aria-label="National relative rank ${rank.toFixed(1)}th percentile"><span class="rank-marker" style="left:${rank.toFixed(3)}%"></span></div><div class="rank-scale-labels"><span>Lower national rank</span><strong>${rank.toFixed(1)}th percentile</strong><span>Higher national rank</span></div><p class="interpretation-note"><strong>Two different percentages:</strong> burned share estimates how much of this cell may burn. National rank compares that estimate with all 89,112 mainland cells.</p><p class="card-note"><strong>Nearby-area context:</strong> each radius is a circle around the clicked point. It summarises overlapping 1 km cells; it is not a second grid, a property assessment, or a separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
+  }
+
+  function currentBand(properties) {
+    return classifications[classificationMode].band(Number(properties.predicted_exposure_percentile));
+  }
+
+  function renderLegend() {
+    const classification = classifications[classificationMode];
+    legendDescription.textContent = classification.description;
+    legendItems.innerHTML = classification.items.map(([color, label]) => `<li><span class="swatch" style="background:${color}"></span>${label}</li>`).join("");
+  }
+
+  function changeClassification(mode) {
+    classificationMode = mode;
+    renderLegend();
+    if (cells) cells.eachLayer((layer) => layer.setStyle(style(layer.feature)));
+    if (selectedFeature && selectedContext) selectionContent.innerHTML = selectionHtml(selectedFeature.properties, selectedContext);
   }
 
   function style(feature) {
@@ -68,7 +104,7 @@
     if (tier === "selected") return { color: "#fff7b0", weight: 2.4, opacity: 1, fillColor: "#f7d64a", fillOpacity: 0.72 };
     if (tier === "three") return { color: "#3fc0dc", weight: 1.2, opacity: 1, fillColor: "#3fc0dc", fillOpacity: 0.50 };
     if (tier === "five") return { color: "#3177a5", weight: 1.0, opacity: 1, fillColor: "#3177a5", fillOpacity: 0.36 };
-    return { color: "#4a4a4a", weight: 0.15, opacity: 0.65, fillColor: colors[feature.properties.exposure_band_code], fillOpacity: exposureOpacity };
+    return { color: "#4a4a4a", weight: 0.15, opacity: 0.65, fillColor: currentBand(feature.properties)[0], fillOpacity: exposureOpacity };
   }
 
   function redrawCells(cellIds) {
@@ -110,6 +146,8 @@
       .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.detail || "Selected-cell context is unavailable."))))
       .then((context) => {
         if (requestId !== selectionRequestId) return;
+        selectedFeature = feature;
+        selectedContext = context;
         selectionContent.innerHTML = selectionHtml(feature.properties, context);
         applyHighlights(feature.properties.cell_id, context.context_buffers);
       })
@@ -122,14 +160,20 @@
   clearSelection.addEventListener("click", () => {
     selectionRequestId += 1;
     clearHighlights();
+    selectedFeature = undefined;
+    selectedContext = undefined;
     defaultSelection();
   });
+  document.querySelectorAll('input[name="display-classification"]').forEach((input) => {
+    input.addEventListener("change", () => changeClassification(input.value));
+  });
   defaultSelection();
+  renderLegend();
 
   fetch("/v1/map/2026/cells.geojson")
     .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.detail || "Map asset is unavailable."))))
     .then((data) => {
-      const cells = L.geoJSON(data, {
+      cells = L.geoJSON(data, {
         renderer: L.canvas({ padding: 0.25 }),
         style,
         onEachFeature(feature, layer) {
