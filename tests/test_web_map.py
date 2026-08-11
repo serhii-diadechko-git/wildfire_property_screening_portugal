@@ -92,12 +92,17 @@ class WebMapTests(unittest.TestCase):
         self.assertIn("Detail: 5 equal rank groups", page)
         self.assertIn("National relative rank", client)
         self.assertIn("Two different percentages", client)
+        self.assertIn("selected-cell-primary", client)
+        self.assertIn("Nearby context averages", client)
+        self.assertIn("contextRow", client)
         self.assertIn("const highlightTiers = new Map()", client)
         self.assertIn("layer.setStyle(style(layer.feature))", client)
         self.assertNotIn("L.geoJSON(sourceLayer.feature", client)
         self.assertIn('selectionTitle.textContent = "Cell details"', client)
         self.assertIn("min-height: 100vh", stylesheet)
         self.assertIn("highlight-three", stylesheet)
+        self.assertIn("--map-widget-width: 290px", stylesheet)
+        self.assertIn("width: var(--map-widget-width)", stylesheet)
 
 
 if __name__ == "__main__":

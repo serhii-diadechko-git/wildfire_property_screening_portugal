@@ -29,11 +29,13 @@ model, or expose the ICNF structural-hazard comparison layer.
   changes the underlying estimated burned-share values. Both are relative
   comparison views, not burned-share percentages, physical risk thresholds,
   safety categories, or Capture@20% validation results.
-- **Selected-cell card:** clicking a cell fills a persistent map card with its
-  estimated burned share, source year, and plain-language 1/3/5 km context
-  summaries. The selected cell is yellow, cells within 3 km are cyan, and the
-  outer 3-5 km context cells are blue. The colours are a temporary selection
-  overlay; they do not alter the exposure bands.
+- **Selected-cell card:** clicking a cell fills a persistent map card that
+  emphasises the selected 1 km cell's own estimated burned share. Separate
+  1/3/5 km rows show area-weighted averages across all cells intersecting each
+  surrounding circle; they are context summaries, not replacement values for
+  the selected cell. The selected cell is yellow, cells within 3 km are cyan,
+  and the outer 3-5 km context cells are blue. The colours are a temporary
+  selection overlay; they do not alter the exposure bands.
 - **Basemap selector:** OpenStreetMap Standard, OpenStreetMap Humanitarian,
   Esri World Topographic terrain, Esri World Imagery satellite, or no online
   basemap. Tiles are loaded only for the view currently used in the browser.

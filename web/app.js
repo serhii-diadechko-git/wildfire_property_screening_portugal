@@ -59,6 +59,15 @@
   const text = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" })[char]);
   const row = (name, value) => `<tr><td>${name}</td><td>${value}</td></tr>`;
 
+  // Keep surrounding-radius summaries visually secondary to the selected
+  // cell's own estimate. Each row reports an area-weighted context average,
+  // not another estimate for the selected 1 km cell.
+  const contextRow = (item) => `<div class="context-row">
+    <div class="context-radius"><strong>${item.radius_km} km</strong><span>radius</span></div>
+    <div class="context-measure"><strong>${percent(item.mean_predicted_burned_share_next_year)}</strong><span>average estimated burned share</span></div>
+    <div class="context-detail"><span>${item.intersecting_cell_count} intersecting cells</span><span>${percent(item.higher_estimated_exposure_area_share, 1)} of context area in the highest national-rank group</span></div>
+  </div>`;
+
   function defaultSelection() {
     selectionTitle.textContent = "Cell details";
     clearSelection.hidden = true;
@@ -68,18 +77,17 @@
   function selectionHtml(properties, context) {
     const contexts = context.context_buffers;
     const rank = Number(properties.predicted_exposure_percentile) * 100;
-    const summary = contexts.map((item) => row(
-      `${item.radius_km} km radius`,
-      `${item.intersecting_cell_count} cells; average estimate ${percent(item.mean_predicted_burned_share_next_year)}; ${percent(item.higher_estimated_exposure_area_share, 1)} in the top-20% national-rank group`
-    )).join("");
-    return `<table class="selection-table">${
+    const summary = contexts.map(contextRow).join("");
+    return `<div class="selected-cell-primary">
+      <span class="selected-cell-kicker">Selected 1 km cell</span>
+      <strong class="selected-cell-value">${percent(properties.predicted_burned_share_next_year)}</strong>
+      <span class="selected-cell-unit">estimated 2026 burned share</span>
+    </div><table class="selection-table">${
       row("Cell ID", text(properties.cell_id)) +
-      row("Estimated 2026 burned share", percent(properties.predicted_burned_share_next_year)) +
       row("National relative rank", `${rank.toFixed(1)}th percentile`) +
       row("Map colour group", text(currentBand(properties)[1])) +
-      row("Predictor inputs", text(properties.prediction_input_year)) +
-      summary
-    }</table><div class="rank-scale" aria-label="National relative rank ${rank.toFixed(1)}th percentile"><span class="rank-marker" style="left:${rank.toFixed(3)}%"></span></div><div class="rank-scale-labels"><span>Lower national rank</span><strong>${rank.toFixed(1)}th percentile</strong><span>Higher national rank</span></div><p class="interpretation-note"><strong>Two different percentages:</strong> burned share estimates how much of this cell may burn. National rank compares that estimate with all 89,112 mainland cells.</p><p class="card-note"><strong>Nearby-area context:</strong> each radius is a circle around the clicked point. It summarises overlapping 1 km cells; it is not a second grid, a property assessment, or a separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
+      row("Predictor inputs", text(properties.prediction_input_year))
+    }</table><div class="rank-scale" aria-label="National relative rank ${rank.toFixed(1)}th percentile"><span class="rank-marker" style="left:${rank.toFixed(3)}%"></span></div><div class="rank-scale-labels"><span>Lower national rank</span><strong>${rank.toFixed(1)}th percentile</strong><span>Higher national rank</span></div><p class="interpretation-note"><strong>Two different percentages:</strong> burned share estimates how much of this cell may burn. National rank compares that estimate with all 89,112 mainland cells.</p><div class="context-heading"><h3>Nearby context averages</h3><p>The selected cell's own estimate is shown above. These rows summarise all cells intersecting each circle.</p></div><div class="context-list">${summary}</div><p class="card-note">Context radii are surrounding-area summaries, not a second grid, property assessment, or separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
   }
 
   function currentBand(properties) {
