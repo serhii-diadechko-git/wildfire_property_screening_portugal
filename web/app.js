@@ -68,9 +68,9 @@
   L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 140 }).addTo(map);
 
   const measurementLayers = L.featureGroup().addTo(map);
-  const measurementControl = L.control({ position: "topleft" });
+  const measurementControl = L.control({ position: "topright" });
   measurementControl.onAdd = () => {
-    const element = L.DomUtil.create("div", "measurement-control leaflet-bar");
+    const element = L.DomUtil.create("div", "measurement-control map-card");
     element.innerHTML = `<div class="measurement-toolbar" role="toolbar" aria-label="Map measurement tools">
       <button type="button" data-measure="distance" title="Measure distance: click points, then double-click to finish" aria-label="Measure distance" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 17 4l3 3L7 20H4v-3Zm8-8 3 3m-6 0 3 3m-6 0 3 3"/></svg></button>
       <button type="button" data-measure="area" title="Measure area: click polygon corners, then double-click to finish" aria-label="Measure area" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 14 2-2 12-12-2V5Zm0 0 12 14M19 7 5 17"/></svg></button>
@@ -80,11 +80,22 @@
     L.DomEvent.disableScrollPropagation(element);
     return element;
   };
-  measurementControl.addTo(map);
-  const measurementStatus = document.querySelector(".measurement-status");
-  const distanceMeasureButton = document.querySelector('[data-measure="distance"]');
-  const areaMeasureButton = document.querySelector('[data-measure="area"]');
-  const clearMeasureButton = document.querySelector('[data-measure="clear"]');
+  let measurementStatus;
+  let distanceMeasureButton;
+  let areaMeasureButton;
+  let clearMeasureButton;
+
+  function installMeasurementControl() {
+    measurementControl.addTo(map);
+    measurementStatus = document.querySelector(".measurement-status");
+    distanceMeasureButton = document.querySelector('[data-measure="distance"]');
+    areaMeasureButton = document.querySelector('[data-measure="area"]');
+    clearMeasureButton = document.querySelector('[data-measure="clear"]');
+    distanceMeasureButton.addEventListener("click", () => setMeasurementMode("distance"));
+    areaMeasureButton.addEventListener("click", () => setMeasurementMode("area"));
+    clearMeasureButton.addEventListener("click", clearMeasurements);
+    updateMeasurementButtons();
+  }
 
   const percent = (value, digits = 2) => `${(Number(value) * 100).toFixed(digits)}%`;
   const text = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" })[char]);
@@ -170,16 +181,13 @@
     updateMeasurementButtons();
   }
 
-  distanceMeasureButton.addEventListener("click", () => setMeasurementMode("distance"));
-  areaMeasureButton.addEventListener("click", () => setMeasurementMode("area"));
-  clearMeasureButton.addEventListener("click", clearMeasurements);
   map.on("click", (event) => {
     if (!measurementMode) return;
     measurementPoints.push(event.latlng);
     if (!activeMeasurement) {
       activeMeasurement = measurementMode === "distance"
-        ? L.polyline(measurementPoints, { color: "#f7d64a", weight: 3 })
-        : L.polygon(measurementPoints, { color: "#f7d64a", fillColor: "#f0aa13", fillOpacity: 0.22, weight: 2 });
+        ? L.polyline(measurementPoints, { color: "#22d3ee", weight: 3 })
+        : L.polygon(measurementPoints, { color: "#60a5fa", fillColor: "#2563eb", fillOpacity: 0.25, weight: 2 });
       activeMeasurement.addTo(measurementLayers);
     } else {
       activeMeasurement.setLatLngs(measurementPoints);
@@ -237,22 +245,25 @@
     return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning, help]) => `<section><div class="input-feature-heading"><strong>${name}</strong><button class="feature-info" type="button" aria-label="What ${name} means" data-help="${text(help)}">i</button></div><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">Select or focus an <strong>i</strong> icon for a plain-language definition. The result combines all nine inputs through the final model and remains a broad-area comparative estimate, not a property-level assessment.</p>`;
   }
 
-  // The popover lives in the dialog's top layer but outside its scrolling
-  // content. That keeps it above the cards without widening the dialog or
-  // creating a horizontal scrollbar on narrow screens.
+  // Keep help independent of the feature-card layout. It floats beside the
+  // selected icon, remains inside the dialog, and never resizes the card.
   function showFeatureHelp(button) {
     featureHelpPopover.textContent = button.dataset.help;
+    inputDetailsDialog.appendChild(featureHelpPopover);
     featureHelpPopover.hidden = false;
     const buttonRect = button.getBoundingClientRect();
     const dialogRect = inputDetailsDialog.getBoundingClientRect();
     const popoverRect = featureHelpPopover.getBoundingClientRect();
     const gap = 8;
-    const outsideDialogLeft = Math.max(buttonRect.right + gap, dialogRect.right + gap);
-    const hasOutsideRoom = window.innerWidth - outsideDialogLeft >= Math.min(180, popoverRect.width);
-    const left = hasOutsideRoom
-      ? Math.min(outsideDialogLeft, window.innerWidth - popoverRect.width - 8)
-      : Math.min(buttonRect.right + gap, window.innerWidth - popoverRect.width - 8);
-    const top = Math.min(Math.max(8, buttonRect.top), window.innerHeight - popoverRect.height - 8);
+    const minimumLeft = dialogRect.left + gap;
+    const maximumLeft = dialogRect.right - popoverRect.width - gap;
+    const preferredLeft = buttonRect.left - popoverRect.width - gap;
+    const left = Math.min(Math.max(minimumLeft, preferredLeft), maximumLeft);
+    const preferredTop = buttonRect.top - popoverRect.height - gap;
+    const fallbackTop = buttonRect.bottom + gap;
+    const top = preferredTop >= dialogRect.top + gap
+      ? preferredTop
+      : Math.min(fallbackTop, dialogRect.bottom - popoverRect.height - gap);
     featureHelpPopover.style.left = `${left}px`;
     featureHelpPopover.style.top = `${top}px`;
     activeFeatureHelp = button;
@@ -453,6 +464,7 @@
         output.textContent = `${slider.value}%`;
         cells.eachLayer((layer) => layer.setStyle(style(layer.feature)));
       });
+      installMeasurementControl();
       map.fitBounds(cells.getBounds(), { padding: [14, 14] });
     })
     .catch((error) => {
