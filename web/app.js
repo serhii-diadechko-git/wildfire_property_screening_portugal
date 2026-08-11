@@ -8,10 +8,10 @@
       items: [["#ead9a0", "Lower national rank (0–50th percentile)"], ["#eca900", "Intermediate national rank (>50–80th percentile)"], ["#a6222a", "Higher national rank (>80–100th percentile)"]],
       band: (percentile) => percentile <= 0.50 ? ["#ead9a0", "Lower national rank (0–50th percentile)"] : percentile <= 0.80 ? ["#eca900", "Intermediate national rank (>50–80th percentile)"] : ["#a6222a", "Higher national rank (>80–100th percentile)"],
     },
-    five: {
-      description: "Five equal national-rank groups for more detail. Colours do not show the percentage expected to burn.",
-      items: [["#fff1c7", "0–20th national rank"], ["#f8cf6a", ">20–40th national rank"], ["#eca900", ">40–60th national rank"], ["#dd6b32", ">60–80th national rank"], ["#a6222a", ">80–100th national rank"]],
-      band: (percentile) => percentile <= 0.20 ? ["#fff1c7", "0–20th national-rank group"] : percentile <= 0.40 ? ["#f8cf6a", ">20–40th national-rank group"] : percentile <= 0.60 ? ["#eca900", ">40–60th national-rank group"] : percentile <= 0.80 ? ["#dd6b32", ">60–80th national-rank group"] : ["#a6222a", ">80–100th national-rank group"],
+    fifteen: {
+      description: "Detailed national-rank intervals, mostly 15 percentile points wide. Colours still do not show the percentage expected to burn.",
+      items: [["#fff1c7", "0–15th national rank"], ["#f8dd94", ">15–30th national rank"], ["#f2c45d", ">30–45th national rank"], ["#eca900", ">45–60th national rank"], ["#dd7635", ">60–75th national rank"], ["#c7442e", ">75–90th national rank"], ["#8f1725", ">90–100th national rank"]],
+      band: (percentile) => percentile <= 0.15 ? ["#fff1c7", "0–15th national-rank interval"] : percentile <= 0.30 ? ["#f8dd94", ">15–30th national-rank interval"] : percentile <= 0.45 ? ["#f2c45d", ">30–45th national-rank interval"] : percentile <= 0.60 ? ["#eca900", ">45–60th national-rank interval"] : percentile <= 0.75 ? ["#dd7635", ">60–75th national-rank interval"] : percentile <= 0.90 ? ["#c7442e", ">75–90th national-rank interval"] : ["#8f1725", ">90–100th national-rank interval"],
     },
   };
   const map = L.map("map", { preferCanvas: true, zoomControl: true, minZoom: 5, maxZoom: 13 });
@@ -59,6 +59,7 @@
     "Satellite imagery (Esri World Imagery)": satellite,
     "No online basemap": noBasemap,
   }, {}, { position: "topright", collapsed: false }).addTo(map);
+  L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 140 }).addTo(map);
 
   const percent = (value, digits = 2) => `${(Number(value) * 100).toFixed(digits)}%`;
   const text = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" })[char]);
@@ -78,17 +79,17 @@
   function inputDetailsHtml(inputs) {
     const sourceSummary = `ICNF history ${inputs.historical_fire_start_year}\u2013${inputs.historical_fire_end_year}; CLC ${inputs.land_cover_reference_year} (${text(inputs.land_cover_release_id)}); ${text(inputs.terrain_release_id)}; ERA5-Land JJAS ${inputs.climate_reference_year}.`;
     const featureRows = [
-      ["Built-up share", percent(inputs.built_up_share), "Built environment in the 1 km cell"],
-      ["Forest/shrub share", percent(inputs.forest_shrub_share_2km), "Mainland land within the 2 km context"],
-      ["Mean slope", `${Number(inputs.mean_slope_2km).toFixed(1)}\u00b0`, "Terrain context within the 2 km buffer"],
-      ["Previously burned years", `${inputs.fire_years_previous_10y_2km} of 10`, `Distinct years in ${inputs.historical_fire_start_year}\u2013${inputs.historical_fire_end_year}, within the 2 km context`],
-      ["Mean summer temperature", `${Number(inputs.warm_season_mean_2m_temperature_c).toFixed(1)}\u00b0C`, `June\u2013September ${inputs.climate_reference_year}`],
-      ["Summer precipitation", `${Number(inputs.warm_season_total_precipitation_mm).toFixed(1)} mm`, `June\u2013September ${inputs.climate_reference_year}`],
-      ["Mean surface soil water", Number(inputs.warm_season_mean_soil_water_layer1).toFixed(3), `June\u2013September ${inputs.climate_reference_year}`],
-      ["Warmest monthly mean", `${Number(inputs.warm_season_max_monthly_2m_temperature_c).toFixed(1)}\u00b0C`, `Warmest monthly mean in June\u2013September ${inputs.climate_reference_year}`],
-      ["Lowest monthly mean soil water", Number(inputs.warm_season_min_monthly_soil_water_layer1).toFixed(3), `Lowest monthly mean in June\u2013September ${inputs.climate_reference_year}`],
+      ["Built-up share", percent(inputs.built_up_share), "Built environment in the 1 km cell", "The proportion of this cell's land covered by buildings, roads, and other developed surfaces in the CLC land-cover data."],
+      ["Forest/shrub share", percent(inputs.forest_shrub_share_2km), "Mainland land within the 2 km context", "The proportion of mainland land around the cell classified as forest or shrubland, measured in the outward 2 km context."],
+      ["Mean slope", `${Number(inputs.mean_slope_2km).toFixed(1)}\u00b0`, "Terrain context within the 2 km buffer", "The average steepness of the surrounding terrain. Higher degrees mean steeper land."],
+      ["Previously burned years", `${inputs.fire_years_previous_10y_2km} of 10`, `Distinct years in ${inputs.historical_fire_start_year}\u2013${inputs.historical_fire_end_year}, within the 2 km context`, "The number of different years in the previous ten years when burned-area geometry was recorded within the surrounding 2 km context."],
+      ["Mean summer temperature", `${Number(inputs.warm_season_mean_2m_temperature_c).toFixed(1)}\u00b0C`, `June\u2013September ${inputs.climate_reference_year}`, "The average June-to-September air temperature, measured by ERA5-Land at the standard height of 2 metres above the ground."],
+      ["Summer precipitation", `${Number(inputs.warm_season_total_precipitation_mm).toFixed(1)} mm`, `June\u2013September ${inputs.climate_reference_year}`, "The total estimated rainfall for June through September. Millimetres describe the depth of water over a flat surface."],
+      ["Mean surface soil water", Number(inputs.warm_season_mean_soil_water_layer1).toFixed(3), `June\u2013September ${inputs.climate_reference_year}`, "The average water content in ERA5-Land's top soil layer, approximately the upper 7 cm. Larger values mean wetter near-surface soil."],
+      ["Warmest monthly mean", `${Number(inputs.warm_season_max_monthly_2m_temperature_c).toFixed(1)}\u00b0C`, `Warmest monthly mean in June\u2013September ${inputs.climate_reference_year}`, "The highest of the four monthly average 2-metre air temperatures for June, July, August, and September."],
+      ["Lowest monthly mean soil water", Number(inputs.warm_season_min_monthly_soil_water_layer1).toFixed(3), `Lowest monthly mean in June\u2013September ${inputs.climate_reference_year}`, "The lowest of the four monthly average top-layer soil-water values, representing the driest monthly soil condition in the warm season."],
     ];
-    return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning]) => `<section><strong>${name}</strong><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">The result combines all nine inputs through the final model. It remains a broad-area comparative estimate, not a property-level assessment.</p>`;
+    return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning, help]) => `<section><div class="input-feature-heading"><strong>${name}</strong><button class="feature-info" type="button" aria-label="What ${name} means" data-help="${text(help)}">i</button></div><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">Select or focus an <strong>i</strong> icon for a plain-language definition. The result combines all nine inputs through the final model and remains a broad-area comparative estimate, not a property-level assessment.</p>`;
   }
 
   function defaultSelection() {

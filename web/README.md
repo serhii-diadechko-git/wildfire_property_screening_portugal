@@ -23,8 +23,9 @@ model, or expose the ICNF structural-hazard comparison layer.
 - **2026 comparative estimate:** 89,112 1 km cells. Each cell has a continuous
   estimated burned share and a separate national rank of that estimate. The
   default **three-group** view is lower (0-50th), intermediate (>50-80th), and
-  higher (>80-100th) national rank. The **five-group** view uses equal 20-point
-  national-rank ranges for more spatial detail.
+  higher (>80-100th) national rank. The detailed view uses mostly
+  15-percentile-point intervals (0-15, >15-30, >30-45, >45-60, >60-75,
+  >75-90, and >90-100) for finer spatial comparison.
   Switching the display changes colours and the legend together, but never
   changes the underlying estimated burned-share values. Both are relative
   comparison views, not burned-share percentages, physical risk thresholds,
@@ -44,6 +45,10 @@ model, or expose the ICNF structural-hazard comparison layer.
 - **Opacity control:** changes only the transparency of the 2026 exposure
   overlay so the selected background map is easier to inspect; it does not
   change any estimated value or band.
+- **Scale bar:** shows the current metric map scale and updates automatically
+  when the user zooms.
+- **Inputs used:** opens the nine recorded predictor values for the selected
+  cell. Each information icon gives a short plain-language feature definition.
 
 The browser map is useful for accessible presentation and broad-area research.
 QGIS remains the technical GIS review interface. See the repository
