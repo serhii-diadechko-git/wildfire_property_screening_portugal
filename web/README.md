@@ -36,7 +36,9 @@ model, or expose the ICNF structural-hazard comparison layer.
   surrounding circle; they are context summaries, not replacement values for
   the selected cell. The selected cell is yellow, cells within 3 km are cyan,
   and the outer 3-5 km context cells are blue. The colours are a temporary
-  selection overlay; they do not alter the exposure bands.
+  selection overlay; they do not alter the exposure bands. The card receives
+  its lookup and context data from same-origin `GET /v1/exposure`; the browser
+  does not calculate or rescore an estimate.
 - **Basemap selector:** OpenStreetMap Standard, OpenStreetMap Humanitarian,
   Esri World Topographic terrain, Esri World Imagery satellite, or no online
   basemap. Tiles are loaded only for the view currently used in the browser.
@@ -50,11 +52,27 @@ model, or expose the ICNF structural-hazard comparison layer.
 - **Measurement tools:** the ruler measures multi-segment distance and the
   polygon tool measures area. Click vertices and double-click to finish; the
   measured value remains labelled on the map until the clear-measurements
-  action is used. Cyan/blue measurement geometry is deliberately distinct
-  from the beige/orange/red exposure palette. These measurements are map
-  geometry aids, not model outputs.
+  action is used. Both tools use a cyan/teal overlay deliberately distinct
+  from the beige/orange/red exposure palette. Clearing measurements restores
+  normal cell selection immediately. These measurements are map geometry aids,
+  not model outputs.
 - **Inputs used:** opens the nine recorded predictor values for the selected
-  cell. Each information icon gives a short plain-language feature definition.
+  cell. Each information icon opens a nearby, independent plain-language
+  definition; the displayed values remain visible underneath.
+
+## Local endpoints used by the map
+
+The browser client is deliberately thin and uses only two same-origin,
+read-only endpoints:
+
+| Endpoint | Purpose | When called |
+|---|---|---|
+| `GET /v1/map/2026/cells.geojson` | Reduced 2026 cell geometry with presentation fields. | Once when the map opens. |
+| `GET /v1/exposure` | Containing-cell estimate, nine recorded inputs, and requested surrounding-context summaries. | Each time a user clicks a cell. |
+
+The API contract, request parameters, output fields, and error behavior are
+defined in the [local exposure API guide](../docs/exposure_api_guide.md) and
+the checked-in [OpenAPI schema](../docs/openapi/exposure_api.json).
 
 The browser map is useful for accessible presentation and broad-area research.
 QGIS remains the technical GIS review interface. See the repository

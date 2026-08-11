@@ -26,6 +26,86 @@ only. It **does not expose the ICNF structural-hazard raster or derived
 hazard classes**, because that official comparison layer has distinct
 licensing/use restrictions. It also does not geocode or retain addresses.
 
+## Endpoint contract
+
+All endpoints are read-only and return data from already published local
+artefacts. They never train, refit, score a new year, or modify a dataset.
+
+| Endpoint | Purpose | Successful response |
+|---|---|---|
+| `GET /` | Serves the local browser map. | HTML page. |
+| `GET /v1/map/2026/cells.geojson` | Serves the reduced 2026 browser-map asset. | GeoJSON. |
+| `GET /v1/exposure` | Looks up one coordinate and its requested context radii. | JSON object described below. |
+| `GET /health` | Confirms that the required published local artefacts can be loaded. | `{"status":"ok","api_version":"0.1.0"}`. |
+| `GET /docs` | Interactive FastAPI documentation. | HTML documentation. |
+| `GET /openapi.json` | Live OpenAPI description from the running service. | OpenAPI JSON. |
+
+### `GET /v1/exposure` request
+
+| Query parameter | Type | Required | Rule |
+|---|---|---:|---|
+| `longitude` | decimal number | Yes | WGS84 (`EPSG:4326`) decimal degrees; API validation range −31 to 15. |
+| `latitude` | decimal number | Yes | WGS84 (`EPSG:4326`) decimal degrees; API validation range 25 to 55. |
+| `buffers_km` | comma-separated decimals | No | Positive, unique radii no larger than 10 km; default `1,3,5`. |
+
+The coordinate must also fall inside the canonical mainland 1 km grid. A
+valid WGS84 coordinate outside that grid returns `404`.
+
+### `GET /v1/exposure` response
+
+| Field | Type | Meaning |
+|---|---|---|
+| `api_version` | string | API version used to create the response. |
+| `request_longitude`, `request_latitude` | number | Echoed WGS84 request coordinate. |
+| `grid_x_epsg_3763`, `grid_y_epsg_3763` | number | Same point transformed to the project’s metric `EPSG:3763` CRS. |
+| `containing_cell` | object | Published 2026 estimate and observed historical-context fields for the containing 1 km cell. |
+| `model_inputs` | object | The nine recorded 2025 values jointly supplied to the final model, with source-period metadata. |
+| `context_buffers` | array | One descriptive, intersection-area-weighted summary per requested radius. |
+| `limitations` | array of strings | Scope and responsible-use statements returned with every lookup. |
+
+`containing_cell` always contains `cell_id`, `forecast_year`,
+`prediction_input_year`, `predicted_burned_share_next_year`,
+`predicted_exposure_percentile`, `estimated_comparative_exposure_band`,
+`historical_evidence_period`, `fire_years_history_10y_2km`, and
+`historical_exposure_band`. The burned-share estimate is a continuous fraction
+from 0 to 1; multiply by 100 for percentage display. The percentile is a
+separate national rank from 0 to 1, not a second estimate.
+
+`model_inputs` contains provenance fields
+`historical_fire_start_year`, `historical_fire_end_year`,
+`climate_reference_year`, `land_cover_reference_year`,
+`land_cover_release_id`, and `terrain_release_id`, followed by these nine
+model fields in their recorded order:
+
+| Field | Unit / interpretation |
+|---|---|
+| `built_up_share` | 1 km mainland-land share classified as built/artificial land. |
+| `forest_shrub_share_2km` | Forest/shrub share of mainland land in the outward 2 km context. |
+| `mean_slope_2km` | Mean terrain slope, in degrees, in the 2 km context. |
+| `fire_years_previous_10y_2km` | Distinct burned years in the strictly pre-predictor 10-year context window. |
+| `warm_season_mean_2m_temperature_c` | June–September mean 2 m air temperature, °C. |
+| `warm_season_total_precipitation_mm` | Day-weighted June–September precipitation total, mm. |
+| `warm_season_mean_soil_water_layer1` | June–September mean shallow (layer-1) soil water, m³/m³. |
+| `warm_season_max_monthly_2m_temperature_c` | Warmest June–September monthly mean 2 m air temperature, °C. |
+| `warm_season_min_monthly_soil_water_layer1` | Driest June–September monthly mean shallow soil water, m³/m³. |
+
+Each `context_buffers` item contains `radius_km`,
+`intersecting_cell_count`, `intersected_grid_area_sq_km`,
+`mean_predicted_burned_share_next_year`,
+`mean_predicted_exposure_percentile`,
+`higher_estimated_exposure_area_share`,
+`mean_fire_years_history_10y_2km`, and `intersecting_cell_ids`. These are
+surrounding-area summaries of overlapping 1 km cells; they are not a second
+grid, additional model estimate, or property assessment.
+
+### Errors
+
+| Status | Meaning |
+|---:|---|
+| `404` | The coordinate is outside the canonical mainland Portugal 1 km grid. |
+| `422` | A coordinate or `buffers_km` parameter is malformed or outside its accepted range. |
+| `503` | Required published local outputs or the browser-map asset are unavailable or fail contract checks. |
+
 ## Preconditions
 
 1. Create and activate the project Python environment and install
@@ -61,8 +141,10 @@ python scripts/run_exposure_api.py
 
 The default host is `127.0.0.1`, so it is reachable only from the local
 machine at `http://127.0.0.1:8000`. The local browser map is at that root URL;
-it uses OpenStreetMap as an online background and the local 2026 derivative as
-its overlay. Interactive API documentation is available at
+it uses the local 2026 derivative as its overlay. Its optional online
+backgrounds are OpenStreetMap Standard, OpenStreetMap Humanitarian, Esri World
+Topographic terrain, and Esri World Imagery; users can also select no online
+basemap. Interactive API documentation is available at
 `http://127.0.0.1:8000/docs`; the machine-readable OpenAPI document is at
 `http://127.0.0.1:8000/openapi.json`.
 

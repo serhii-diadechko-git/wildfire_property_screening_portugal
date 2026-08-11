@@ -107,15 +107,20 @@ python scripts/run_exposure_api.py
 ```
 
 Open `http://127.0.0.1:8000` for the interactive map. It keeps the continuous
-estimated burned share separate from the cell's national relative rank. Users
-can switch between a three-group overview and five equal national-rank groups;
-these colour groups do not change the model estimate and are not physical risk
-thresholds. Clicking a 1 km cell shows its estimate, exact percentile rank, and
-descriptive 1/3/5 km context summaries. The OpenStreetMap
-Standard/Humanitarian, terrain, and satellite background
-selector needs an internet connection; the exposure layer and API remain local.
-Use it to narrow broad research areas, not to assess a specific property or
-make a purchase decision.
+estimated burned share separate from the cell's national relative rank. The
+default **three-group** overview is the project’s presentation classification;
+an optional detailed view divides the same rank into seven mostly
+15-percentile-point intervals. Switching views changes only colours and legend
+labels—not model estimates, analytical results, or physical-risk thresholds.
+
+Click a 1 km cell to see its estimated burned share, exact national percentile,
+the nine recorded model inputs, and descriptive 1/3/5 km surrounding-context
+summaries. The map also includes opacity, scale, distance, and area tools.
+Measurement geometry is only a map-inspection aid; clearing it returns the map
+to normal cell selection. The OpenStreetMap Standard/Humanitarian, terrain, and
+satellite background selector needs an internet connection; the exposure layer
+and API remain local. Use the viewer to narrow broad research areas, not to
+assess a specific property or make a purchase decision.
 
 Open `http://127.0.0.1:8000/docs` for the interactive API documentation. The
 API accepts coordinates, not addresses, by design: address geocoding would
