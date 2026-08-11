@@ -19,6 +19,7 @@
   const highlightTiers = new Map();
   const selectionTitle = document.getElementById("selection-title");
   const selectionContent = document.getElementById("selection-content");
+  const selectionToolbar = document.getElementById("selection-toolbar");
   const clearSelection = document.getElementById("clear-selection");
   const showInputDetails = document.getElementById("show-input-details");
   const inputDetailsDialog = document.getElementById("input-details-dialog");
@@ -35,6 +36,9 @@
   let selectedContext;
   let selectedInputs;
   let activeFeatureHelp;
+  let measurementMode;
+  let measurementPoints = [];
+  let activeMeasurement;
 
   const standard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -63,9 +67,148 @@
   }, {}, { position: "topright", collapsed: false }).addTo(map);
   L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 140 }).addTo(map);
 
+  const measurementLayers = L.featureGroup().addTo(map);
+  const measurementControl = L.control({ position: "topleft" });
+  measurementControl.onAdd = () => {
+    const element = L.DomUtil.create("div", "measurement-control leaflet-bar");
+    element.innerHTML = `<div class="measurement-toolbar" role="toolbar" aria-label="Map measurement tools">
+      <button type="button" data-measure="distance" title="Measure distance: click points, then double-click to finish" aria-label="Measure distance" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 17 4l3 3L7 20H4v-3Zm8-8 3 3m-6 0 3 3m-6 0 3 3"/></svg></button>
+      <button type="button" data-measure="area" title="Measure area: click polygon corners, then double-click to finish" aria-label="Measure area" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 14 2-2 12-12-2V5Zm0 0 12 14M19 7 5 17"/></svg></button>
+      <button type="button" data-measure="clear" title="Clear all distance and area measurements" aria-label="Clear all measurements" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7V4h6v3m-8 0 1 13h8l1-13M10 10v7m4-7v7"/></svg></button>
+    </div><div class="measurement-status" aria-live="polite">Choose distance or area.</div>`;
+    L.DomEvent.disableClickPropagation(element);
+    L.DomEvent.disableScrollPropagation(element);
+    return element;
+  };
+  measurementControl.addTo(map);
+  const measurementStatus = document.querySelector(".measurement-status");
+  const distanceMeasureButton = document.querySelector('[data-measure="distance"]');
+  const areaMeasureButton = document.querySelector('[data-measure="area"]');
+  const clearMeasureButton = document.querySelector('[data-measure="clear"]');
+
   const percent = (value, digits = 2) => `${(Number(value) * 100).toFixed(digits)}%`;
   const text = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" })[char]);
   const row = (name, value) => `<tr><td>${name}</td><td>${value}</td></tr>`;
+
+  const distanceMetres = (points) => points.slice(1).reduce((total, point, index) => total + map.distance(points[index], point), 0);
+  const formatDistance = (metres) => metres < 1_000 ? `${metres.toFixed(0)} m` : `${(metres / 1_000).toFixed(3)} km`;
+  const formatArea = (squareMetres) => squareMetres < 10_000
+    ? `${squareMetres.toFixed(0)} m\u00b2`
+    : squareMetres < 1_000_000
+      ? `${(squareMetres / 10_000).toFixed(2)} ha`
+      : `${(squareMetres / 1_000_000).toFixed(3)} km\u00b2 (${(squareMetres / 10_000).toFixed(1)} ha)`;
+
+  // Spherical polygon area, matching Leaflet's geographic map coordinates.
+  function geodesicArea(points) {
+    if (points.length < 3) return 0;
+    const radius = 6_378_137;
+    const radians = Math.PI / 180;
+    let sum = 0;
+    for (let index = 0; index < points.length; index += 1) {
+      const first = points[index];
+      const second = points[(index + 1) % points.length];
+      sum += (second.lng - first.lng) * radians * (2 + Math.sin(first.lat * radians) + Math.sin(second.lat * radians));
+    }
+    return Math.abs(sum * radius * radius / 2);
+  }
+
+  function measurementValue(points = measurementPoints) {
+    return measurementMode === "distance" ? formatDistance(distanceMetres(points)) : formatArea(geodesicArea(points));
+  }
+
+  function updateMeasurementButtons() {
+    distanceMeasureButton.setAttribute("aria-pressed", String(measurementMode === "distance"));
+    areaMeasureButton.setAttribute("aria-pressed", String(measurementMode === "area"));
+    clearMeasureButton.disabled = measurementLayers.getLayers().length === 0;
+    map.getContainer().classList.toggle("measurement-active", Boolean(measurementMode));
+  }
+
+  function cancelActiveMeasurement() {
+    if (activeMeasurement) measurementLayers.removeLayer(activeMeasurement);
+    activeMeasurement = undefined;
+    measurementPoints = [];
+  }
+
+  function setMeasurementMode(mode) {
+    if (measurementMode === mode) {
+      cancelActiveMeasurement();
+      measurementMode = undefined;
+      map.doubleClickZoom.enable();
+      measurementStatus.textContent = "Choose distance or area.";
+    } else {
+      cancelActiveMeasurement();
+      measurementMode = mode;
+      map.doubleClickZoom.disable();
+      measurementStatus.textContent = mode === "distance"
+        ? "Distance: click points; double-click to finish."
+        : "Area: click corners; double-click to finish.";
+    }
+    updateMeasurementButtons();
+  }
+
+  function finishMeasurement() {
+    const minimumPoints = measurementMode === "distance" ? 2 : 3;
+    if (!activeMeasurement || measurementPoints.length < minimumPoints) return;
+    const value = measurementValue();
+    activeMeasurement.setLatLngs(measurementPoints);
+    activeMeasurement.bindTooltip(value, { permanent: true, direction: "center", className: "measurement-label" }).openTooltip();
+    activeMeasurement = undefined;
+    measurementPoints = [];
+    measurementMode = undefined;
+    map.doubleClickZoom.enable();
+    measurementStatus.innerHTML = `<strong>Measured:</strong> ${value}`;
+    updateMeasurementButtons();
+  }
+
+  function clearMeasurements() {
+    measurementLayers.clearLayers();
+    activeMeasurement = undefined;
+    measurementPoints = [];
+    measurementMode = undefined;
+    map.doubleClickZoom.enable();
+    measurementStatus.textContent = "All measurements cleared.";
+    updateMeasurementButtons();
+  }
+
+  distanceMeasureButton.addEventListener("click", () => setMeasurementMode("distance"));
+  areaMeasureButton.addEventListener("click", () => setMeasurementMode("area"));
+  clearMeasureButton.addEventListener("click", clearMeasurements);
+  map.on("click", (event) => {
+    if (!measurementMode) return;
+    measurementPoints.push(event.latlng);
+    if (!activeMeasurement) {
+      activeMeasurement = measurementMode === "distance"
+        ? L.polyline(measurementPoints, { color: "#f7d64a", weight: 3 })
+        : L.polygon(measurementPoints, { color: "#f7d64a", fillColor: "#f0aa13", fillOpacity: 0.22, weight: 2 });
+      activeMeasurement.addTo(measurementLayers);
+    } else {
+      activeMeasurement.setLatLngs(measurementPoints);
+    }
+    const minimumPoints = measurementMode === "distance" ? 2 : 3;
+    measurementStatus.innerHTML = measurementPoints.length >= minimumPoints
+      ? `<strong>Current ${measurementMode}:</strong> ${measurementValue()} &mdash; double-click to finish.`
+      : `${measurementMode === "distance" ? "Distance" : "Area"}: add ${minimumPoints - measurementPoints.length} more point${minimumPoints - measurementPoints.length === 1 ? "" : "s"}.`;
+    updateMeasurementButtons();
+  });
+  map.on("mousemove", (event) => {
+    if (!measurementMode || measurementPoints.length === 0 || !activeMeasurement) return;
+    activeMeasurement.setLatLngs([...measurementPoints, event.latlng]);
+    measurementStatus.innerHTML = `<strong>Current ${measurementMode}:</strong> ${measurementValue([...measurementPoints, event.latlng])}`;
+  });
+  map.on("dblclick", (event) => {
+    if (!measurementMode) return;
+    L.DomEvent.stop(event.originalEvent);
+    if (measurementPoints.length > 1 && map.distance(measurementPoints.at(-1), measurementPoints.at(-2)) < 1) measurementPoints.pop();
+    finishMeasurement();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !measurementMode) return;
+    cancelActiveMeasurement();
+    measurementMode = undefined;
+    map.doubleClickZoom.enable();
+    measurementStatus.textContent = "Measurement cancelled.";
+    updateMeasurementButtons();
+  });
 
   // Keep surrounding-radius summaries visually secondary to the selected
   // cell's own estimate. Each row reports an area-weighted context average,
@@ -94,23 +237,21 @@
     return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning, help]) => `<section><div class="input-feature-heading"><strong>${name}</strong><button class="feature-info" type="button" aria-label="What ${name} means" data-help="${text(help)}">i</button></div><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">Select or focus an <strong>i</strong> icon for a plain-language definition. The result combines all nine inputs through the final model and remains a broad-area comparative estimate, not a property-level assessment.</p>`;
   }
 
-  // The popover is deliberately outside the scrolling dialog content. That
-  // prevents a help label from widening the dialog or creating a horizontal
-  // scrollbar on narrow screens.
+  // The popover lives in the dialog's top layer but outside its scrolling
+  // content. That keeps it above the cards without widening the dialog or
+  // creating a horizontal scrollbar on narrow screens.
   function showFeatureHelp(button) {
-    const card = button.closest("section");
-    const isNarrow = window.matchMedia("(max-width: 760px)").matches;
-    const side = isNarrow || card.matches(":nth-child(odd)") ? "left" : "right";
     featureHelpPopover.textContent = button.dataset.help;
     featureHelpPopover.hidden = false;
-    featureHelpPopover.dataset.side = side;
     const buttonRect = button.getBoundingClientRect();
+    const dialogRect = inputDetailsDialog.getBoundingClientRect();
     const popoverRect = featureHelpPopover.getBoundingClientRect();
     const gap = 8;
-    const unclampedLeft = side === "left"
-      ? buttonRect.left - popoverRect.width - gap
-      : buttonRect.right + gap;
-    const left = Math.min(Math.max(8, unclampedLeft), window.innerWidth - popoverRect.width - 8);
+    const outsideDialogLeft = Math.max(buttonRect.right + gap, dialogRect.right + gap);
+    const hasOutsideRoom = window.innerWidth - outsideDialogLeft >= Math.min(180, popoverRect.width);
+    const left = hasOutsideRoom
+      ? Math.min(outsideDialogLeft, window.innerWidth - popoverRect.width - 8)
+      : Math.min(buttonRect.right + gap, window.innerWidth - popoverRect.width - 8);
     const top = Math.min(Math.max(8, buttonRect.top), window.innerHeight - popoverRect.height - 8);
     featureHelpPopover.style.left = `${left}px`;
     featureHelpPopover.style.top = `${top}px`;
@@ -124,7 +265,8 @@
   }
 
   function defaultSelection() {
-    selectionTitle.textContent = "Cell details";
+    selectionTitle.textContent = "Selected cell";
+    selectionToolbar.hidden = true;
     clearSelection.hidden = true;
     showInputDetails.hidden = true;
     hideFeatureHelp();
@@ -201,8 +343,10 @@
   }
 
   function selectCell(feature, event) {
+    if (measurementMode) return;
     const requestId = ++selectionRequestId;
     selectionTitle.textContent = "Selected cell";
+    selectionToolbar.hidden = false;
     clearSelection.hidden = false;
     showInputDetails.hidden = true;
     selectionContent.innerHTML = '<p>Loading selected-cell and nearby-area context…</p>';

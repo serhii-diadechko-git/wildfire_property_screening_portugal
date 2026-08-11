@@ -18,25 +18,35 @@
     <main class="map-panel" aria-label="Interactive wildfire exposure map">
       <div id="map" role="application" aria-label="Interactive map of 2026 comparative wildfire exposure"></div>
       <aside class="map-card legend" aria-label="Legend">
-        <h2>Comparative exposure</h2>
-        <p id="legend-description">Overview groups based on each cell's national rank. Colours do not show the percentage expected to burn.</p>
-        <fieldset class="legend-switch" aria-label="Display classification">
-          <legend>Display classification</legend>
-          <label><input type="radio" name="display-classification" value="three" checked> Overview: 3 rank groups</label>
-          <label><input type="radio" name="display-classification" value="fifteen"> Detail: 15-point rank intervals</label>
-        </fieldset>
-        <ul id="legend-items"></ul>
-        <p class="card-note">The display choice changes colours only. It does not change the model estimate or create a risk threshold.</p>
-      </aside>
-      <section class="map-card selection" aria-live="polite">
-        <div class="selection-heading">
-          <h2 id="selection-title">Cell details</h2>
-          <div class="selection-toolbar" aria-label="Selected-cell actions">
-            <button id="show-input-details" type="button" hidden>Inputs used</button>
-            <button id="clear-selection" type="button" hidden>Clear</button>
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Map legend</p>
+            <h2>Comparative exposure</h2>
           </div>
         </div>
-        <div id="selection-content">
+        <div class="card-body">
+          <p id="legend-description">Overview groups based on each cell's national rank. Colours do not show the percentage expected to burn.</p>
+          <fieldset class="legend-switch" aria-label="Display classification">
+            <legend>Display classification</legend>
+            <label><input type="radio" name="display-classification" value="three" checked> Overview: 3 rank groups</label>
+            <label><input type="radio" name="display-classification" value="fifteen"> Detail: 15-point rank intervals</label>
+          </fieldset>
+          <ul id="legend-items"></ul>
+          <p class="card-note">The display choice changes colours only. It does not change the model estimate or create a risk threshold.</p>
+        </div>
+      </aside>
+      <section class="map-card selection" aria-live="polite">
+        <div class="card-header selection-heading">
+          <div>
+            <p class="eyebrow">Map inspection</p>
+            <h2 id="selection-title">Selected cell</h2>
+          </div>
+          <div id="selection-toolbar" class="selection-toolbar" aria-label="Selected-cell actions" hidden>
+            <button id="show-input-details" class="toolbar-icon" type="button" title="Show the nine model inputs used for this selected cell" aria-label="Show inputs used" hidden>ℹ</button>
+            <button id="clear-selection" class="toolbar-icon" type="button" title="Clear the selected cell and nearby-context highlights" aria-label="Clear selected cell" hidden>×</button>
+          </div>
+        </div>
+        <div id="selection-content" class="card-body">
           <p>Click a 1 km cell to inspect its 2026 comparative estimate.</p>
           <p class="card-note">The map will also highlight the nearby 3 km and 5 km context cells. These are surrounding-area summaries, not a second grid or a property assessment.</p>
         </div>
@@ -48,7 +58,7 @@
           <p class="eyebrow">Selected-cell explanation</p>
           <h2 id="input-details-title">Inputs used for this estimate</h2>
         </div>
-        <button id="input-details-close" type="button" aria-label="Close inputs used">Close</button>
+        <button id="input-details-close" class="toolbar-icon" type="button" title="Close this explanation" aria-label="Close inputs used">×</button>
       </div>
       <div id="input-details-content" class="input-details-content"></div>
       <div id="feature-help-popover" class="feature-help-popover" role="tooltip" hidden></div>

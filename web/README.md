@@ -47,6 +47,10 @@ model, or expose the ICNF structural-hazard comparison layer.
   change any estimated value or band.
 - **Scale bar:** shows the current metric map scale and updates automatically
   when the user zooms.
+- **Measurement tools:** the ruler measures multi-segment distance and the
+  polygon tool measures area. Click vertices and double-click to finish; the
+  measured value remains labelled on the map until the clear-measurements
+  action is used. These measurements are map geometry aids, not model outputs.
 - **Inputs used:** opens the nine recorded predictor values for the selected
   cell. Each information icon gives a short plain-language feature definition.
 
