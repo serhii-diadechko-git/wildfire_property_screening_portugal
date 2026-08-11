@@ -272,6 +272,9 @@
           "containing_cell": {
             "$ref": "#/components/schemas/CellEstimate"
           },
+          "model_inputs": {
+            "$ref": "#/components/schemas/ModelInputs"
+          },
           "context_buffers": {
             "items": {
               "$ref": "#/components/schemas/BufferSummary"
@@ -295,6 +298,7 @@
           "grid_x_epsg_3763",
           "grid_y_epsg_3763",
           "containing_cell",
+          "model_inputs",
           "context_buffers",
           "limitations"
         ],
@@ -313,6 +317,90 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "ModelInputs": {
+        "properties": {
+          "historical_fire_start_year": {
+            "type": "integer",
+            "title": "Historical Fire Start Year"
+          },
+          "historical_fire_end_year": {
+            "type": "integer",
+            "title": "Historical Fire End Year"
+          },
+          "climate_reference_year": {
+            "type": "integer",
+            "title": "Climate Reference Year"
+          },
+          "land_cover_reference_year": {
+            "type": "integer",
+            "title": "Land Cover Reference Year"
+          },
+          "land_cover_release_id": {
+            "type": "string",
+            "title": "Land Cover Release Id"
+          },
+          "terrain_release_id": {
+            "type": "string",
+            "title": "Terrain Release Id"
+          },
+          "built_up_share": {
+            "type": "number",
+            "title": "Built Up Share"
+          },
+          "forest_shrub_share_2km": {
+            "type": "number",
+            "title": "Forest Shrub Share 2Km"
+          },
+          "mean_slope_2km": {
+            "type": "number",
+            "title": "Mean Slope 2Km"
+          },
+          "fire_years_previous_10y_2km": {
+            "type": "integer",
+            "title": "Fire Years Previous 10Y 2Km"
+          },
+          "warm_season_mean_2m_temperature_c": {
+            "type": "number",
+            "title": "Warm Season Mean 2M Temperature C"
+          },
+          "warm_season_total_precipitation_mm": {
+            "type": "number",
+            "title": "Warm Season Total Precipitation Mm"
+          },
+          "warm_season_mean_soil_water_layer1": {
+            "type": "number",
+            "title": "Warm Season Mean Soil Water Layer1"
+          },
+          "warm_season_max_monthly_2m_temperature_c": {
+            "type": "number",
+            "title": "Warm Season Max Monthly 2M Temperature C"
+          },
+          "warm_season_min_monthly_soil_water_layer1": {
+            "type": "number",
+            "title": "Warm Season Min Monthly Soil Water Layer1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "historical_fire_start_year",
+          "historical_fire_end_year",
+          "climate_reference_year",
+          "land_cover_reference_year",
+          "land_cover_release_id",
+          "terrain_release_id",
+          "built_up_share",
+          "forest_shrub_share_2km",
+          "mean_slope_2km",
+          "fire_years_previous_10y_2km",
+          "warm_season_mean_2m_temperature_c",
+          "warm_season_total_precipitation_mm",
+          "warm_season_mean_soil_water_layer1",
+          "warm_season_max_monthly_2m_temperature_c",
+          "warm_season_min_monthly_soil_water_layer1"
+        ],
+        "title": "ModelInputs",
+        "description": "Recorded 2025 inputs for explaining one published annual estimate.\n\nThese are the values supplied jointly to the selected model.  They are\nexplanatory provenance, not separate causal attributions."
       },
       "ValidationError": {
         "properties": {

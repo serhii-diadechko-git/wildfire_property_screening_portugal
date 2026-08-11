@@ -36,6 +36,8 @@ class ExposureApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         payload = response.json()
         self.assertEqual(payload["containing_cell"]["cell_id"], "A")
+        self.assertEqual(payload["model_inputs"]["climate_reference_year"], 2025)
+        self.assertIn("warm_season_total_precipitation_mm", payload["model_inputs"])
         self.assertEqual([item["radius_km"] for item in payload["context_buffers"]], [1.0, 3.0, 5.0])
         self.assertEqual(payload["context_buffers"][0]["intersecting_cell_ids"], ["A", "B"])
         self.assertEqual(payload["containing_cell"]["estimated_comparative_exposure_band"], "Lower estimated comparative exposure percentile (0-50%)")

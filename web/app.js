@@ -20,6 +20,10 @@
   const selectionTitle = document.getElementById("selection-title");
   const selectionContent = document.getElementById("selection-content");
   const clearSelection = document.getElementById("clear-selection");
+  const showInputDetails = document.getElementById("show-input-details");
+  const inputDetailsDialog = document.getElementById("input-details-dialog");
+  const inputDetailsContent = document.getElementById("input-details-content");
+  const inputDetailsClose = document.getElementById("input-details-close");
   const legendDescription = document.getElementById("legend-description");
   const legendItems = document.getElementById("legend-items");
   let exposureOpacity = 0.82;
@@ -28,6 +32,7 @@
   let cells;
   let selectedFeature;
   let selectedContext;
+  let selectedInputs;
 
   const standard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -68,9 +73,28 @@
     <div class="context-detail"><span>${item.intersecting_cell_count} intersecting cells</span><span>${percent(item.higher_estimated_exposure_area_share, 1)} of context area in the highest national-rank group</span></div>
   </div>`;
 
+  // This modal intentionally shows the recorded values supplied jointly to
+  // the model. It does not claim that one displayed value caused the estimate.
+  function inputDetailsHtml(inputs) {
+    const sourceSummary = `ICNF history ${inputs.historical_fire_start_year}\u2013${inputs.historical_fire_end_year}; CLC ${inputs.land_cover_reference_year} (${text(inputs.land_cover_release_id)}); ${text(inputs.terrain_release_id)}; ERA5-Land JJAS ${inputs.climate_reference_year}.`;
+    const featureRows = [
+      ["Built-up share", percent(inputs.built_up_share), "Built environment in the 1 km cell"],
+      ["Forest/shrub share", percent(inputs.forest_shrub_share_2km), "Mainland land within the 2 km context"],
+      ["Mean slope", `${Number(inputs.mean_slope_2km).toFixed(1)}\u00b0`, "Terrain context within the 2 km buffer"],
+      ["Previously burned years", `${inputs.fire_years_previous_10y_2km} of 10`, `Distinct years in ${inputs.historical_fire_start_year}\u2013${inputs.historical_fire_end_year}, within the 2 km context`],
+      ["Mean summer temperature", `${Number(inputs.warm_season_mean_2m_temperature_c).toFixed(1)}\u00b0C`, `June\u2013September ${inputs.climate_reference_year}`],
+      ["Summer precipitation", `${Number(inputs.warm_season_total_precipitation_mm).toFixed(1)} mm`, `June\u2013September ${inputs.climate_reference_year}`],
+      ["Mean surface soil water", Number(inputs.warm_season_mean_soil_water_layer1).toFixed(3), `June\u2013September ${inputs.climate_reference_year}`],
+      ["Warmest monthly mean", `${Number(inputs.warm_season_max_monthly_2m_temperature_c).toFixed(1)}\u00b0C`, `Warmest monthly mean in June\u2013September ${inputs.climate_reference_year}`],
+      ["Lowest monthly mean soil water", Number(inputs.warm_season_min_monthly_soil_water_layer1).toFixed(3), `Lowest monthly mean in June\u2013September ${inputs.climate_reference_year}`],
+    ];
+    return `<p class="input-details-intro">These are the nine recorded inputs used together to produce this cell's 2026 estimate. They describe context; they are not separate proven causes.</p><p class="input-details-source"><strong>Source periods:</strong> ${sourceSummary}</p><div class="input-details-grid">${featureRows.map(([name, value, meaning]) => `<section><strong>${name}</strong><span class="input-value">${value}</span><span>${meaning}</span></section>`).join("")}</div><p class="card-note">The result combines all nine inputs through the final model. It remains a broad-area comparative estimate, not a property-level assessment.</p>`;
+  }
+
   function defaultSelection() {
     selectionTitle.textContent = "Cell details";
     clearSelection.hidden = true;
+    showInputDetails.hidden = true;
     selectionContent.innerHTML = '<p>Click a 1 km cell to inspect its 2026 comparative estimate.</p><p class="card-note">The map will also highlight nearby 3 km and 5 km context cells. These are surrounding-area summaries, not a second grid or a property assessment.</p>';
   }
 
@@ -87,7 +111,7 @@
       row("National relative rank", `${rank.toFixed(1)}th percentile`) +
       row("Map colour group", text(currentBand(properties)[1])) +
       row("Predictor inputs", text(properties.prediction_input_year))
-    }</table><div class="rank-scale" aria-label="National relative rank ${rank.toFixed(1)}th percentile"><span class="rank-marker" style="left:${rank.toFixed(3)}%"></span></div><div class="rank-scale-labels"><span>Lower national rank</span><strong>${rank.toFixed(1)}th percentile</strong><span>Higher national rank</span></div><p class="interpretation-note"><strong>Two different percentages:</strong> burned share estimates how much of this cell may burn. National rank compares that estimate with all 89,112 mainland cells.</p><div class="context-heading"><h3>Nearby context averages</h3><p>The selected cell's own estimate is shown above. These rows summarise all cells intersecting each circle.</p></div><div class="context-list">${summary}</div><p class="card-note">Context radii are surrounding-area summaries, not a second grid, property assessment, or separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
+    }</table><div class="rank-scale" aria-label="National relative rank ${rank.toFixed(1)}th percentile"><span class="rank-marker" style="left:${rank.toFixed(3)}%"></span></div><div class="rank-scale-labels"><span>Lower national rank</span><strong>${rank.toFixed(1)}th percentile</strong><span>Higher national rank</span></div><p class="interpretation-note"><strong>Two different percentages:</strong> burned share estimates how much of this cell may burn. National rank compares that estimate with all 89,112 mainland cells.</p><div class="context-heading"><h3>Nearby context averages</h3><p>The selected cell's own estimate is shown above. These rows summarise all cells intersecting each circle.</p></div><div class="context-list">${summary}</div><p class="card-note">These radius areas are surrounding-area summaries, not a second grid, property assessment, or separate prediction.</p><div class="highlight-guide"><span><i class="highlight-dot highlight-selected"></i>Selected cell</span><span><i class="highlight-dot highlight-three"></i>Within 3 km</span><span><i class="highlight-dot highlight-five"></i>3&ndash;5 km</span></div>`;
   }
 
   function currentBand(properties) {
@@ -147,6 +171,7 @@
     const requestId = ++selectionRequestId;
     selectionTitle.textContent = "Selected cell";
     clearSelection.hidden = false;
+    showInputDetails.hidden = true;
     selectionContent.innerHTML = '<p>Loading selected-cell and nearby-area context…</p>';
     replaceHighlights(feature.properties.cell_id);
     const query = new URLSearchParams({ longitude: event.latlng.lng.toFixed(6), latitude: event.latlng.lat.toFixed(6), buffers_km: "1,3,5" });
@@ -156,11 +181,15 @@
         if (requestId !== selectionRequestId) return;
         selectedFeature = feature;
         selectedContext = context;
+        selectedInputs = context.model_inputs;
+        showInputDetails.hidden = !selectedInputs;
         selectionContent.innerHTML = selectionHtml(feature.properties, context);
         applyHighlights(feature.properties.cell_id, context.context_buffers);
       })
       .catch((error) => {
         if (requestId !== selectionRequestId) return;
+        selectedInputs = undefined;
+        showInputDetails.hidden = true;
         selectionContent.innerHTML = `<p><strong>Selected cell:</strong> ${text(feature.properties.cell_id)}</p><p class="card-note">${text(error.message)}</p>`;
       });
   }
@@ -170,7 +199,18 @@
     clearHighlights();
     selectedFeature = undefined;
     selectedContext = undefined;
+    selectedInputs = undefined;
+    if (inputDetailsDialog.open) inputDetailsDialog.close();
     defaultSelection();
+  });
+  showInputDetails.addEventListener("click", () => {
+    if (!selectedInputs) return;
+    inputDetailsContent.innerHTML = inputDetailsHtml(selectedInputs);
+    inputDetailsDialog.showModal();
+  });
+  inputDetailsClose.addEventListener("click", () => inputDetailsDialog.close());
+  inputDetailsDialog.addEventListener("click", (event) => {
+    if (event.target === inputDetailsDialog) inputDetailsDialog.close();
   });
   document.querySelectorAll('input[name="display-classification"]').forEach((input) => {
     input.addEventListener("change", () => changeClassification(input.value));
@@ -193,10 +233,12 @@
           });
         },
       }).addTo(map);
-      const control = L.control({ position: "topleft" });
+      // Keep display controls together: the opacity control follows the
+      // basemap selector in Leaflet's top-right control stack.
+      const control = L.control({ position: "topright" });
       control.onAdd = () => {
-        const element = L.DomUtil.create("div", "opacity-control leaflet-bar");
-        element.innerHTML = '<label for="exposure-opacity">2026 layer opacity <output id="opacity-value">82%</output></label><input id="exposure-opacity" type="range" min="0" max="100" value="82" aria-label="2026 exposure layer opacity">';
+        const element = L.DomUtil.create("div", "opacity-control map-card");
+        element.innerHTML = '<div class="opacity-heading">2026 layer opacity</div><label for="exposure-opacity"><span>Exposure layer</span><output id="opacity-value">82%</output></label><input id="exposure-opacity" type="range" min="0" max="100" value="82" aria-label="2026 exposure layer opacity">';
         L.DomEvent.disableClickPropagation(element);
         L.DomEvent.disableScrollPropagation(element);
         return element;

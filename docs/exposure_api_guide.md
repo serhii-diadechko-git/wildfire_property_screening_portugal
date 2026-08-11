@@ -12,6 +12,8 @@ the same validated output; neither is a new model or changes validated data.
 - the containing canonical mainland Portugal 1 km cell;
 - its 2026 continuous estimated burned share and national comparative
   percentile;
+- the nine recorded 2025 model inputs and their source periods, for a
+  selected-cell explanation in the local viewer; and
 - observed 2016-2025 historical recurrence context; and
 - intersection-area-weighted context summaries within the requested 1 km,
   3 km, and 5 km radii; and
@@ -101,6 +103,11 @@ calculated by ranking all same-year mainland cell estimates from low to high;
 it is not the percentage expected to burn or a safety rating. A `404` response means the coordinate is outside the
 canonical mainland grid; a `503` response means the required published local
 outputs have not been built or failed their contract checks.
+
+`model_inputs` records the nine values supplied jointly to the final model for
+the containing cell, together with their source periods. They help a user
+understand the context behind the displayed estimate; they do not identify
+individual causes or convert the estimate into a property-level assessment.
 
 ## Address input and privacy
 

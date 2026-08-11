@@ -31,7 +31,10 @@
       <section class="map-card selection" aria-live="polite">
         <div class="selection-heading">
           <h2 id="selection-title">Cell details</h2>
-          <button id="clear-selection" type="button" hidden>Clear</button>
+          <div class="selection-toolbar" aria-label="Selected-cell actions">
+            <button id="show-input-details" type="button" hidden>Inputs used</button>
+            <button id="clear-selection" type="button" hidden>Clear</button>
+          </div>
         </div>
         <div id="selection-content">
           <p>Click a 1 km cell to inspect its 2026 comparative estimate.</p>
@@ -39,6 +42,16 @@
         </div>
       </section>
     </main>
+    <dialog id="input-details-dialog" class="input-details-dialog" aria-labelledby="input-details-title">
+      <div class="input-details-header">
+        <div>
+          <p class="eyebrow">Selected-cell explanation</p>
+          <h2 id="input-details-title">Inputs used for this estimate</h2>
+        </div>
+        <button id="input-details-close" type="button" aria-label="Close inputs used">Close</button>
+      </div>
+      <div id="input-details-content" class="input-details-content"></div>
+    </dialog>
     <footer class="app-footer">
       <span>Project estimate: ICNF burned-area history, Copernicus CLC and DEM, ERA5-Land, and DGT CAOP.</span>
       <span>Basemap: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>.</span>

@@ -14,6 +14,7 @@ from typing import Annotated
 
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -34,6 +35,20 @@ WGS84_TO_GRID = Transformer.from_crs("EPSG:4326", "EPSG:3763", always_xy=True)
 GRID_TO_WGS84 = Transformer.from_crs("EPSG:3763", "EPSG:4326", always_xy=True)
 DEFAULT_BUFFERS_KM = (1.0, 3.0, 5.0)
 WEB_DIRECTORY = PROJECT_ROOT / "web"
+FORECAST_INPUT_MATRIX_PATH = (
+    PROJECT_ROOT / "data/processed/operational_forecasts/forecast_2026_nine_feature_matrix.parquet"
+)
+MODEL_INPUT_COLUMNS = (
+    "built_up_share",
+    "forest_shrub_share_2km",
+    "mean_slope_2km",
+    "fire_years_previous_10y_2km",
+    "warm_season_mean_2m_temperature_c",
+    "warm_season_total_precipitation_mm",
+    "warm_season_mean_soil_water_layer1",
+    "warm_season_max_monthly_2m_temperature_c",
+    "warm_season_min_monthly_soil_water_layer1",
+)
 
 
 class CellEstimate(BaseModel):
@@ -69,6 +84,30 @@ class BufferSummary(BaseModel):
     )
 
 
+class ModelInputs(BaseModel):
+    """Recorded 2025 inputs for explaining one published annual estimate.
+
+    These are the values supplied jointly to the selected model.  They are
+    explanatory provenance, not separate causal attributions.
+    """
+
+    historical_fire_start_year: int
+    historical_fire_end_year: int
+    climate_reference_year: int
+    land_cover_reference_year: int
+    land_cover_release_id: str
+    terrain_release_id: str
+    built_up_share: float
+    forest_shrub_share_2km: float
+    mean_slope_2km: float
+    fire_years_previous_10y_2km: int
+    warm_season_mean_2m_temperature_c: float
+    warm_season_total_precipitation_mm: float
+    warm_season_mean_soil_water_layer1: float
+    warm_season_max_monthly_2m_temperature_c: float
+    warm_season_min_monthly_soil_water_layer1: float
+
+
 class ExposureResponse(BaseModel):
     """Read-only response for a mainland Portugal coordinate lookup."""
 
@@ -78,6 +117,7 @@ class ExposureResponse(BaseModel):
     grid_x_epsg_3763: float
     grid_y_epsg_3763: float
     containing_cell: CellEstimate
+    model_inputs: ModelInputs
     context_buffers: list[BufferSummary]
     limitations: list[str]
 
@@ -87,6 +127,7 @@ class ExposureStore:
     """Validated in-memory spatial views used by the small read-only service."""
 
     cells: gpd.GeoDataFrame
+    model_inputs: pd.DataFrame
 
     @classmethod
     def from_project_root(cls, project_root: Path = PROJECT_ROOT) -> "ExposureStore":
@@ -110,14 +151,56 @@ class ExposureStore:
         cells = scores.join(historical_fields, on="cell_id", how="left", validate="one_to_one")
         if len(cells) != len(scores) or cells[["history_start_year", "history_end_year", "fire_years_history_10y_2km"]].isna().any().any():
             raise ValueError("Historical evidence does not cover every published annual-estimate cell")
-        return cls(cells=cells)
+        matrix_path = project_root / FORECAST_INPUT_MATRIX_PATH.relative_to(PROJECT_ROOT)
+        if not matrix_path.is_file():
+            raise FileNotFoundError(matrix_path)
+        input_columns = [
+            "cell_id", "observation_year", "historical_fire_start_year", "historical_fire_end_year",
+            "climate_reference_year", "land_cover_reference_year", "land_cover_release_id", "terrain_release_id",
+            *MODEL_INPUT_COLUMNS,
+        ]
+        model_inputs = pd.read_parquet(matrix_path, columns=input_columns)
+        if (
+            len(model_inputs) != len(scores)
+            or not model_inputs.cell_id.is_unique
+            or set(model_inputs.cell_id.astype(str)) != set(scores.cell_id.astype(str))
+        ):
+            raise ValueError("Forecast input matrix does not provide one model-input row per published estimate cell")
+        if not model_inputs.observation_year.eq(FORECAST_YEAR - 1).all():
+            raise ValueError("Forecast input matrix has an unexpected predictor year")
+        if model_inputs[list(MODEL_INPUT_COLUMNS)].isna().any().any():
+            raise ValueError("Forecast input matrix has missing model inputs")
+        if not np.isfinite(model_inputs[list(MODEL_INPUT_COLUMNS)].to_numpy(dtype="float64")).all():
+            raise ValueError("Forecast input matrix has non-finite model inputs")
+        return cls(cells=cells, model_inputs=model_inputs.set_index("cell_id", verify_integrity=True))
 
     @classmethod
-    def from_frames(cls, scores: gpd.GeoDataFrame, historical: gpd.GeoDataFrame) -> "ExposureStore":
+    def from_frames(
+        cls,
+        scores: gpd.GeoDataFrame,
+        historical: gpd.GeoDataFrame,
+        model_inputs: pd.DataFrame | None = None,
+    ) -> "ExposureStore":
         """Create a store from validated test/deployment frames without file I/O."""
 
         historical_fields = historical.drop(columns="geometry").set_index("cell_id")
-        return cls(cells=scores.join(historical_fields, on="cell_id", how="left", validate="one_to_one"))
+        if model_inputs is None:
+            # Test/development convenience only. Published use always reads the
+            # validated operational predictor matrix in ``from_project_root``.
+            model_inputs = pd.DataFrame({
+                "cell_id": scores.cell_id.astype(str),
+                "historical_fire_start_year": 2015,
+                "historical_fire_end_year": 2024,
+                "climate_reference_year": 2025,
+                "land_cover_reference_year": 2018,
+                "land_cover_release_id": "V2020_20u1",
+                "terrain_release_id": "Copernicus DEM GLO-30",
+                **{column: 0.0 for column in MODEL_INPUT_COLUMNS},
+            })
+        return cls(
+            cells=scores.join(historical_fields, on="cell_id", how="left", validate="one_to_one"),
+            model_inputs=model_inputs.drop(columns=["observation_year"], errors="ignore").set_index("cell_id", verify_integrity=True),
+        )
 
     def containing_cell(self, point: Point):
         """Return the deterministically selected canonical cell covering ``point``."""
@@ -130,6 +213,31 @@ class ExposureStore:
         if matches.empty:
             return None
         return matches.sort_values("cell_id", kind="stable").iloc[0]
+
+    def inputs_for_cell(self, cell_id: str) -> ModelInputs:
+        """Return the recorded nine inputs used for one published estimate."""
+
+        try:
+            inputs = self.model_inputs.loc[cell_id]
+        except KeyError as error:
+            raise ValueError(f"Published model inputs are missing for cell {cell_id}") from error
+        return ModelInputs(
+            historical_fire_start_year=int(inputs.historical_fire_start_year),
+            historical_fire_end_year=int(inputs.historical_fire_end_year),
+            climate_reference_year=int(inputs.climate_reference_year),
+            land_cover_reference_year=int(inputs.land_cover_reference_year),
+            land_cover_release_id=str(inputs.land_cover_release_id),
+            terrain_release_id=str(inputs.terrain_release_id),
+            built_up_share=float(inputs.built_up_share),
+            forest_shrub_share_2km=float(inputs.forest_shrub_share_2km),
+            mean_slope_2km=float(inputs.mean_slope_2km),
+            fire_years_previous_10y_2km=int(inputs.fire_years_previous_10y_2km),
+            warm_season_mean_2m_temperature_c=float(inputs.warm_season_mean_2m_temperature_c),
+            warm_season_total_precipitation_mm=float(inputs.warm_season_total_precipitation_mm),
+            warm_season_mean_soil_water_layer1=float(inputs.warm_season_mean_soil_water_layer1),
+            warm_season_max_monthly_2m_temperature_c=float(inputs.warm_season_max_monthly_2m_temperature_c),
+            warm_season_min_monthly_soil_water_layer1=float(inputs.warm_season_min_monthly_soil_water_layer1),
+        )
 
     def context_summary(self, point: Point, radius_km: float) -> BufferSummary:
         """Return an intersection-area-weighted context summary around a point."""
@@ -284,6 +392,7 @@ def create_app(store: ExposureStore | None = None) -> FastAPI:
             grid_x_epsg_3763=x,
             grid_y_epsg_3763=y,
             containing_cell=containing,
+            model_inputs=store.inputs_for_cell(str(cell.cell_id)),
             context_buffers=[store.context_summary(point, radius) for radius in buffers],
             limitations=[
                 "Comparative screening evidence for broad 1 km cells; not a property-level forecast, safety guarantee, insurance quote, or purchase recommendation.",
