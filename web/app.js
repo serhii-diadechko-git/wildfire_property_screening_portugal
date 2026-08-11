@@ -187,7 +187,7 @@
     if (!activeMeasurement) {
       activeMeasurement = measurementMode === "distance"
         ? L.polyline(measurementPoints, { color: "#22d3ee", weight: 3 })
-        : L.polygon(measurementPoints, { color: "#60a5fa", fillColor: "#2563eb", fillOpacity: 0.25, weight: 2 });
+        : L.polygon(measurementPoints, { color: "#22d3ee", fillColor: "#0e7490", fillOpacity: 0.25, weight: 2 });
       activeMeasurement.addTo(measurementLayers);
     } else {
       activeMeasurement.setLatLngs(measurementPoints);

@@ -119,7 +119,7 @@ class WebMapTests(unittest.TestCase):
         self.assertIn("finishMeasurement", client)
         self.assertIn("clearMeasurements", client)
         self.assertIn('color: "#22d3ee"', client)
-        self.assertIn('color: "#60a5fa"', client)
+        self.assertIn('color: "#22d3ee"', client)
         self.assertIn("measurement-label", stylesheet)
         self.assertIn("feature-info", client)
         self.assertIn("feature-info", stylesheet)
