@@ -19,7 +19,7 @@ the project without receiving private credentials or a personal file path.
 | Licence boundary | Passed: repository-owned code, notebooks, documentation, and original figures are released under the MIT License; external data remains subject to provider terms. |
 | Environment and notebook guidance | Current: Python 3.13, pinned dependencies, VS Code/Jupyter-kernel setup, preflight, API acquisition, validation, and deliberate rebuild are documented in the root README. |
 | QGIS projects | Current: the historical project has 5 map layers; the combined 2026 project has 6 map layers. Both use project-relative data paths after a successful rebuild. |
-| Presentation | Current: the editable final deck contains 8 slides and 8 note sections; see `presentation_validation.md`. |
+| Presentation | Current: the editable final deck contains 9 slides and 9 note sections, including the model-development and 2026-estimate flow; see `presentation_validation.md`. |
 
 ## Public workflow
 

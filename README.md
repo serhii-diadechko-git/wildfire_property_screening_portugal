@@ -246,7 +246,7 @@ scripts\run_qgis_presentation_project.bat --validate-operational
 | `data/processed/spatial_outputs/historical_residential_wildfire_exposure_screening.gpkg` | Observed 2016–2025 recurrence evidence plus official ICNF comparison attributes. |
 | `reports/figures/` and `reports/tables/` | Reproducible visual and tabular presentation outputs. |
 | `reports/validation/` | Stable analytical validation evidence. |
-| `reports/presentation/wildfire_exposure_screening_capstone_final.pptx` | Editable eight-slide capstone presentation. |
+| `reports/presentation/wildfire_exposure_screening_capstone_final.pptx` | Editable nine-slide capstone presentation, including the historical training, validation, final temporal evaluation, refit, and 2026-estimate flow. |
 | `reports/run_logs/` | Local, Git-ignored command logs and timings. |
 
 Parquet is the canonical analytical table format. GeoPackages provide reusable geometry and QGIS/presentation layers; they are not duplicate full cell-year panels.
