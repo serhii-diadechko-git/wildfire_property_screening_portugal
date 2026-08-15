@@ -42,7 +42,7 @@ It does not recommend the purchase of a specific property.
 
 In ERA5-Land, `2m_temperature` means air temperature at a standard height of 2 metres above the land surface. The `2m` label describes measurement height, not a 2 m spatial resolution or a 2 m context buffer.
 
-> Final-model selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once the final model was frozen, it was evaluated once on the held-out final period T=2022-2024; those results did not change its parameters.
+> Final-model selection design: fit T=2010-2019; validate T=2020-2021; select only from that development evidence. `burned_share_next_year` is the sole current target; `burned_next_year` remains deferred. Once the final model was frozen, it was evaluated once during the final temporal evaluation period T=2022-2024; those results did not change its parameters.
 
 Each observation is one 1 km x 1 km grid cell for predictor reference year `T`. Predictor information available at `T` estimates the observed wildfire outcome in `T+1`.
 
@@ -93,7 +93,7 @@ The final nine-feature model is a two-stage burned-share regression model. It co
 
 1. Which broad areas should be prioritised for further local location research based on comparative wildfire-exposure evidence?
 2. Which patterns remain comparatively lower or higher across different completed years?
-3. Does the final nine-feature model improve on historical recurrence alone in held-out future years?
+3. Does the final nine-feature model improve on historical recurrence alone during the later final temporal evaluation years?
 4. How stable are its comparative estimates and limitations across time?
 5. Which broad areas should be shortlisted for local verification, investigated with caution, or marked as insufficient evidence?
 
@@ -108,8 +108,8 @@ classification. This limited empirical question supports the capstone's
 broad-area screening purpose; it does not define a buy/do-not-buy decision.
 
 The hypothesis received partial support. The final nine-feature model was selected from the
-development validation period and then evaluated once on the held-out final
-period `T=2022-2024`: it reduced all-row MAE from 0.029186 to 0.020913 and
+development validation period and then evaluated once during the final temporal
+evaluation period `T=2022-2024`: it reduced all-row MAE from 0.029186 to 0.020913 and
 increased tie-aware burned-share-mass capture@20% from 40.17% to 57.16% versus
 the transparent historical-recurrence benchmark. RMSE was marginally higher
 (0.110995 versus 0.110595), and the high-burn 2025 outcome remained difficult.

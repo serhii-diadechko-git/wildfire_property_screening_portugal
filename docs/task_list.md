@@ -1,6 +1,6 @@
 # Current Task List
 
-The validated project state is a final nine-feature annual continuous burned-share model plus a separate historical recurrence screening layer. The final model was selected using fit `T=2010-2019` and complete validation `T=2020-2021`, with no `T=2022-2024` rows read during selection. The frozen configuration then completed its one held-out final evaluation on `T=2022-2024`, before the operational model was refit through `T=2024` / observed outcome 2025 and the 2026 comparative estimate was published.
+The validated project state is a final nine-feature annual continuous burned-share model plus a separate historical recurrence screening layer. The final model was selected using fit `T=2010-2019` and complete validation `T=2020-2021`, with no `T=2022-2024` rows read during selection. The frozen configuration then completed its one final temporal evaluation on `T=2022-2024`, before the operational model was refit through `T=2024` / observed outcome 2025 and the 2026 comparative estimate was published.
 
 ## Completed analytical workflow
 
@@ -11,7 +11,7 @@ The validated project state is a final nine-feature annual continuous burned-sha
 - [x] Resolve systematic ERA5-Land coastal masking with the validated nearest-valid-land-cell fallback.
 - [x] Extend model training backward to `T=2010` using the governed source rules.
 - [x] Compare the historical-recurrence baseline and predeclared nine-feature two-stage regression configurations on `T=2020-2021`.
-- [x] Select the documented final nine-feature model from validation-only evidence, then evaluate the frozen configuration once on held-out `T=2022-2024` data.
+- [x] Select the documented final nine-feature model from validation-only evidence, then evaluate the frozen configuration once on later `T=2022-2024` final-evaluation data.
 - [x] Refit the final nine-feature model through observed outcome 2025.
 - [x] Publish the target-free 2026 comparative estimate and QGIS-ready layer.
 - [x] Publish the separate 2016-2025 historical recurrence screening and ICNF comparison.

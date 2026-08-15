@@ -41,13 +41,22 @@ property-level forecast, insurance estimate, or purchase recommendation.
 ## Numerical and terminology checks
 
 - Canonical grid: 89,112 mainland 1 km cells.
-- Historical-screening evidence window: 2016-2025; recurrence is measured in a
-  mainland-masked 2 km context.
-- Model-development fit years: `T=2010-2019`; validation years: `T=2020-2021`;
-  final temporal evaluation: `T=2022-2024` with outcomes 2023-2025.
-- Final-test historical-recurrence benchmark: MAE 0.0292, RMSE 0.1106, and
+- Registered ICNF source coverage: 2000-2025. This is archive coverage, not one
+  model-fitting or evaluation period.
+- Historical-screening evidence window: 2016-2025. This is separate descriptive
+  evidence; recurrence is measured in a mainland-masked 2 km context.
+
+| Model stage | Predictor years `T` | Observed outcomes `T+1` |
+|---|---:|---:|
+| Development fitting | 2010-2019 | 2011-2020 |
+| Development validation | 2020-2021 | 2021-2022 |
+| Final temporal evaluation | 2022-2024 | 2023-2025 |
+| Operational refit | 2010-2024 | 2011-2025 |
+| Current annual estimate | 2025 | 2026 outcome pending |
+
+- Final-evaluation historical-recurrence benchmark: MAE 0.0292, RMSE 0.1106, and
   tie-aware burned-share-mass capture@20% 40.2%.
-- Final-test final nine-feature model: MAE 0.0209, RMSE 0.1110, and
+- Final-evaluation nine-feature model: MAE 0.0209, RMSE 0.1110, and
   tie-aware burned-share-mass capture@20% 57.2%.
 - The 2026 annual output is target-free, derived from 2025 predictor inputs,
   and awaits independent evaluation after ICNF publishes the observed 2026
@@ -59,11 +68,11 @@ property-level forecast, insurance estimate, or purchase recommendation.
 ## Package check
 
 - PPTX package check: 9 slides and 9 speaker-note sections.
-- PPTX size: 291,007 bytes.
-- PPTX SHA-256: `59B3FB64DDE4E41ABADC400370DEE93EE034180BA0A2D346BCAEB0DE7A54585B`.
+- PPTX size: 290,799 bytes.
+- PPTX SHA-256: `4D196BB4190B0950223D0F78A995A483886ECD1C920BC54F0B57D6596FE94EA1`.
 - Render and overflow check: passed for all nine slides.
-- Template-fidelity check: passed; the inserted slide reuses the existing
-  three-card process layout without new geometry.
+- Template-fidelity check: passed; the temporal wording update preserves the
+  existing slide geometry and layout.
 
 This report validates presentation content, paths, notes, and terminology.
 Render/overflow verification should be rerun after any future manual slide edit.

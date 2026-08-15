@@ -22,7 +22,7 @@ flowchart TD
     G --> I["Select the final specification<br/>using validation evidence only"]
     H --> I
 
-    I --> J["Held-out final evaluation<br/>T = 2022-2024<br/>outcomes 2023-2025"]
+    I --> J["Final temporal evaluation<br/>T = 2022-2024<br/>outcomes 2023-2025"]
     J --> K["Freeze the scientific conclusion"]
 
     K --> L["Operational refit of the unchanged specification<br/>T = 2010-2024<br/>observed outcomes 2011-2025"]
@@ -90,19 +90,28 @@ x 0.045 estimated burned share if burning occurs
 = 1.125% of the cell's land area
 ```
 
-## Why model selection, testing, and refitting are separate
+## Why the model stages are separate
+
+The stages answer different questions. **Development fitting** teaches the
+candidate models from older examples. **Development validation** chooses which
+candidate to keep. **Final temporal evaluation** checks that frozen choice once
+on later unseen years. **Operational refit** then rebuilds the unchanged chosen
+model with all completed labelled years so that the current estimate uses the
+most available evidence.
 
 | Stage | Predictor years | Outcome years | What happens |
 |---|---:|---:|---|
-| Development fitting | 2010-2019 | 2011-2020 | Candidate specifications learn from labelled examples. |
-| Development validation | 2020-2021 | 2021-2022 | The final specification is selected without reading final-test rows. |
-| Held-out final evaluation | 2022-2024 | 2023-2025 | The frozen specification is evaluated once on later years. |
-| Operational refit | 2010-2024 | 2011-2025 | The unchanged selected specification learns from all completed labelled evidence. |
+| Development fitting | 2010-2019 | 2011-2020 | Candidate models learn relationships from older labelled examples. |
+| Development validation | 2020-2021 | 2021-2022 | Candidate results are compared and the final model is selected without reading the later evaluation rows. |
+| Final temporal evaluation | 2022-2024 | 2023-2025 | The frozen selected model is checked once on later unseen years to provide an honest performance estimate. |
+| Operational refit | 2010-2024 | 2011-2025 | The unchanged selected model is rebuilt using all completed labelled evidence. |
 | Current annual scoring | 2025 | 2026 not yet observed | The refitted model estimates 2026 burned share from target-free 2025 inputs. |
 
+For a short presentation, these can be grouped into three ideas: **build and
+select**, **check on later years**, and **rebuild for the current estimate**.
 The operational refit does not repeat model selection or change the validated
-specification. It lets the already selected method learn from the most recent
-completed outcomes before estimating the next unobserved year.
+method. It only lets that method learn from the newest completed outcomes before
+estimating the next unobserved year.
 
 ## How the 2026 estimate is produced
 

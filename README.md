@@ -46,9 +46,15 @@ The registered ICNF annual burned-area records cover calendar years **2000–202
 |---|---:|---:|---|
 | Development fitting | 2010–2019 | 2011–2020 | Fit the predeclared candidate methods. |
 | Development validation | 2020–2021 | 2021–2022 | Select the final nine-feature model. |
-| Held-out final test | 2022–2024 | 2023–2025 | Evaluate the frozen final nine-feature model once. |
+| Final temporal evaluation | 2022–2024 | 2023–2025 | Evaluate the frozen final nine-feature model once. |
 | Operational refit | 2010–2024 | 2011–2025 | Refit the unchanged selected specification using all completed labelled rows. |
 | Current annual estimate | 2025 | 2026: not yet observed | Produce the target-free 2026 comparative estimate. |
+
+In simple terms, the project first **builds and selects** the model using the
+fitting and validation periods, then **checks** the frozen model once on later
+years, and finally **rebuilds the same selected model** with all completed
+labelled evidence before producing the current 2026 estimate. The final check
+measures performance; the later rebuild does not repeat model selection.
 
 The current layer uses `T=2025` inputs to estimate 2026; no observed 2026
 outcome is used. See the [model-learning and scoring flow](docs/model_learning_and_2026_estimate.md)
