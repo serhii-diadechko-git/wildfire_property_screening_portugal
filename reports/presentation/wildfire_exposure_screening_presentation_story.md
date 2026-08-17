@@ -26,7 +26,7 @@ Some features are calculated within a 2 km outward context around each cell. Thi
 
 ## Slide 3 — Model development
 
-The model learned from data for 2010–2019. Data for 2020–2021 was used to choose the final modelling approach.
+The model learned from 2010–2019 data. Candidate models were then compared using 2020–2021 data, and the best-performing approach was selected.
 
 That approach was checked once on 2022–2024 data by comparing its estimates with fires observed in the following years, 2023–2025.
 
