@@ -26,6 +26,8 @@
   const inputDetailsContent = document.getElementById("input-details-content");
   const inputDetailsClose = document.getElementById("input-details-close");
   const featureHelpPopover = document.getElementById("feature-help-popover");
+  const legendHelpButton = document.getElementById("legend-help-button");
+  const legendHelpPopover = document.getElementById("legend-help-popover");
   const legendDescription = document.getElementById("legend-description");
   const legendItems = document.getElementById("legend-items");
   let exposureOpacity = 0.82;
@@ -36,6 +38,7 @@
   let selectedContext;
   let selectedInputs;
   let activeFeatureHelp;
+  let legendHelpPinned = false;
   let measurementMode;
   let measurementPoints = [];
   let activeMeasurement;
@@ -275,6 +278,26 @@
     activeFeatureHelp = undefined;
   }
 
+  function showLegendHelp() {
+    legendHelpPopover.hidden = false;
+    legendHelpButton.setAttribute("aria-expanded", "true");
+    const buttonRect = legendHelpButton.getBoundingClientRect();
+    const popoverRect = legendHelpPopover.getBoundingClientRect();
+    const gap = 8;
+    const left = Math.max(gap, buttonRect.left - popoverRect.width - gap);
+    const top = Math.min(
+      Math.max(gap, buttonRect.top),
+      window.innerHeight - popoverRect.height - gap,
+    );
+    legendHelpPopover.style.left = `${left}px`;
+    legendHelpPopover.style.top = `${Math.max(gap, top)}px`;
+  }
+
+  function hideLegendHelp() {
+    legendHelpPopover.hidden = true;
+    legendHelpButton.setAttribute("aria-expanded", "false");
+  }
+
   function defaultSelection() {
     selectionTitle.textContent = "Selected cell";
     selectionToolbar.hidden = true;
@@ -423,6 +446,34 @@
     if (!button) return;
     event.preventDefault();
     showFeatureHelp(button);
+  });
+  legendHelpButton.addEventListener("mouseenter", showLegendHelp);
+  legendHelpButton.addEventListener("mouseleave", () => {
+    if (!legendHelpPinned) hideLegendHelp();
+  });
+  legendHelpButton.addEventListener("focus", showLegendHelp);
+  legendHelpButton.addEventListener("blur", () => {
+    if (!legendHelpPinned) hideLegendHelp();
+  });
+  legendHelpButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    legendHelpPinned = !legendHelpPinned;
+    if (legendHelpPinned) showLegendHelp();
+    else hideLegendHelp();
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!legendHelpPinned || event.target === legendHelpButton) return;
+    legendHelpPinned = false;
+    hideLegendHelp();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || legendHelpPopover.hidden) return;
+    legendHelpPinned = false;
+    hideLegendHelp();
+    legendHelpButton.focus();
+  });
+  window.addEventListener("resize", () => {
+    if (!legendHelpPopover.hidden) showLegendHelp();
   });
   document.querySelectorAll('input[name="display-classification"]').forEach((input) => {
     input.addEventListener("change", () => changeClassification(input.value));
