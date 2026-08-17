@@ -26,11 +26,11 @@ Some features are calculated within a 2 km outward context around each cell. Thi
 
 ## Slide 3 — Model development
 
-The model was fitted using predictor years 2010–2019. Predictor years 2020–2021 were then used to select the final model specification.
+The model learned from data for 2010–2019. Data for 2020–2021 was used to choose the final modelling approach.
 
-The selected model was evaluated once on the later predictor years 2022–2024, using observed wildfire outcomes from 2023–2025. These later records were not used to select or tune the model.
+That approach was checked once on 2022–2024 data by comparing its estimates with fires observed in the following years, 2023–2025.
 
-After evaluation, the same model specification was rebuilt using all labelled records through predictor year 2024. It was then applied to 2025 inputs to estimate burned share in 2026. The observed 2026 burned areas are not yet available, so the 2026 estimate cannot yet be evaluated.
+The same model design was then rebuilt with all completed data through 2024 and applied to 2025 information to estimate burned share in 2026. Because the observed 2026 burned areas are not yet available, this estimate cannot yet be evaluated.
 
 ## Slide 4 — Three spatial views
 
