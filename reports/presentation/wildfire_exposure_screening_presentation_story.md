@@ -38,7 +38,7 @@ The project presents three different views of the same 1 km mainland cells.
 
 The historical-recurrence map counts the number of distinct years with burned-area evidence between 2016 and 2025 within the 2 km context around each cell. It is a fixed descriptive view of recent observed history.
 
-The official ICNF structural-hazard map describes persistent landscape conditions associated with wildfire hazard. It is an external official reference and is not the project's prediction.
+The official ICNF structural-hazard map classifies the longer-term wildfire hazard of the landscape from very low to very high. It is an official reference layer, not an observed-fire map or this project’s prediction.
 
 The third map shows the project's comparative estimate for 2026, created from 2025 predictor inputs. These three maps answer different questions. They can be compared, but they should not be added together into one score.
 
