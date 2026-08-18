@@ -26,11 +26,11 @@ Some features are calculated within a 2 km outward context around each cell. Thi
 
 ## Slide 3 — Model development
 
-The model learned from 2010–2019 data. Candidate models were then compared using 2020–2021 data, and the best-performing approach was selected.
+The candidate models learned from historical data for 2010–2019. We compared them using the later 2020–2021 period and selected the best-performing approach.
 
-That approach was checked once on 2022–2024 data by comparing its estimates with fires observed in the following years, 2023–2025.
+The selected model was then tested once on 2022–2024 data. These later years were kept separate from model training and selection, providing a more realistic check of how the model performs on new data.
 
-The same model design was then rebuilt with all completed data through 2024 and applied to 2025 information to estimate burned share in 2026. Because the observed 2026 burned areas are not yet available, this estimate cannot yet be evaluated.
+After evaluation, the selected model was refitted using predictor years 2010–2024 and their known following-year outcomes from 2011–2025. The refitted model was then given the available 2025 predictors to estimate burned share in 2026. The 2026 outcome is not yet available, so this estimate cannot yet be evaluated.
 
 ## Slide 4 — Three spatial views
 
