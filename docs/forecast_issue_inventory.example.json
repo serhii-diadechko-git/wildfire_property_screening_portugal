@@ -1,0 +1,22 @@
+{
+  "forecast_year": 2027,
+  "issue_at": "2026-12-31T12:00:00+00:00",
+  "input_cutoff": "2026-12-30T23:59:59+00:00",
+  "predictor_year": 2026,
+  "latest_training_outcome_year": 2025,
+  "instructions": "Incomplete template, not evidence. Add one record for EVERY required file: ICNF 2000-2025, ERA5-Land JJAS 2010-2026 including precipitation corrections, CLC 2006/2012/2018, terrain tiles and grid/boundary sources. Supply verified dates, versions and checksums. Never invent dates to pass the gate.",
+  "inputs": [
+    {
+      "source": "era5_land",
+      "reference_years": [2026],
+      "observation_end": "2026-09-30T23:59:59+00:00",
+      "completed_period": false,
+      "available_at": null,
+      "acquired_at": null,
+      "version": null,
+      "release_evidence_url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-monthly-means",
+      "path": "data/raw/climate/era5_land/era5_land_monthly_jjas_2026_mainland_portugal.grib",
+      "sha256": null
+    }
+  ]
+}

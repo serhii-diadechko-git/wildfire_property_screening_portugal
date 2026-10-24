@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-24",
+  "new_regression_tests_passed": 10,
+  "existing_focused_tests_passed": 22,
+  "final_new_plus_operational_tests_passed": 15,
+  "standard_validation_tests_passed": 28,
+  "test_counts_overlap": true,
+  "rerun_identical_prediction_rows": 891120,
+  "rerun_methods": 7,
+  "saved_model_reload_checks_passed": 20,
+  "reload_atol": 1e-12,
+  "code_result_model_hashes_verified": true,
+  "protected_publication_files_unchanged": 87,
+  "only_changed_preexisting_diagnostic": "data/processed/final_model_2010_2024/forecast_2026_preflight.json",
+  "diagnostic_reason": "Existing operational test refreshed preflight checked_utc; test now isolates its output.",
+  "incomplete_availability_template_exit_code": 1,
+  "incomplete_availability_template_status": "blocked",
+  "plot_visually_checked": true
+}

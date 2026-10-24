@@ -13,3 +13,6 @@
 *.pptx binary
 *.pdf binary
 *.png binary
+
+# Preserve recorded experiment bytes: manifests hash these exact saved files.
+/reports/research/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

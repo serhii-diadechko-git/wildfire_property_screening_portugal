@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 
 import joblib
 import pandas as pd
@@ -54,7 +57,11 @@ class OperationalForecastTests(unittest.TestCase):
         self.assertIn("not a probability", payload["output_interpretation"])
 
     def test_current_preflight_is_ready_with_2025_era5_and_no_future_data(self) -> None:
-        preflight = forecast_preflight(CURRENT_FORECAST_YEAR)
+        # The preflight function persists a timestamped report. Keep that
+        # diagnostic inside the test sandbox, not in the published model folder.
+        with tempfile.TemporaryDirectory(dir=MODEL_PATH.parent.parent) as temporary:
+            with patch("src.operational_forecast.PREFLIGHT_PATH", Path(temporary) / "preflight.json"):
+                preflight = forecast_preflight(CURRENT_FORECAST_YEAR)
         self.assertEqual(preflight["status"], "ready_for_feature_derivation")
         self.assertEqual(preflight["missing_inputs"], [])
         self.assertFalse(preflight["target_present_in_scoring_input"])

@@ -1,0 +1,41 @@
+{
+  "review_date": "2026-10-24",
+  "bootstrap_seed": 20261024,
+  "model_seed": 20260805,
+  "outcome_years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "training_first_outcome_year": 2011,
+  "issue_time": "December 31 Y-1 at 12:00 UTC",
+  "input_cutoff": "December 30 Y-1 at 23:59:59 UTC",
+  "latest_training_outcome_year": "Y-2",
+  "scoring_predictor_year": "Y-1",
+  "history_fire_window": "Y-11 through Y-2",
+  "label_publication_assumption": "Y-2 available; not verified historically",
+  "status": "retrospective sensitivity analysis using revised vintages and reused development years",
+  "selection": "none; two predeclared versions, no hyperparameter search or test-based promotion",
+  "preprocessing": "identity; fixed source transformations; all HGB binning and both stages fitted within fold",
+  "variants": {
+    "hurdle_published_parameters": "current defaults incl training-only automatic early stopping",
+    "hurdle_fixed_iterations": "same fixed tree budgets, early_stopping=False in both stages"
+  },
+  "baselines": [
+    "zero",
+    "training_mean",
+    "cell_training_mean",
+    "latest_available_year",
+    "recurrence"
+  ],
+  "geographic_scope": "future years in already-observed mainland cells",
+  "aggregate_target": "sum(cell burned_share * land_area_m2) / sum(land_area_m2); separate from cell-level task",
+  "uncertainty": "paired whole-country circular year blocks of length 1, 2 and 3; 4000 resamples; not prediction intervals"
+}

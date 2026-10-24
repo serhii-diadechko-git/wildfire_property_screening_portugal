@@ -1,6 +1,13 @@
 # Success Criteria and Model Acceptance Rules
 
-> The canonical national panel, backward training extension, and model-readiness EDA are validated. The final nine-feature model was selected using only complete `T=2020-2021` validation evidence, then refit through observed outcome 2025 and may be used for a clearly labelled annual comparative estimate only after the relevant source-input preflight passes. It is not a calibrated probability, safety guarantee, or purchase recommendation. Its independent operational evaluation requires the observed ICNF 2026 outcome.
+> The canonical panel and retrospective metrics are reproducible. The October
+> 2026 audit established prior use of the evaluation years and an August 2026
+> creation date for the annual estimate. The criteria below are historical
+> development rules, not certification of prospective forecasts. See the
+> [forecast reliability review](forecast_reliability_review.md) and revised
+> annual runbook for publication-date gates, repeated backtesting and remaining
+> limits. No calibrated probability, safety guarantee or purchase recommendation
+> is established.
 
 ## Purpose
 

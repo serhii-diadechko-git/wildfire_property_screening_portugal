@@ -1,0 +1,9 @@
+model,baseline,metric,difference,lower95,upper95,years,block_years,replicates
+nine_feature_hurdle,historical_recurrence_baseline,mae,-0.00827315835435239,-0.00946219462907571,-0.0076164489228653515,3,1,4000
+nine_feature_hurdle,historical_recurrence_baseline,rmse,0.0004006616298253135,-0.0015092406640227068,0.0008036169781680813,3,1,4000
+nine_feature_hurdle,historical_recurrence_baseline,positive_mae,0.004015944022051576,0.0011916087134264536,0.005526024402279117,3,1,4000
+nine_feature_hurdle,historical_recurrence_baseline,mass_capture20,0.13053316512294472,0.035127325945381926,0.18915274282138372,3,1,4000
+nine_feature_hurdle,historical_recurrence_baseline,mae,-0.00827315835435239,-0.008888406923089178,-0.007657909785615598,3,2,4000
+nine_feature_hurdle,historical_recurrence_baseline,rmse,0.0004006616298253135,-0.0002806624045927075,0.0007827861242102885,3,2,4000
+nine_feature_hurdle,historical_recurrence_baseline,positive_mae,0.004015944022051576,0.0028541328430495283,0.00496283346082782,3,2,4000
+nine_feature_hurdle,historical_recurrence_baseline,mass_capture20,0.13053316512294472,0.07919135949761091,0.18187497074827869,3,2,4000

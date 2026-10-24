@@ -24,11 +24,21 @@ For ERA5-Land soil water, `layer 1` means the shallowest soil layer, approximate
 
 The labelled nine-feature model panel covers predictor years `T=2010-2024`. Final-model selection used `T=2010-2019` for fitting and `T=2020-2021` for validation only; no `T=2022-2024` row was read during selection. The later labelled years are used for the operational refit through observed outcome 2025. The ICNF archive range is `2000-2025` inclusive.
 
-There is no temporal gap between historical-fire information and predictor year `T`. `fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10` through `T-1`, which is information genuinely available at prediction time and is not leakage. ICNF burned areas are never a same-year `T` predictor.
+`fire_years_previous_10y_2km` uses only the inclusive pre-`T` window `T-10`
+through `T-1`. ICNF burned areas are never a same-year `T` predictor. This
+checks observation years, not publication dates: an archived release or revision
+may have become available later. Actual availability at issue time requires
+separate dated source evidence; see the forecast reliability review.
 
 CLC is broad, retrospective land-cover context rather than annual parcel-level land cover. Assign CLC 2006 to `T=2010-2015`, CLC 2012 to `T=2016-2018`, and CLC 2018 to `T=2019-2025`. The assigned CLC reference year must be no later than `T`; the current official revised package is used for each reference layer. This is reproducible retrospective covariate reconstruction and does not imply that the later revised package was operationally available at `T`. ERA5-Land is coarse regional context, not 1 km weather: its JJAS values from `T` only use the centroid-containing ERA5-Land cell when valid. If that source cell is water-masked for a mainland analytical cell, use the deterministic nearest valid ERA5-Land land cell established by `reports/validation/era5_coastal_fallback_analysis.md`. This is a source-cell fallback, not interpolation or downscaling.
 
-For an operational score for forecast year `Y`, build one unlabelled row per cell using `T=Y-1`, refit only through labelled predictor year `Y-2`, and leave `burned_share_next_year` absent. For example, a 2026 estimate uses T=2025 predictor values and a model trained through observed outcome 2025. The source cutoff and model checksum are mandatory output metadata.
+The existing 2026 artifact uses `T=2025` predictor values and training through
+outcome 2025; it was created during August 2026. For a **pre-year** issue on
+31 December `Y-1`, the reviewed protocol instead uses completed training
+outcomes through `Y-2` (labelled predictor years through `Y-3`), subject to
+verified release dates. Scoring still uses unlabelled `T=Y-1` rows. Record the
+issue timestamp, input cutoff, source publication/acquisition timestamps,
+versions and checksums; a source year alone is insufficient.
 
 ## Technical identifiers
 

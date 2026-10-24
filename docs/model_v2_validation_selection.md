@@ -7,10 +7,16 @@ configuration used by the operational 2026 estimate. It replaced the prior
 candidate parameter configuration after a predeclared comparison on the full
 development validation period only: predictor years `T=2020-2021`.
 
-The selection decision did **not** read, fit, tune, score, or report rows from
-`T=2022-2024`. Only after the final model was frozen was it evaluated once on that held-out
-period; that separate evidence is recorded below and in
-`reports/validation/final_temporal_test_2022_2024.md`.
+The selection routine excludes `T=2022-2024` from its input and tuning loop.
+However, the October 2026 Git audit found earlier-model results for those same
+years in commit `ed7ae77` (6 August), before V2 promotion in `9bc3f00`
+(9 August). Earlier EDA also inspected their target distributions. Therefore
+the development process had already exposed the period: it is a **reused
+retrospective evaluation**, not an untouched test. Code-level separation does
+not establish that previously seen results had no influence on later choices.
+The historical report remains preserved at
+`reports/validation/final_temporal_test_2022_2024.md`; the corrected
+interpretation is in [the reliability review](forecast_reliability_review.md).
 
 ## Fixed inputs and comparison
 
@@ -36,9 +42,9 @@ slightly lowering RMSE. Its positive-row MAE is essentially unchanged
 (0.000033 higher), so this is a practical comparative-screening improvement,
 not proof of a universally best wildfire model.
 
-## Post-selection held-out test
+## Post-selection retrospective evaluation
 
-After the validation decision was fixed, the final nine-feature model was evaluated once on
+After the validation decision was fixed, the final nine-feature model was evaluated on
 `T=2022-2024` (267,336 rows). It improved all-row MAE over the historical
 recurrence baseline, but its RMSE was marginally higher and high-burn outcomes
 remained difficult. The tie-aware top-20% burned-share-mass capture was 57.16%
@@ -70,7 +76,8 @@ python scripts/run_hyperparameter_experiments.py --full-training --run-name full
 python scripts/build_model_v2_validation_figures.py
 ```
 
-The first independent evaluation of the published final-model operational score is
-possible only after ICNF publishes the observed 2026 burned-area outcome. Until
-then, the 2026 layer is a target-free comparative estimate, not validated
-future performance.
+The 2026 layer can be scored against the complete ICNF 2026 outcome only after
+that outcome is published. Its recorded creation was during August 2026; this
+future comparison will not retroactively establish a pre-year issue. A clean
+prospective test needs a specification and forecast frozen before the target
+year, with archived publication-date evidence for every input.

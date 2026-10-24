@@ -7,6 +7,13 @@ It owns the scientific and temporal explanation; the
 [annual operational runbook](operational_forecast_cycle.md) owns commands,
 update steps, safeguards, and output paths.
 
+**October 2026 audit:** the diagram below describes the recorded retrospective
+pipeline, not a verified real-time forecast experiment. Earlier-model results
+for outcomes 2023–2025 existed before V2 selection, and the current 2026 artifact
+was created on 9 August 2026. The [reliability review](forecast_reliability_review.md)
+supersedes claims of an untouched test or pre-year publication. Published
+artifacts are preserved.
+
 ## The complete flow
 
 ```mermaid
@@ -94,8 +101,8 @@ x 0.045 estimated burned share if burning occurs
 
 The stages answer different questions. **Development fitting** teaches the
 candidate models from older examples. **Development validation** chooses which
-candidate to keep. **Final temporal evaluation** checks that frozen choice once
-on later unseen years. **Operational refit** then rebuilds the unchanged chosen
+candidate to keep. **Temporal evaluation** checks that frozen choice
+on later years, already examined in earlier development. **Operational refit** then rebuilds the unchanged chosen
 model with all completed labelled years so that the current estimate uses the
 most available evidence.
 
@@ -103,7 +110,7 @@ most available evidence.
 |---|---:|---:|---|
 | Development fitting | 2010-2019 | 2011-2020 | Candidate models learn relationships from older labelled examples. |
 | Development validation | 2020-2021 | 2021-2022 | Candidate results are compared and the final model is selected without reading the later evaluation rows. |
-| Final temporal evaluation | 2022-2024 | 2023-2025 | The frozen selected model is checked once on later unseen years to provide an honest performance estimate. |
+| Temporal evaluation | 2022-2024 | 2023-2025 | The frozen selected model is checked on reused later years; this is retrospective evidence. |
 | Operational refit | 2010-2024 | 2011-2025 | The unchanged selected model is rebuilt using all completed labelled evidence. |
 | Current annual scoring | 2025 | 2026 not yet observed | The refitted model estimates 2026 burned share from target-free 2025 inputs. |
 
@@ -143,8 +150,9 @@ the 75th percentile. These values answer different questions:
 
 The 2026 output is a target-free comparative estimate. It is not an observed
 2026 burned-area measurement, a property-level forecast, a safety guarantee, or
-a buy/do-not-buy recommendation. Its predictive performance can be evaluated
-independently only after ICNF publishes the observed 2026 burned-area outcome.
+a buy/do-not-buy recommendation. It can be compared with the complete ICNF
+2026 outcome after publication. Because this artifact was created during
+August 2026, that comparison will not establish pre-year forecast performance.
 
 For the exact feature definitions and annual rebuilding procedure, see the
 [data dictionary](data_dictionary.md), the

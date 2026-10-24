@@ -28,7 +28,12 @@ Can recent wildfire recurrence, landscape context, terrain, and predictor-year c
 
 ### Final temporal evaluation
 
-The **final nine-feature model** was frozen after development validation on `T=2020–2021` and evaluated once on the untouched final period `T=2022–2024` (observed outcomes 2023–2025).
+The **final nine-feature model** was selected using development validation on
+`T=2020–2021`, then evaluated on `T=2022–2024` (outcomes 2023–2025).
+The October 2026 audit found that results for an earlier model on this same
+period existed before that selection. These are **reused retrospective
+evaluation years**, not an untouched final test. The recorded numbers below
+are reproducible; their interpretation must respect that limitation.
 
 | Final temporal metric | Historical-recurrence baseline | Final nine-feature model |
 |---|---:|---:|
@@ -57,8 +62,13 @@ labelled evidence before producing the current 2026 estimate. The final check
 measures performance; the later rebuild does not repeat model selection.
 
 The current layer uses `T=2025` inputs to estimate 2026; no observed 2026
-outcome is used. See the [model-learning and scoring flow](docs/model_learning_and_2026_estimate.md)
-for the complete temporal explanation.
+outcome is used. Its manifest records creation on **9 August 2026**, so this is
+an estimate created during the target year, not evidence of a pre-2026 issue.
+Full-year 2026 cannot yet be evaluated as of **24 October 2026**.
+See the [forecast reliability review](docs/forecast_reliability_review.md) for
+the verified history, isolated annual backtests, and publication-date limits,
+and the [model-learning and scoring flow](docs/model_learning_and_2026_estimate.md)
+for the original pipeline.
 
 ## How the method works
 
@@ -259,11 +269,13 @@ Parquet is the canonical analytical table format. GeoPackages provide reusable g
 
 ## Annual update cycle
 
-For forecast year `Y`, use completed inputs from `T=Y−1` to publish a
-target-free estimate. After ICNF publishes the observed outcome for `Y`,
-evaluate the published estimate, add the new labelled year, refit the unchanged
-specification, and score `Y+1`. Commands, safeguards, required inputs, and
-outputs are in the [annual operational runbook](docs/operational_forecast_cycle.md).
+For a pre-year forecast of `Y`, the reviewed schedule is 31 December `Y−1`,
+using JJAS `Y−1` predictors and completed training outcomes only through `Y−2`,
+subject to verified publication dates. The preceding year's full outcome is
+not yet available at that issue date. Evaluate each saved estimate only after
+its complete official outcome is published. The legacy 2026 scripts remain
+unchanged; the revised gates and their integration limits are in the
+[annual operational runbook](docs/operational_forecast_cycle.md).
 
 ## Data access and licensing
 
@@ -302,6 +314,7 @@ attribution, and redistribution guidance is in
 | Model-selection design and parameters | [docs/model_v2_validation_selection.md](docs/model_v2_validation_selection.md) |
 | How the model learns and produces an annual estimate | [docs/model_learning_and_2026_estimate.md](docs/model_learning_and_2026_estimate.md) |
 | Annual update commands, checks, and outputs | [docs/operational_forecast_cycle.md](docs/operational_forecast_cycle.md) |
+| Forecast timing audit, annual backtests, uncertainty and retained-method decision | [docs/forecast_reliability_review.md](docs/forecast_reliability_review.md) |
 | Notebook roles and VS Code use | [notebooks/README.md](notebooks/README.md) |
 | QGIS layers, projects, and limitations | [qgis/README.md](qgis/README.md) |
 | Local interactive web map | [web/README.md](web/README.md) |
