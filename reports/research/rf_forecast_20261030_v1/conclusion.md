@@ -131,3 +131,17 @@ application, forecast or published artifact was replaced, and no merge occurred.
 The numerical report, all metric CSVs, figures, manifest and reproduction
 commands are in [README.md](README.md). Predictions and fitted models are in
 `data/processed/research/rf_forecast_20261030_v1/` under the repository root.
+
+## Short capstone conclusion
+
+The experiment showed that Random Forest can help rank areas by next-year
+wildfire exposure. Both versions ranked areas better than historical fire
+recurrence, but neither clearly improved on the current HGB model. We therefore
+keep HGB as a research tool because it combines useful ranking with lower
+average error.
+
+However, all models substantially underestimated burning in severe years.
+Results under unfamiliar conditions were mixed, so we cannot conclude that
+unfamiliar inputs caused poorer predictions. Because the experiment used
+revised historical data and previously examined years, performance on genuinely
+new future years remains uncertain.
