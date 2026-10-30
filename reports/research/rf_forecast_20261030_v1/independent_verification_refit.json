@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-10-30T14:32:21.445966+00:00",
+  "run_name": "rf_forecast_20261030_v1",
+  "verifier_sha256": "43582043db6ecc3f5afe844fef6920652b3d087cd5c93eefaf5589bc41a7c437",
+  "elapsed_seconds": 167.40695109999797,
+  "independent_numpy_metrics": true,
+  "independent_source_and_area_alignment": true,
+  "independent_paired_year_block_intervals": true,
+  "independent_train_only_range_flags": true,
+  "full_grid_rows": 891120,
+  "annual_model_results": 80,
+  "subgroup_results": 440,
+  "prior_accepted_full_grid_model_year_comparisons": 60,
+  "synthetic_response_rows_basic_physical_checks": 75,
+  "hashes_checked": {
+    "input_sha256": 279,
+    "code_sha256": 8,
+    "artifact_sha256": 91,
+    "result_sha256": 17,
+    "protected": 96
+  },
+  "full_fold_refits": {
+    "rf_direct": {
+      "outcome_year": 2025,
+      "training_rows": 1158456,
+      "evaluation_rows": 89112,
+      "max_absolute_prediction_difference": 8.326672684688674e-17,
+      "elapsed_seconds": 72.01178910001181
+    },
+    "rf_hurdle": {
+      "outcome_year": 2025,
+      "training_rows": 1158456,
+      "evaluation_rows": 89112,
+      "max_absolute_prediction_difference": 5.551115123125783e-17,
+      "elapsed_seconds": 76.87013289998868
+    }
+  },
+  "limitations": [
+    "Historical publication-time availability remains unverified.",
+    "Metric bootstrap does not establish future prediction coverage or remove reused-year bias."
+  ]
+}

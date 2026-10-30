@@ -1,0 +1,11 @@
+{
+  "builder_sha256": "67702eed3313e6ed90abd04df42d26735e2580917869c8fde029a6792f1595c6",
+  "results": {
+    "README.md": "712b1995c3e5c73f282132f435541d231ecaedd67fe0b0e2c9ba08c2c381f291",
+    "decision_checks.csv": "6e6a03a18af10aad32de8fead025576d1793c3e7871da4723d6b775b69e507a2",
+    "severe_years.csv": "54abd544cf37a9e8e0bbb884e434c43401877b9330f5654c949331ffc91b3f54",
+    "year_summary.csv": "8f1fef24e4d7bb2985a054bd4ec5370a4246dccbdee88d5c5f9fb082b39ea485",
+    "subgroups_annual_summary.csv": "b5dde37cff648145b7c1555af29103304d466e5d414151e9dcc94eda92e1cb81",
+    "climate_subgroups.png": "046cbc1559d9924ea445606dbcf552f0940d7638ff39c54128b9f9cdec0e36ba"
+  }
+}

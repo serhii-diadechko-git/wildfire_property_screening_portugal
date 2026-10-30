@@ -1,0 +1,58 @@
+{
+  "status": "complete",
+  "review_date": "2026-10-30",
+  "branch": "codex/random-forest-forecast-experiment",
+  "focused_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m unittest tests.test_random_forest_experiment tests.test_forecast_review -v",
+    "passed": 16,
+    "failed": 0
+  },
+  "independent_numerical_review": "passed",
+  "independent_interpretation_review": "approved; minor timing and cell-year wording corrected",
+  "figures_visually_reviewed": [
+    "yearly_metrics.png",
+    "national_totals.png",
+    "unfamiliar_conditions.png",
+    "response_diagnostics.png",
+    "climate_subgroups.png"
+  ],
+  "existing_user_changes_preserved": true,
+  "operational_or_published_outputs_changed": false,
+  "code_sha256": {
+    "src/random_forest_experiment.py": "bd2eed86b6a34160aefdeeb7730e4cb2c9a162a25509893148f9860fce8f255c",
+    "scripts/run_random_forest_experiment.py": "31a6cf4d40c5a769784da5c4a5e069b13b9057cf07b1a9b6c34a6a007d0b044b",
+    "scripts/build_random_forest_report.py": "67702eed3313e6ed90abd04df42d26735e2580917869c8fde029a6792f1595c6",
+    "scripts/verify_random_forest_experiment.py": "43582043db6ecc3f5afe844fef6920652b3d087cd5c93eefaf5589bc41a7c437",
+    "tests/test_random_forest_experiment.py": "64b2aa68c26a2c0bb953e81fef1ccb652034df2be11312d58abae9bde64bc400",
+    "docs/random_forest_experiment_protocol.md": "4da174be093a3feca91a1a2db252a6236314759de6ad30710da68543f5e09338"
+  },
+  "report_sha256": {
+    "climate_subgroups.png": "046cbc1559d9924ea445606dbcf552f0940d7638ff39c54128b9f9cdec0e36ba",
+    "conclusion.md": "156a966476c01bab7c03937da372375079b518c672e8ad935a7ea0dd9dfbfacd",
+    "decision_checks.csv": "6e6a03a18af10aad32de8fead025576d1793c3e7871da4723d6b775b69e507a2",
+    "feature_ranges.csv": "cb56d5c0f101889613358dfe37db472f03cee02ad13a9aa7798aaa91cac4abff",
+    "folds.csv": "f9ebf665d10f511e18c061e76f25f589188fc2bb824737d4cbfb9e05b4013957",
+    "independent_verification_refit.json": "9d2beaf3afcb0987e5b26629d309c3d72e3727a2ae73c332e1896eb674135ce8",
+    "metrics_by_year.csv": "b36903cba6e739b4dc711e1abd5cf3f87ae5c4665b202a2fb60b8ea9145326e0",
+    "metrics_pooled.csv": "d8dd8c0d074cdaf2193f7529ecbc1149a84d4539df4885fcc8af84d79d17d6e1",
+    "national_observed_history.csv": "1d9b9706ab419c90d035fdb4fa2ee74633285c45bcc49581c2773f95ca2e9b37",
+    "national_totals.png": "d17d32a64ede956514ce08efb496e82214ac94082c4e3bf4efa31a16b9d27170",
+    "paired_differences.csv": "c10793c8b68b1bf107575d0ff520b81be3f19c1c98212d06657b7829f1bc4def",
+    "paired_uncertainty.csv": "401192897fae6bf82ebbb269d4ee2d4a0e9ce2d25822e5b20ff75798fe40936e",
+    "protocol.md": "4da174be093a3feca91a1a2db252a6236314759de6ad30710da68543f5e09338",
+    "README.md": "712b1995c3e5c73f282132f435541d231ecaedd67fe0b0e2c9ba08c2c381f291",
+    "report_manifest.json": "a36b5d7578fa5d54ec95f13620709365ba5a5de722b367bf506d451813a7ec83",
+    "response_diagnostics.png": "221a90f7bc7b2799dc6b80e43d98a8e44dc58172de9d3487489f9013ee97404c",
+    "response_predictions.csv": "8873ab86725fb83c535653359affed24a2a72e637014e9109770ada1c7d2a1d7",
+    "run_manifest.json": "571977d9678a548d358b9ea03b3f756128d82d8db11e002a8a45d23bae4c0dc9",
+    "saved_model_audit.json": "5c44928200070d79db701a565c65b55e5244c051c6aa0f61285242c59cf03be0",
+    "severe_years.csv": "54abd544cf37a9e8e0bbb884e434c43401877b9330f5654c949331ffc91b3f54",
+    "source_year_audit.json": "c2a93d30628d1a3fe4e3f5eb1e9bf2af9ae195410590f59ac158306cbf5fbc88",
+    "subgroups_annual_summary.csv": "b5dde37cff648145b7c1555af29103304d466e5d414151e9dcc94eda92e1cb81",
+    "subgroups_by_year.csv": "43a36d80681be2264e9eb4ddead0d643937c7e75dff54800d5ef1d88f791839e",
+    "subgroups_pooled.csv": "a360211400bae80236fe76d5d75f6ecb7273d03bf4f21dcfd25b1b644014a957",
+    "unfamiliar_conditions.png": "983be6f516522fc31e446a9798b39841b4fc46fb2bbec03bdf0c0ba2b1bf69a6",
+    "year_summary.csv": "8f1fef24e4d7bb2985a054bd4ec5370a4246dccbdee88d5c5f9fb082b39ea485",
+    "yearly_metrics.png": "53262f16675c9cb847431d5c0894a03e037abf74e171d79678ba7cbc2ec2ea41"
+  }
+}

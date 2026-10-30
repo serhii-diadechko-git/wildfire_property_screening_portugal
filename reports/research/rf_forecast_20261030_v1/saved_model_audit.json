@@ -1,0 +1,7 @@
+{
+  "type": "HurdleHistGradientRegressor",
+  "parameters_match": true,
+  "feature_order_match": true,
+  "artifact_sha256": "0c9dcfe23cef114c377485d53e209030084451da067bedead4da11508a50d290",
+  "prediction_formula": "occurrence probability times clipped conditional positive burned share"
+}

@@ -1,0 +1,157 @@
+{
+  "metadata_valid": true,
+  "actual_records": [
+    {
+      "observation_year": 2010,
+      "outcome_year": 2011,
+      "historical_fire_start_year": 2000,
+      "historical_fire_end_year": 2009,
+      "climate_reference_year": 2010,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2011,
+      "outcome_year": 2012,
+      "historical_fire_start_year": 2001,
+      "historical_fire_end_year": 2010,
+      "climate_reference_year": 2011,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2012,
+      "outcome_year": 2013,
+      "historical_fire_start_year": 2002,
+      "historical_fire_end_year": 2011,
+      "climate_reference_year": 2012,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2013,
+      "outcome_year": 2014,
+      "historical_fire_start_year": 2003,
+      "historical_fire_end_year": 2012,
+      "climate_reference_year": 2013,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2014,
+      "outcome_year": 2015,
+      "historical_fire_start_year": 2004,
+      "historical_fire_end_year": 2013,
+      "climate_reference_year": 2014,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2015,
+      "outcome_year": 2016,
+      "historical_fire_start_year": 2005,
+      "historical_fire_end_year": 2014,
+      "climate_reference_year": 2015,
+      "land_cover_reference_year": 2006,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2016,
+      "outcome_year": 2017,
+      "historical_fire_start_year": 2006,
+      "historical_fire_end_year": 2015,
+      "climate_reference_year": 2016,
+      "land_cover_reference_year": 2012,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2017,
+      "outcome_year": 2018,
+      "historical_fire_start_year": 2007,
+      "historical_fire_end_year": 2016,
+      "climate_reference_year": 2017,
+      "land_cover_reference_year": 2012,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2018,
+      "outcome_year": 2019,
+      "historical_fire_start_year": 2008,
+      "historical_fire_end_year": 2017,
+      "climate_reference_year": 2018,
+      "land_cover_reference_year": 2012,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2019,
+      "outcome_year": 2020,
+      "historical_fire_start_year": 2009,
+      "historical_fire_end_year": 2018,
+      "climate_reference_year": 2019,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2020,
+      "outcome_year": 2021,
+      "historical_fire_start_year": 2010,
+      "historical_fire_end_year": 2019,
+      "climate_reference_year": 2020,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2021,
+      "outcome_year": 2022,
+      "historical_fire_start_year": 2011,
+      "historical_fire_end_year": 2020,
+      "climate_reference_year": 2021,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2022,
+      "outcome_year": 2023,
+      "historical_fire_start_year": 2012,
+      "historical_fire_end_year": 2021,
+      "climate_reference_year": 2022,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2023,
+      "outcome_year": 2024,
+      "historical_fire_start_year": 2013,
+      "historical_fire_end_year": 2022,
+      "climate_reference_year": 2023,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    },
+    {
+      "observation_year": 2024,
+      "outcome_year": 2025,
+      "historical_fire_start_year": 2014,
+      "historical_fire_end_year": 2023,
+      "climate_reference_year": 2024,
+      "land_cover_reference_year": 2018,
+      "land_cover_release_id": "V2020_20u1",
+      "terrain_release_id": "2021 public release; Copernicus DSM COG 10"
+    }
+  ],
+  "as_issued_eligible_folds": 0,
+  "reason": "NOT VERIFIED: revised vintages, no complete issue-date receipt ledger"
+}
